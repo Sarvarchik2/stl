@@ -3,7 +3,25 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
 
-  modules: [],
+  modules: ['@nuxtjs/i18n'],
+
+  i18n: {
+    locales: [
+      { code: 'ru', name: 'Русский', file: 'ru.json' },
+      { code: 'uz', name: "O'zbekcha", file: 'uz.json' },
+      { code: 'en', name: 'English', file: 'en.json' }
+    ],
+    defaultLocale: 'ru',
+    lazy: true,
+    langDir: 'locales',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_locale',
+      fallbackLocale: 'ru'
+    }
+  },
+
   css: ['~/assets/css/main.css'],
 
   runtimeConfig: {
@@ -14,11 +32,11 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'STL Auto Admin - Панель управления',
+      title: 'STL Auto Admin',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Административная панель STL Auto' }
+        { name: 'description', content: 'STL Auto Admin Panel' }
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

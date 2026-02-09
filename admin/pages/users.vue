@@ -1,14 +1,14 @@
 <template>
     <div v-if="isLoadingSession" class="flex-center py-20">
         <div class="text-center text-tertiary">
-            <p>Проверка доступа...</p>
+            <p>{{ $t('auth.checkingAccess') }}</p>
         </div>
     </div>
     <div v-else-if="!hasRole('operator')" class="flex-center py-20">
         <div class="text-center">
-            <h2 class="text-thin">Доступ ограничен</h2>
-            <p class="text-secondary">У вас нет прав для управления персоналом</p>
-            <NuxtLink to="/dashboard" class="btn btn-primary btn-sm mt-4">Вернуться в хаб</NuxtLink>
+            <h2 class="text-thin">{{ $t('auth.accessDenied') }}</h2>
+            <p class="text-secondary">{{ $t('auth.noPermission') }}</p>
+            <NuxtLink to="/dashboard" class="btn btn-primary btn-sm mt-4">{{ $t('nav.dashboard') }}</NuxtLink>
         </div>
     </div>
     <div v-else class="users-page animate-fade-in">
@@ -16,8 +16,8 @@
             <div class="container">
                 <div class="flex-between">
                     <div>
-                        <h1 class="text-thin">Сотрудники</h1>
-                        <p class="text-secondary text-light">Управление доступом и ролями системы</p>
+                        <h1 class="text-thin">{{ $t('users.title') }}</h1>
+                        <p class="text-secondary text-light">{{ $t('users.subtitle') }}</p>
                     </div>
                     <div class="header-actions" v-if="hasRole('admin')">
                         <button class="btn btn-primary btn-sm" @click="openModal()">
@@ -28,7 +28,7 @@
                                 <line x1="20" y1="8" x2="20" y2="14" />
                                 <line x1="23" y1="11" x2="17" y2="11" />
                             </svg>
-                            Добавить сотрудника
+                            {{ $t('users.addUser') }}
                         </button>
                     </div>
                 </div>
@@ -40,11 +40,11 @@
             <div class="search-filter-row mb-8">
                 <div class="flex gap-4">
                     <div class="search-wrap">
-                        <input v-model="searchQuery" type="text" placeholder="Поиск по имени, телефону..."
+                        <input v-model="searchQuery" type="text" :placeholder="$t('users.searchPlaceholder')"
                             class="input input-minimal">
                     </div>
                     <select v-model="roleFilter" class="input input-minimal" style="width: 160px;">
-                        <option value="all">Все роли</option>
+                        <option value="all">{{ $t('users.allRoles') }}</option>
                         <option v-for="role in roles" :key="role.key" :value="role.key">
                             {{ role.label }}
                         </option>
@@ -58,16 +58,16 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="pl-8">Пользователь</th>
-                                <th>Роль</th>
-                                <th>Телефон</th>
-                                <th>Статус</th>
-                                <th class="text-right pr-8">Действия</th>
+                                <th class="pl-8">{{ $t('users.user') }}</th>
+                                <th>{{ $t('users.role') }}</th>
+                                <th>{{ $t('users.phone') }}</th>
+                                <th>{{ $t('users.status') }}</th>
+                                <th class="text-right pr-8">{{ $t('common.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="loading" v-for="i in 3" :key="i">
-                                <td colspan="5" class="py-12 text-center text-tertiary">Обновление...</td>
+                                <td colspan="5" class="py-12 text-center text-tertiary">{{ $t('common.loading') }}</td>
                             </tr>
                             <tr v-else v-for="user in filteredUsers" :key="user.id" class="premium-row clickable-row"
                                 @click="hasRole('admin') && openModal(user)">
@@ -87,15 +87,16 @@
                                 <td>
                                     <div class="flex items-center gap-2">
                                         <span class="status-dot" :class="{ active: user.is_active }"></span>
-                                        <span class="text-secondary smaller-text">{{ user.is_active ? 'Активен' :
-                                            'Заблокирован' }}</span>
+                                        <span class="text-secondary smaller-text">{{ user.is_active ? $t('users.active')
+                                            :
+                                            $t('users.blocked') }}</span>
                                     </div>
                                 </td>
                                 <td class="text-right pr-8">
                                     <div class="flex justify-end gap-2" @click.stop v-if="hasRole('admin')">
                                         <button @click="toggleStatus(user)" class="btn btn-sm btn-outline btn-minimal"
                                             :class="user.is_active ? 'text-error' : 'text-success'">
-                                            {{ user.is_active ? 'Бан' : 'Активировать' }}
+                                            {{ user.is_active ? $t('users.block') : $t('users.activate') }}
                                         </button>
                                         <button @click="openModal(user)" class="btn btn-icon-only btn-ghost">
                                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor"
@@ -115,6 +116,59 @@
             <div class="spacer"></div>
         </div>
 
+
+
+        <!-- User Modal -->
+        <Teleport to="body">
+            <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+                <div class="modal-card animate-scale-in">
+                    <h2 class="text-xl font-bold mb-6">{{ modalTitle }}</h2>
+                    <div class="grid grid-2 gap-4">
+                        <div class="form-group">
+                            <label class="micro-label mb-2">{{ $t('users.firstName') }}</label>
+                            <input v-model="form.first_name" type="text" class="input input-sm">
+                        </div>
+                        <div class="form-group">
+                            <label class="micro-label mb-2">{{ $t('users.lastName') }}</label>
+                            <input v-model="form.last_name" type="text" class="input input-sm">
+                        </div>
+                    </div>
+                    <div class="form-group mt-4">
+                        <label class="micro-label mb-2">{{ $t('users.email') }}</label>
+                        <input v-model="form.email" type="email" class="input input-sm">
+                    </div>
+                    <div class="form-group mt-4">
+                        <label class="micro-label mb-2">{{ $t('users.phone') }}</label>
+                        <input v-model="form.phone" type="text" class="input input-sm">
+                    </div>
+                    <div class="form-group mt-4">
+                        <label class="micro-label mb-2">{{ $t('users.role') }}</label>
+                        <select v-model="form.role" class="input input-sm">
+                            <option v-for="role in roles" :key="role.key" :value="role.key">
+                                {{ role.label }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group mt-4" v-if="!editingId">
+                        <label class="micro-label mb-2">{{ $t('auth.password') }}</label>
+                        <input v-model="form.password" type="password" class="input input-sm">
+                    </div>
+                    <div class="form-group mt-4" v-else>
+                        <label class="micro-label mb-2">{{ $t('settings.newPassword') }} ({{ $t('common.optional')
+                            }})</label>
+                        <input v-model="form.password" type="password" class="input input-sm"
+                            :placeholder="$t('settings.leaveBlank')">
+                    </div>
+                    <div class="flex gap-3 mt-8">
+                        <button class="btn btn-sm flex-grow" @click="showModal = false">{{ $t('common.close')
+                            }}</button>
+                        <button class="btn btn-primary btn-sm flex-grow font-bold" @click="saveUser" :disabled="saving">
+                            {{ saving ? $t('common.loading') : $t('common.save') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
 
         <!-- Confirmation Modal -->
         <Teleport to="body">
@@ -138,11 +192,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button class="btn btn-sm flex-grow" @click="closeConfirm">Отмена</button>
+                        <button class="btn btn-sm flex-grow" @click="closeConfirm">{{ $t('common.cancel') }}</button>
                         <button class="btn btn-sm flex-grow font-bold"
                             :class="confirmType === 'danger' ? 'btn-error' : 'btn-primary'" @click="executeConfirm"
                             :disabled="processingConfirm">
-                            {{ processingConfirm ? 'Загрузка...' : confirmButtonText }}
+                            {{ processingConfirm ? $t('common.loading') : confirmButtonText }}
                         </button>
                     </div>
                 </div>
@@ -154,6 +208,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+const { t } = useI18n()
+const toast = useToast()
+
 const { getUsers, createStaffUser, updateUserStatus, addToBlacklist, removeFromBlacklistByPhone, hasRole, authToken, currentUser } = useApi()
 
 const isLoadingSession = computed(() => !!authToken.value && !currentUser.value)
@@ -164,6 +221,7 @@ const saving = ref(false)
 // User Modal
 const showModal = ref(false)
 const editingId = ref<string | null>(null)
+const modalTitle = computed(() => editingId.value ? t('users.editUser') : t('users.addUser'))
 
 // Confirmation Modal
 const showConfirmModal = ref(false)
@@ -177,14 +235,14 @@ let pendingConfirmAction: (() => Promise<void>) | null = null
 const searchQuery = ref('')
 const roleFilter = ref('all')
 
-const roles = [
-    { key: 'operator', label: 'Оператор' },
-    { key: 'supervisor', label: 'Супервизор' },
-    { key: 'manager', label: 'Менеджер' },
-    { key: 'admin', label: 'Админ' },
-    { key: 'owner', label: 'Владелец' },
-    { key: 'client', label: 'Клиент' }
-]
+const roles = computed(() => [
+    { key: 'operator', label: t('users.roles.operator') },
+    { key: 'supervisor', label: t('users.roles.supervisor') },
+    { key: 'manager', label: t('users.roles.manager') },
+    { key: 'admin', label: t('users.roles.admin') },
+    { key: 'owner', label: t('users.roles.owner') },
+    { key: 'client', label: t('users.roles.client') }
+])
 
 const form = ref({
     first_name: '',
@@ -232,7 +290,7 @@ const saveUser = async () => {
         showModal.value = false
         fetchUsers()
     } catch (err: any) {
-        alert(err?.data?.detail || 'Ошибка при сохранении')
+        toast.error(t('common.error'), err?.data?.detail || t('common.saveError'))
     } finally {
         saving.value = false
     }
@@ -243,7 +301,7 @@ const openConfirm = (title: string, message: string, type: 'primary' | 'danger',
     confirmTitle.value = title
     confirmMessage.value = message
     confirmType.value = type
-    confirmButtonText.value = type === 'danger' ? 'Заблокировать' : 'Активировать'
+    confirmButtonText.value = type === 'danger' ? t('users.block') : t('users.activate')
     pendingConfirmAction = action
     showConfirmModal.value = true
 }
@@ -268,10 +326,10 @@ const executeConfirm = async () => {
 
 const toggleStatus = (user: any) => {
     const isBlocking = user.is_active
-    const title = isBlocking ? 'Блокировка доступа' : 'Активация доступа'
+    const title = isBlocking ? t('users.confirmBlock.title') : t('users.confirmActivate.title')
     const message = isBlocking
-        ? `Вы уверены, что хотите заблокировать ${user.first_name}? Пользователь будет также добавлен в черный список.`
-        : `Восстановить доступ для ${user.first_name}? Пользователь также будет удален из черного списка.`
+        ? t('users.confirmBlock.message', { name: user.first_name })
+        : t('users.confirmActivate.message', { name: user.first_name })
 
     openConfirm(title, message, isBlocking ? 'danger' : 'primary', async () => {
         try {
@@ -291,7 +349,7 @@ const toggleStatus = (user: any) => {
                 await removeFromBlacklistByPhone(user.phone).catch(err => console.warn('Failed to remove from blacklist', err))
             }
         } catch (err: any) {
-            alert(err?.data?.detail || 'Ошибка при изменении статуса')
+            toast.error(t('common.error'), err?.data?.detail || t('users.statusError'))
         }
     })
 }
@@ -308,15 +366,7 @@ const filteredUsers = computed(() => {
 })
 
 const translateRole = (r: string) => {
-    const map: Record<string, string> = {
-        'operator': 'Оператор',
-        'supervisor': 'Супервизор',
-        'manager': 'Менеджер',
-        'admin': 'Админ',
-        'owner': 'Владелец',
-        'client': 'Клиент'
-    }
-    return map[r.toLowerCase()] || r
+    return t(`users.roles.${r?.toLowerCase()}`) || r
 }
 
 onMounted(() => {

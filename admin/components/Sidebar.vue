@@ -14,7 +14,7 @@
                         <rect x="3" y="14" width="7" height="7" rx="1" />
                     </svg>
                 </div>
-                <span>Дашборд</span>
+                <span>{{ $t('nav.dashboard') }}</span>
             </NuxtLink>
 
             <NuxtLink to="/applications" class="nav-link" @click="$emit('close')">
@@ -27,7 +27,7 @@
                         <polyline points="10 9 9 9 8 9" />
                     </svg>
                 </div>
-                <span>Заявки</span>
+                <span>{{ $t('nav.applications') }}</span>
             </NuxtLink>
 
             <NuxtLink to="/cars" class="nav-link" @click="$emit('close')">
@@ -37,7 +37,7 @@
                             d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18.7 7h-1.2l-1.3-4.4c-.1-.3-.4-.6-.7-.6H8.5c-.3 0-.6.3-.7.6L6.5 7H5.3l-1.8 11L6 13c0 .6.4 1 1 1h2m10 0v2c0 .6-.4 1-1 1H8c-.6 0-1-.4-1-1v-2m10 0H7" />
                     </svg>
                 </div>
-                <span>Автопарк</span>
+                <span>{{ $t('nav.cars') }}</span>
             </NuxtLink>
 
             <NuxtLink v-if="hasRole('operator')" to="/stories" class="nav-link" @click="$emit('close')">
@@ -48,7 +48,7 @@
                         <circle cx="12" cy="12" r="2" />
                     </svg>
                 </div>
-                <span>Stories</span>
+                <span>{{ $t('nav.stories') }}</span>
             </NuxtLink>
 
             <NuxtLink v-if="hasRole('operator')" to="/users" class="nav-link" @click="$emit('close')">
@@ -60,7 +60,7 @@
                         <path d="M16 3.13a4 4 0 010 7.75" />
                     </svg>
                 </div>
-                <span>Пользователи</span>
+                <span>{{ $t('nav.users') }}</span>
             </NuxtLink>
 
             <NuxtLink v-if="hasRole('operator')" to="/payments" class="nav-link" @click="$emit('close')">
@@ -70,7 +70,7 @@
                         <line x1="1" y1="10" x2="23" y2="10" />
                     </svg>
                 </div>
-                <span>Платежи</span>
+                <span>{{ $t('nav.payments') }}</span>
             </NuxtLink>
 
             <NuxtLink v-if="hasRole('supervisor')" to="/blacklist" class="nav-link" @click="$emit('close')">
@@ -80,12 +80,18 @@
                         <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
                     </svg>
                 </div>
-                <span>Черный список</span>
+                <span>{{ $t('nav.blacklist') }}</span>
             </NuxtLink>
         </nav>
 
         <div class="sidebar-footer"
             style="padding: 1rem; border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 0.5rem;">
+
+            <!-- Language Switcher -->
+            <div style="padding: 0 0.5rem 0.5rem;">
+                <LanguageSwitcher />
+            </div>
+
             <button class="nav-link theme-toggle-btn" @click="toggleTheme"
                 style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; color: var(--color-text-secondary); transition: 0.2s;">
                 <div class="nav-link-icon" style="display: flex; align-items: center; justify-content: center;">
@@ -106,7 +112,7 @@
                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                     </svg>
                 </div>
-                <span>{{ theme === 'light' ? 'Темная тема' : 'Светлая тема' }}</span>
+                <span>{{ theme === 'light' ? $t('settings.darkTheme') : $t('settings.lightTheme') }}</span>
             </button>
 
             <NuxtLink v-if="hasRole('manager')" to="/settings" class="nav-link" @click="$emit('close')">
@@ -117,7 +123,7 @@
                             d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
                     </svg>
                 </div>
-                <span>Настройки</span>
+                <span>{{ $t('nav.settings') }}</span>
             </NuxtLink>
 
             <button class="nav-link logout-btn-sidebar" @click="handleLogout">
@@ -128,7 +134,7 @@
                         <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
                 </div>
-                <span class="font-bold">Выход</span>
+                <span class="font-bold">{{ $t('nav.logout') }}</span>
             </button>
         </div>
     </aside>

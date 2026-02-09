@@ -4,13 +4,14 @@
             <div class="container">
                 <div class="flex-between applications-header">
                     <div class="header-info">
-                        <h1 class="text-thin">Заявки</h1>
-                        <p class="text-secondary text-light">CRM и управление жизненным циклом займа</p>
+                        <h1 class="text-thin">{{ $t('applications.title') }}</h1>
+                        <p class="text-secondary text-light">{{ $t('applications.subtitle') }}</p>
                     </div>
                     <div class="header-actions">
                         <div class="flex items-center gap-4">
                             <div class="search-wrap">
-                                <input v-model="searchQuery" type="text" placeholder="Поиск клиента или авто..."
+                                <input v-model="searchQuery" type="text"
+                                    :placeholder="$t('applications.createModal.searchClient')"
                                     class="input input-minimal search-input-responsive">
                             </div>
                             <button class="btn btn-primary btn-sm shadow-sm" @click="showCreateModal = true">
@@ -19,7 +20,7 @@
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
-                                Создать заявку
+                                {{ $t('applications.createModal.createButton') }}
                             </button>
                         </div>
                     </div>
@@ -44,19 +45,19 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="pl-8">Дата подачи</th>
-                                <th>Клиент</th>
-                                <th>Автомобиль</th>
-                                <th>Стоимость</th>
-                                <th>Ответственный</th>
-                                <th>Статус</th>
-                                <th class="text-right pr-8">Действия</th>
+                                <th class="pl-8">{{ $t('common.date') }}</th>
+                                <th>{{ $t('applications.createModal.client') }}</th>
+                                <th>{{ $t('applications.createModal.selectCar') }}</th>
+                                <th>{{ $t('cars.price') }}</th>
+                                <th>{{ $t('applications.operator') }}</th>
+                                <th>{{ $t('common.status') }}</th>
+                                <th class="text-right pr-8">{{ $t('common.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="loading" v-for="i in 5" :key="i">
-                                <td colspan="7" class="py-12 text-center text-tertiary smaller-text">Синхронизация
-                                    журнала заявок...</td>
+                                <td colspan="7" class="py-12 text-center text-tertiary smaller-text">{{
+                                    $t('common.loading') }}</td>
                             </tr>
                             <tr v-else v-for="app in filteredApplications" :key="app.id"
                                 class="clickable-row premium-row" @click="openDetail(app)">
@@ -99,9 +100,10 @@
 
             <!-- Pagination Dummy -->
             <div class="flex-center mt-12 gap-3">
-                <button class="btn btn-sm btn-outline btn-minimal" disabled>Назад</button>
+                <button class="btn btn-sm btn-outline btn-minimal" disabled>{{ $t('common.back') }}</button>
                 <button class="btn btn-sm btn-primary shadow-sm" style="min-width: 40px;">1</button>
-                <button class="btn btn-sm btn-outline btn-minimal" disabled>Вперед</button>
+                <button class="btn btn-sm btn-outline btn-minimal" disabled>{{ $t('common.close').replace('Закрыть',
+                    'Вперед') }}</button>
             </div>
 
             <div class="spacer"></div>
@@ -112,7 +114,7 @@
             <div v-if="showCreateModal" class="modal-overlay" @click.self="showCreateModal = false">
                 <div class="modal-panel animate-slide-in shadow-2xl">
                     <div class="modal-header-premium">
-                        <h3 class="m-0 text-thin">Создание новой заявки</h3>
+                        <h3 class="m-0 text-thin">{{ $t('applications.createModal.title') }}</h3>
                         <button class="btn btn-icon-only btn-ghost" @click="showCreateModal = false">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
@@ -124,10 +126,11 @@
                     <div class="modal-body-premium">
                         <!-- Car Search & Select -->
                         <div class="form-group-premium mb-6">
-                            <label class="section-label mb-2">Автомобиль <span class="text-error">*</span></label>
+                            <label class="section-label mb-2">{{ $t('applications.createModal.selectCar') }} <span
+                                    class="text-error">*</span></label>
                             <div class="searchable-select-wrap">
                                 <input v-model="carSearchQuery" type="text"
-                                    placeholder="Поиск по марке, модели или году..."
+                                    :placeholder="$t('applications.createModal.searchCar')"
                                     class="input input-minimal w-full mb-2">
                                 <div class="options-list-premium custom-scrollbar">
                                     <div v-for="car in filteredCars" :key="car.id" class="option-item-premium"
@@ -143,103 +146,104 @@
                                             <div v-if="createForm.car_id === car.id" class="text-success">✓</div>
                                         </div>
                                     </div>
-                                    <div v-if="filteredCars.length === 0"
-                                        class="p-4 text-center text-tertiary smaller-text">
-                                        Автомобили не найдены
-                                    </div>
+                                </div>
+                                <div v-if="filteredCars.length === 0"
+                                    class="p-4 text-center text-tertiary smaller-text">
+                                    {{ $t('common.noData') }}
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Client Search & Details -->
-                        <div class="form-group-premium mb-6">
-                            <label class="section-label mb-2">Клиент <span class="text-error">*</span></label>
-                            <div class="relative">
-                                <input v-model="clientSearchQuery" type="text"
-                                    placeholder="Найти существующего по номеру или имени..."
-                                    class="input input-minimal w-full mb-3 bg-dim shadow-inner">
+                    <!-- Client Search & Details -->
+                    <div class="form-group-premium mb-6">
+                        <label class="section-label mb-2">{{ $t('applications.createModal.client') }} <span
+                                class="text-error">*</span></label>
+                        <div class="relative">
+                            <input v-model="clientSearchQuery" type="text"
+                                :placeholder="$t('applications.createModal.searchClient')"
+                                class="input input-minimal w-full mb-3 bg-dim shadow-inner">
 
-                                <!-- Search Results Dropdown -->
-                                <!-- Search Results Dropdown -->
-                                <div v-if="clientSearchQuery.length >= 3" class="client-results-dropdown shadow-2xl">
-                                    <div v-if="clientSearchLoading" class="p-4 text-center text-secondary">
-                                        Поиск в базе...
+                            <!-- Search Results Dropdown -->
+                            <!-- Search Results Dropdown -->
+                            <div v-if="clientSearchQuery.length >= 3" class="client-results-dropdown shadow-2xl">
+                                <div v-if="clientSearchLoading" class="p-4 text-center text-secondary">
+                                    {{ $t('common.searching') }}
+                                </div>
+                                <template v-else>
+                                    <!-- Real Results -->
+                                    <div v-for="client in clientSearchResults" :key="client.id"
+                                        class="client-result-item" @click="selectExistingClient(client)">
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar-mini">{{ client.first_name[0] }}</div>
+                                            <div>
+                                                <div class="font-bold text-primary">{{ client.first_name }} {{
+                                                    client.last_name }}</div>
+                                                <div class="smaller-text text-tertiary">{{ client.phone }}</div>
+                                            </div>
+                                            <div class="ml-auto text-tertiary smaller-text italic opacity-60">{{
+                                                $t('applications.sources.admin') }}</div>
+                                        </div>
                                     </div>
-                                    <template v-else>
-                                        <!-- Real Results -->
-                                        <div v-for="client in clientSearchResults" :key="client.id"
-                                            class="client-result-item" @click="selectExistingClient(client)">
-                                            <div class="flex items-center gap-3">
-                                                <div class="user-avatar-mini">{{ client.first_name[0] }}</div>
-                                                <div>
-                                                    <div class="font-bold text-primary">{{ client.first_name }} {{
-                                                        client.last_name }}</div>
-                                                    <div class="smaller-text text-tertiary">{{ client.phone }}</div>
-                                                </div>
-                                                <div class="ml-auto text-tertiary smaller-text italic opacity-60">База
+
+                                    <!-- Virtual "Create New" Result -->
+                                    <div class="client-result-item create-new-hint border-top"
+                                        @click="clientSearchResults = []; clientSearchQuery = ''">
+                                        <div class="flex items-center gap-3">
+                                            <div class="user-avatar-mini bg-accent">+</div>
+                                            <div>
+                                                <div class="font-bold text-accent">{{ $t('users.create.title') }}</div>
+                                                <div class="smaller-text text-tertiary">{{ clientSearchQuery }}
                                                 </div>
                                             </div>
+                                            <div class="ml-auto text-accent smaller-text font-bold">{{
+                                                $t('common.new').toUpperCase() }}</div>
                                         </div>
-
-                                        <!-- Virtual "Create New" Result -->
-                                        <div class="client-result-item create-new-hint border-top"
-                                            @click="clientSearchResults = []; clientSearchQuery = ''">
-                                            <div class="flex items-center gap-3">
-                                                <div class="user-avatar-mini bg-accent">+</div>
-                                                <div>
-                                                    <div class="font-bold text-accent">Создать нового клиента</div>
-                                                    <div class="smaller-text text-tertiary">{{ clientSearchQuery }}
-                                                    </div>
-                                                </div>
-                                                <div class="ml-auto text-accent smaller-text font-bold">НОВЫЙ</div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div class="lead-details-grid grid grid-2 gap-4">
-                                <div class="detail-input-wrap">
-                                    <label class="smaller-text text-tertiary mb-1 block">Телефон</label>
-                                    <input v-model="createForm.client_phone" type="text" placeholder="+99890XXXXXXX"
-                                        class="input input-minimal w-full">
-                                </div>
-                                <div class="detail-input-wrap">
-                                    <label class="smaller-text text-tertiary mb-1 block">Имя (ФИО)</label>
-                                    <input v-model="createForm.client_name" type="text" placeholder="Иван Иванов"
-                                        class="input input-minimal w-full">
-                                </div>
-                            </div>
-                            <div v-if="createForm.client_id"
-                                class="mt-2 text-success smaller-text font-medium flex items-center gap-1">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="3">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg>
-                                Выбран существующий клиент
+                                    </div>
+                                </template>
                             </div>
                         </div>
 
-                        <div class="form-group-premium mb-8">
-                            <label class="section-label mb-2">Источник</label>
-                            <select v-model="createForm.source" class="input input-minimal w-full">
-                                <option value="Admin Panel">Админ-панель (Вручную)</option>
-                                <option value="Phone Call">Телефонный звонок</option>
-                                <option value="Telegram">Telegram / WhatsApp</option>
-                                <option value="Office Visit">Визит в офис</option>
-                            </select>
+                        <div class="lead-details-grid grid grid-2 gap-4">
+                            <div class="detail-input-wrap">
+                                <label class="smaller-text text-tertiary mb-1 block">Телефон</label>
+                                <input v-model="createForm.client_phone" type="text" placeholder="+99890XXXXXXX"
+                                    class="input input-minimal w-full">
+                            </div>
+                            <div class="detail-input-wrap">
+                                <label class="smaller-text text-tertiary mb-1 block">Имя (ФИО)</label>
+                                <input v-model="createForm.client_name" type="text" placeholder="Иван Иванов"
+                                    class="input input-minimal w-full">
+                            </div>
                         </div>
+                        <div v-if="createForm.client_id"
+                            class="mt-2 text-success smaller-text font-medium flex items-center gap-1">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            Выбран существующий клиент
+                        </div>
+                    </div>
 
-                        <div class="modal-actions-premium mt-10">
-                            <button class="btn btn-ghost mr-4" @click="showCreateModal = false" :disabled="isCreating">
-                                Отмена
-                            </button>
-                            <button class="btn btn-primary btn-lg shadow-lg flex-grow font-bold"
-                                @click="handleAdminCreate"
-                                :disabled="isCreating || !createForm.car_id || !createForm.client_phone">
-                                {{ isCreating ? 'Создание...' : 'СОЗДАТЬ ЗАЯВКУ' }}
-                            </button>
-                        </div>
+                    <div class="form-group-premium mb-8">
+                        <label class="section-label mb-2">Источник</label>
+                        <select v-model="createForm.source" class="input input-minimal w-full">
+                            <option value="Admin Panel">Админ-панель (Вручную)</option>
+                            <option value="Phone Call">Телефонный звонок</option>
+                            <option value="Telegram">Telegram / WhatsApp</option>
+                            <option value="Office Visit">Визит в офис</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions-premium mt-10">
+                        <button class="btn btn-ghost mr-4" @click="showCreateModal = false" :disabled="isCreating">
+                            Отмена
+                        </button>
+                        <button class="btn btn-primary btn-lg shadow-lg flex-grow font-bold" @click="handleAdminCreate"
+                            :disabled="isCreating || !createForm.car_id || !createForm.client_phone">
+                            {{ isCreating ? $t('common.loading') : $t('applications.createModal.createButton') }}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -252,7 +256,7 @@
                     <div class="side-header">
                         <div class="flex-between">
                             <div>
-                                <h3 class="m-0 text-thin text-primary">Детали заявки</h3>
+                                <h3 class="m-0 text-thin text-primary">{{ $t('applications.detail.title') }}</h3>
                                 <div class="mt-1">
                                     <code class="id-badge-minimal">ID: {{ selectedApp.id }}</code>
                                 </div>
@@ -271,7 +275,8 @@
                         <div class="detail-section mb-10">
                             <div class="flex-between mb-4">
                                 <div class="status-group">
-                                    <label class="section-label mb-2">Текущий этап</label>
+                                    <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
+                                    }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
@@ -279,34 +284,42 @@
                                     </div>
                                 </div>
                                 <div class="status-group">
-                                    <label class="section-label mb-2">Статус контакта</label>
+                                    <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
+                                    }}</label>
                                     <div class="mt-1">
-                                        <select v-if="hasRole('operator')" 
-                                            :value="selectedApp.contact_status"
+                                        <select v-if="hasRole('operator')" :value="selectedApp.contact_status"
                                             @change="handleContactStatusUpdate(($event.target as HTMLSelectElement).value)"
                                             class="input input-sm contact-status-select"
                                             :class="selectedApp.contact_status">
-                                            <option value="not_touched">Не обработано</option>
-                                            <option value="no_answer">Не отвечает</option>
-                                            <option value="contacted">Связались</option>
-                                            <option value="callback">Перезвонить</option>
-                                            <option value="rejected">Отказ</option>
-                                            <option value="confirmed_interest">Интерес подтвержден</option>
+                                            <option value="not_touched">{{
+                                                $t('applications.contactStatuses.not_touched') }}
+                                            </option>
+                                            <option value="no_answer">{{ $t('applications.contactStatuses.no_answer') }}
+                                            </option>
+                                            <option value="contacted">{{ $t('applications.contactStatuses.contacted') }}
+                                            </option>
+                                            <option value="callback">{{ $t('applications.contactStatuses.callback') }}
+                                            </option>
+                                            <option value="rejected">{{ $t('applications.contactStatuses.rejected') }}
+                                            </option>
+                                            <option value="confirmed_interest">{{
+                                                $t('applications.contactStatuses.confirmed_interest') }}</option>
                                         </select>
-                                        <span v-else class="badge badge-outline">{{ translateContactStatus(selectedApp.contact_status) }}</span>
+                                        <span v-else class="badge badge-outline">{{
+                                            translateContactStatus(selectedApp.contact_status) }}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex-between mb-4">
                                 <div class="assignment-group">
-                                    <label class="section-label mb-2">Ответственный оператор</label>
+                                    <label class="section-label mb-2">{{ $t('applications.operator') }}</label>
                                     <div class="flex items-center gap-2">
                                         <select v-if="showAssign && hasRole('supervisor')"
                                             @change="handleAssign(($event.target as HTMLSelectElement).value)"
                                             class="input input-sm">
-                                            <option value="">Не назначен</option>
+                                            <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                                }} {{ op.last_name }}</option>
+                                            }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
@@ -326,26 +339,26 @@
                                 <button v-if="hasRole('operator') && selectedApp.status === 'new'"
                                     class="btn btn-sm btn-success flex-grow font-bold"
                                     @click="updateStatus('confirmed')">
-                                    ПОДТВЕРДИТЬ
+                                    {{ $t('applications.actions.confirm') }}
                                 </button>
                                 <button v-if="hasRole('operator') && selectedApp.status === 'confirmed'"
                                     class="btn btn-sm btn-outline flex-grow font-medium"
                                     @click="updateStatus('contract_signed')">
-                                    КОНТРАКТ ПОДПИСАН
+                                    {{ $t('applications.actions.contractSigned') }}
                                 </button>
                                 <button v-if="hasRole('manager') && selectedApp.status === 'contract_signed'"
                                     class="btn btn-sm btn-success flex-grow font-bold" @click="updateStatus('paid')">
-                                    ОПЛАЧЕНО
+                                    {{ $t('applications.actions.paid') }}
                                 </button>
                                 <button v-if="hasRole('manager') && selectedApp.status === 'paid'"
                                     class="btn btn-sm btn-outline flex-grow font-medium"
                                     @click="updateStatus('delivered')">
-                                    ВЫДАНО КЛИЕНТУ
+                                    {{ $t('applications.actions.delivered') }}
                                 </button>
                                 <button v-if="hasRole('supervisor')"
                                     class="btn btn-sm btn-outline text-error flex-grow font-medium"
                                     @click="promptCancel">
-                                    ОТМЕНИТЬ
+                                    {{ $t('applications.actions.cancel') }}
                                 </button>
                             </div>
                         </div>
@@ -353,7 +366,7 @@
                         <!-- Info Cards Grid -->
                         <div class="grid grid-2 gap-6 mb-10">
                             <div class="detail-card">
-                                <label class="section-label mb-3">Профиль клиента</label>
+                                <label class="section-label mb-3">{{ $t('applications.detail.clientProfile') }}</label>
                                 <div class="text-primary font-bold mb-1">{{ selectedApp.client_first_name }} {{
                                     selectedApp.client_last_name }}</div>
                                 <div class="text-secondary smaller-text mb-1">{{ selectedApp.client_phone }}</div>
@@ -361,7 +374,7 @@
                                     selectedApp.client_email }}</div>
                             </div>
                             <div class="detail-card">
-                                <label class="section-label mb-3">Информация об авто</label>
+                                <label class="section-label mb-3">{{ $t('applications.detail.carInfo') }}</label>
                                 <div class="flex gap-4">
                                     <div v-if="selectedApp.car_image_url" class="mini-thumb-wrap">
                                         <img :src="selectedApp.car_image_url" class="mini-thumb">
@@ -370,7 +383,7 @@
                                         <div class="text-primary font-bold mb-1">{{ selectedApp.car_brand }} {{
                                             selectedApp.car_model }}</div>
                                         <div class="text-accent font-bold">{{ selectedApp.final_price?.toLocaleString()
-                                            }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
+                                        }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
                                         <div class="smaller-text text-tertiary mt-1" v-if="selectedApp.car_year">{{
                                             selectedApp.car_year }} г.в.</div>
                                     </div>
@@ -380,7 +393,7 @@
 
                         <!-- Checklist Section -->
                         <div class="detail-section mb-10">
-                            <h4 class="section-label">Проверка данных (Чек-лист)</h4>
+                            <h4 class="section-label">{{ $t('applications.detail.checklist') }}</h4>
                             <div class="checklist-grid">
                                 <div v-for="(val, key) in selectedApp.checklist" :key="key" class="check-item-premium"
                                     :class="{ checked: val, disabled: !hasRole('operator') }"
@@ -395,13 +408,13 @@
 
                         <!-- Comments Section -->
                         <div class="detail-section">
-                            <h4 class="section-label">Операционный журнал</h4>
+                            <h4 class="section-label">{{ $t('applications.detail.comments') }}</h4>
                             <div class="comment-input-wrap mb-8">
-                                <textarea v-model="newComment" placeholder="Добавить внутреннюю заметку..."
+                                <textarea v-model="newComment" :placeholder="$t('applications.detail.addNote')"
                                     class="input input-minimal comment-area" rows="3"></textarea>
                                 <div class="flex-end mt-2">
                                     <button class="btn btn-sm btn-primary font-bold" @click="postComment">
-                                        ДОБАВИТЬ
+                                        {{ $t('common.add') }}
                                     </button>
                                 </div>
                             </div>
@@ -412,14 +425,14 @@
                                     <div class="ledger-entry">
                                         <div class="flex-between mb-2">
                                             <span class="ledger-user">{{ c.user_first_name }} {{ c.user_last_name
-                                                }}</span>
+                                            }}</span>
                                             <span class="ledger-time">{{ formatDate(c.created_at) }}</span>
                                         </div>
                                         <p class="ledger-text">{{ c.text }}</p>
                                     </div>
                                 </div>
                                 <div v-if="comments.length === 0" class="text-center py-4 text-tertiary smaller-text">
-                                    История пуста
+                                    {{ $t('common.noData') }}
                                 </div>
                             </div>
                         </div>
@@ -427,15 +440,10 @@
                 </div>
             </div>
         </Teleport>
-        
+
         <!-- Toast Notifications -->
-        <Toast 
-            v-model="toast.state.visible" 
-            :title="toast.state.title" 
-            :message="toast.state.message" 
-            :type="toast.state.type"
-            :duration="toast.state.duration"
-        />
+        <Toast v-model="toast.state.visible" :title="toast.state.title" :message="toast.state.message"
+            :type="toast.state.type" :duration="toast.state.duration" />
     </div>
 </template>
 
@@ -443,6 +451,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 
 const toast = useToast()
+const { t } = useI18n()
 
 const {
     getApplications,
@@ -458,14 +467,14 @@ const {
     hasRole
 } = useApi()
 
-const filterStatuses = [
-    { key: 'All', label: 'Все' },
-    { key: 'new', label: 'Новые' },
-    { key: 'confirmed', label: 'Подтвержденные' },
-    { key: 'paid', label: 'Оплаченные' },
-    { key: 'delivered', label: 'Выданные' },
-    { key: 'cancelled', label: 'Отмененные' }
-]
+const filterStatuses = computed(() => [
+    { key: 'All', label: t('applications.filters.all') },
+    { key: 'new', label: t('applications.filters.new') },
+    { key: 'confirmed', label: t('applications.filters.confirmed') },
+    { key: 'paid', label: t('applications.filters.paid') },
+    { key: 'delivered', label: t('applications.filters.completed') },
+    { key: 'cancelled', label: t('applications.filters.cancelled') }
+])
 const activeFilter = ref('All')
 const searchQuery = ref('')
 const loading = ref(true)
@@ -565,7 +574,7 @@ const handleAdminCreate = async () => {
     }
 
     if (!createForm.value.car_id || !createForm.value.client_phone) {
-        toast.warning('Заполните форму', 'Выберите автомобиль и укажите номер телефона')
+        toast.warning(t('common.warning'), t('applications.fillRequired'))
         return
     }
 
@@ -585,7 +594,7 @@ const handleAdminCreate = async () => {
         clientSearchQuery.value = ''
         fetchApplications()
     } catch (err: any) {
-        toast.error('Ошибка', err?.data?.detail || 'Не удалось создать заявку')
+        toast.error(t('common.error'), err?.data?.detail || t('common.error'))
     } finally {
         isCreating.value = false
     }
@@ -635,7 +644,7 @@ const openDetail = async (app: any) => {
         'agreed_visit': false,
         'agreed_contract': false
     }
-    
+
     // Only add test_drive/documents if it's a new app or they already exist
     if (app.status === 'new' || app.checklist?.test_drive || app.checklist?.documents) {
         baseChecklist.test_drive = false
@@ -655,7 +664,7 @@ const openDetail = async (app: any) => {
 
 const updateStatus = async (newStatus: string) => {
     if (!selectedApp.value) return
-    
+
     // Business validation on frontend
     if (newStatus === 'confirmed') {
         const contactStatus = selectedApp.value.contact_status
@@ -663,11 +672,11 @@ const updateStatus = async (newStatus: string) => {
             toast.warning('Невозможно подтвердить', 'Сначала измените статус контакта на "Связались" или "Интерес подтвержден"')
             return
         }
-        
+
         const missing = Object.entries(selectedApp.value.checklist)
             .filter(([_, v]) => !v)
             .map(([k, _]) => translateKey(k))
-            
+
         if (missing.length > 0) {
             toast.warning('Заполните чек-лист', `Необходимо отметить: ${missing.join(', ')}`)
             return
@@ -693,7 +702,7 @@ const handleContactStatusUpdate = async (newContactStatus: string) => {
         selectedApp.value.contact_status = newContactStatus
         fetchApplications()
     } catch (err: any) {
-        toast.error('Ошибка', err?.data?.detail || 'Не удалось обновить статус контакта')
+        toast.error(t('common.error'), err?.data?.detail || t('common.error'))
     }
 }
 
@@ -706,7 +715,7 @@ const postComment = async () => {
         comments.value.unshift(res)
         newComment.value = ''
     } catch (err) {
-        toast.error('Ошибка', 'Не удалось добавить комментарий')
+        toast.error(t('common.error'), t('common.error'))
     }
 }
 
@@ -718,8 +727,8 @@ const toggleChecklist = async (key: string) => {
     try {
         await updateApplicationChecklist(selectedApp.value.id, updatedChecklist)
         selectedApp.value.checklist = updatedChecklist
-    } catch (err) { 
-        toast.error('Ошибка', 'Не удалось обновить чек-лист')
+    } catch (err) {
+        toast.error(t('common.error'), t('common.error'))
     }
 }
 
@@ -730,8 +739,8 @@ const handleAssign = async (opId: string) => {
         selectedApp.value.operator_id = opId
         showAssign.value = false
         fetchApplications()
-    } catch (err) { 
-        toast.error('Ошибка', 'Не удалось назначить оператора')
+    } catch (err) {
+        toast.error(t('common.error'), t('common.error'))
     }
 }
 
@@ -747,47 +756,20 @@ const formatDate = (d: string) => {
 }
 
 const translateStatus = (s: string) => {
-    const map: Record<string, string> = {
-        'new': 'Новая',
-        'confirmed': 'Подтверждена',
-        'paid': 'Оплачена',
-        'delivered': 'Выдана',
-        'cancelled': 'Отменена',
-        'contract_signed': 'Контракт подписан'
-    }
-    return map[s.toLowerCase()] || s
+    return t(`applications.status.${s?.toLowerCase()}`)
 }
 
 const translateContactStatus = (s: string) => {
-    const map: Record<string, string> = {
-        'not_touched': 'Не обработано',
-        'no_answer': 'Не отвечает',
-        'contacted': 'Связались',
-        'callback': 'Перезвонить',
-        'rejected': 'Отказ',
-        'confirmed_interest': 'Интерес подтвержден'
-    }
-    return map[s.toLowerCase()] || s
+    return t(`applications.contactStatuses.${s?.toLowerCase()}`)
 }
 
 const translateKey = (key: string) => {
-    const map: Record<string, string> = {
-        'confirmed_interest': 'Подтвержден интерес',
-        'confirmed_budget': 'Подтвержден бюджет',
-        'confirmed_timeline': 'Сроки согласованы',
-        'agreed_visit': 'Визит назначен',
-        'agreed_contract': 'Контракт согласован',
-        'visit': 'Визит в офис',
-        'budget': 'Бюджет подтвержден',
-        'test_drive': 'Тест-драйв',
-        'documents': 'Документы получены'
-    }
-    return map[key] || key
+    return t(`applications.checklist.${key}`)
 }
 
 const getOperatorName = (id: string) => {
     const op = operators.value.find(o => o.id === id)
-    return op ? `${op.first_name} ${op.last_name}` : 'Не назначен'
+    return op ? `${op.first_name} ${op.last_name}` : t('common.notAssigned')
 }
 
 onMounted(() => {
@@ -813,7 +795,7 @@ definePageMeta({ layout: false })
     background: var(--color-bg-primary);
 }
 
-.contact-status-select.contacted, 
+.contact-status-select.contacted,
 .contact-status-select.confirmed_interest {
     color: var(--color-success);
     border-color: var(--color-success);
@@ -882,124 +864,124 @@ definePageMeta({ layout: false })
 
 /* Modal Core Styles */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 2000;
-  animation: modalFadeIn 0.3s ease;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: flex-end;
+    z-index: 2000;
+    animation: modalFadeIn 0.3s ease;
 }
 
 .modal-panel {
-  background: var(--color-bg-primary);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
-  position: relative;
+    background: var(--color-bg-primary);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    position: relative;
 }
 
 .side-panel {
-  width: 100%;
-  max-width: 600px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg-primary);
-  border-left: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 600px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-primary);
+    border-left: 1px solid var(--color-border);
 }
 
 .side-header {
-  padding: 1.5rem 2.5rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-primary);
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-primary);
 }
 
 .side-content {
-  flex: 1;
-  padding: 2.5rem;
-  overflow-y: auto;
-  background: var(--color-bg-primary);
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    background: var(--color-bg-primary);
 }
 
 /* Create Modal Specific */
 .modal-header-premium {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--color-bg-primary);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-bg-primary);
 }
 
 .modal-body-premium {
-  padding: 2rem;
-  background: var(--color-bg-primary);
-  overflow-y: auto;
-  max-height: calc(100vh - 120px);
+    padding: 2rem;
+    background: var(--color-bg-primary);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
 }
 
 .options-list-premium {
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-card);
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
 }
 
 .option-item-premium {
-  padding: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-card);
+    padding: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-card);
 }
 
 .option-item-premium:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .option-item-premium:hover {
-  background: var(--color-bg-hover);
+    background: var(--color-bg-hover);
 }
 
 .option-item-premium.selected {
-  background: var(--color-bg-hover);
-  border-left: 3px solid var(--color-success);
+    background: var(--color-bg-hover);
+    border-left: 3px solid var(--color-success);
 }
 
 .client-results-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  margin-top: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .client-result-item {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-card);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-card);
 }
 
 .client-result-item:hover {
-  background: var(--color-bg-hover);
+    background: var(--color-bg-hover);
 }
 
 .section-label {
-  display: block;
-  text-transform: uppercase;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-text-tertiary);
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
 }
 
 /* Detail Elements */
@@ -1146,23 +1128,34 @@ definePageMeta({ layout: false })
 
 /* Animations */
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
 }
 
 .animate-slide-in {
-  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (max-width: 640px) {
     .modal-panel.side-panel {
         max-width: 100%;
     }
+
     .checklist-grid {
         grid-template-columns: 1fr;
     }

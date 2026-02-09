@@ -1,0 +1,317 @@
+{
+    "common": {
+        "save": "Сохранить",
+        "cancel": "Отмена",
+        "delete": "Удалить",
+        "edit": "Редактировать",
+        "create": "Создать",
+        "add": "Добавить",
+        "search": "Поиск...",
+        "loading": "Загрузка...",
+        "noData": "Данные отсутствуют",
+        "confirm": "Подтвердить",
+        "back": "Назад",
+        "close": "Закрыть",
+        "all": "Все",
+        "actions": "Действия",
+        "status": "Статус",
+        "date": "Дата",
+        "phone": "Телефон",
+        "email": "Email",
+        "name": "Имя",
+        "yes": "Да",
+        "no": "Нет",
+        "error": "Ошибка",
+        "success": "Успешно",
+        "warning": "Предупреждение",
+        "viewOnly": "Только просмотр",
+        "objects": "объектов",
+        "confirmDelete": "Вы уверены, что хотите удалить?",
+        "saveError": "Ошибка сохранения",
+        "deleteError": "Ошибка удаления",
+        "optional": "Необязательно"
+    },
+    "nav": {
+        "dashboard": "Дашборд",
+        "applications": "Заявки",
+        "cars": "Каталог",
+        "users": "Сотрудники",
+        "blacklist": "Черный список",
+        "payments": "Платежи",
+        "stories": "Сторис",
+        "settings": "Настройки",
+        "logout": "Выйти"
+    },
+    "auth": {
+        "login": "Вход",
+        "loginTitle": "Вход в систему",
+        "loginSubtitle": "Добро пожаловать в STL Auto",
+        "phone": "Номер телефона",
+        "password": "Пароль",
+        "loginButton": "Войти",
+        "loggingIn": "Вход...",
+        "invalidCredentials": "Неверный номер или пароль",
+        "accessDenied": "Доступ запрещен",
+        "checkingAccess": "Проверка доступа...",
+        "noPermission": "У вас нет прав для управления персоналом"
+    },
+    "dashboard": {
+        "title": "Панель управления",
+        "subtitle": "Обзор ключевых показателей",
+        "totalApplications": "Всего заявок",
+        "pendingApplications": "Ожидают обработки",
+        "completedDeals": "Завершенные сделки",
+        "totalRevenue": "Общий доход",
+        "recentActivity": "Последние действия",
+        "quickStats": "Быстрая статистика"
+    },
+    "applications": {
+        "title": "Заявки (CRM)",
+        "subtitle": "Управление заявками клиентов",
+        "newApplication": "Новая заявка",
+        "applicationDetails": "Детали заявки",
+        "currentStage": "Текущий этап",
+        "contactStatus": "Статус контакта",
+        "operator": "Ответственный оператор",
+        "notAssigned": "Не назначен",
+        "clientProfile": "Профиль клиента",
+        "carInfo": "Информация об авто",
+        "checklist": "Проверка данных (Чек-лист)",
+        "operationLog": "Операционный журнал",
+        "addComment": "Добавить внутреннюю заметку...",
+        "status": {
+            "new": "Новая",
+            "confirmed": "Подтверждена",
+            "contract_signed": "Договор подписан",
+            "paid": "Оплачена",
+            "delivered": "Доставлена",
+            "cancelled": "Отменена"
+        },
+        "contactStatuses": {
+            "not_touched": "Не обработано",
+            "contacted": "Связались",
+            "confirmed_interest": "Интерес подтвержден",
+            "rejected": "Отклонен"
+        },
+        "checklistItems": {
+            "confirmed_interest": "Подтвержден интерес",
+            "confirmed_budget": "Подтвержден бюджет",
+            "confirmed_timeline": "Сроки согласованы",
+            "agreed_visit": "Визит назначен",
+            "agreed_contract": "Контракт согласован",
+            "test_drive": "Тест-драйв",
+            "documents": "Документы получены"
+        },
+        "actions": {
+            "confirm": "Подтвердить",
+            "reject": "Отменить",
+            "signContract": "Подписать договор",
+            "markPaid": "Отметить как оплачено",
+            "markDelivered": "Отметить как доставлено"
+        },
+        "filters": {
+            "all": "Все",
+            "new": "Новые",
+            "confirmed": "Подтвержденные",
+            "paid": "Оплаченные",
+            "completed": "Завершенные",
+            "cancelled": "Отмененные"
+        },
+        "fillRequired": "Выберите автомобиль и укажите номер телефона",
+        "createModal": {
+            "title": "Создание новой заявки",
+            "selectCar": "Автомобиль",
+            "searchCar": "Поиск по марке, модели или году...",
+            "client": "Клиент",
+            "searchClient": "Найти существующего по номеру или имени",
+            "clientPhone": "Телефон",
+            "clientName": "Имя (ФИО)",
+            "source": "Источник",
+            "createButton": "Создать заявку"
+        },
+        "sources": {
+            "admin": "Админ-панель (Вручную)",
+            "app": "Мобильное приложение",
+            "website": "Веб-сайт"
+        },
+        "validation": {
+            "fillForm": "Заполните форму",
+            "selectCarAndPhone": "Выберите автомобиль и укажите номер телефона",
+            "cannotConfirm": "Невозможно подтвердить",
+            "changeContactStatus": "Сначала измените статус контакта на \"Связались\" или \"Интерес подтвержден\"",
+            "fillChecklist": "Заполните чек-лист",
+            "checklistRequired": "Необходимо отметить"
+        },
+        "errors": {
+            "createFailed": "Не удалось создать заявку",
+            "updateStatusFailed": "Не удалось обновить статус",
+            "updateContactFailed": "Не удалось обновить статус контакта",
+            "addCommentFailed": "Не удалось добавить комментарий",
+            "updateChecklistFailed": "Не удалось обновить чек-лист",
+            "assignOperatorFailed": "Не удалось назначить оператора"
+        }
+    },
+    "cars": {
+        "title": "Каталог автомобилей",
+        "subtitle": "Управление автопарком",
+        "add": "Добавить авто",
+        "search": "Поиск по марке, модели, VIN или году...",
+        "car": "Автомобиль",
+        "specs": "Характеристики",
+        "mileage": "Пробег",
+        "sourcePrice": "Цена закупа",
+        "price": "Розничная цена",
+        "priceNote": "Цены включают автоматическую системную наценку (12-15%).",
+        "status": {
+            "title": "Статус инвентаря",
+            "available": "В наличии",
+            "sold": "Продано",
+            "reserved": "Забронировано"
+        },
+        "modal": {
+            "edit": "Редактировать авто",
+            "add": "Новый автомобиль",
+            "subtitle": "Полная спецификация, изображения и информация о дилере",
+            "tabs": {
+                "general": "Основные",
+                "specs": "Технические",
+                "media": "Медиа",
+                "dealer": "Дилер"
+            }
+        },
+        "brand": "Производитель / Марка",
+        "model": "Модель",
+        "trim": "Комплектация (Trim)",
+        "year": "Год выпуска",
+        "vin": "VIN номер",
+        "bodyType": "Тип кузова",
+        "engine": "Двигатель",
+        "transmission": "Трансмиссия",
+        "drivetrain": "Привод",
+        "exteriorColor": "Цвет кузова",
+        "interiorColor": "Цвет салона",
+        "fuelType": "Тип топлива",
+        "mpg": "Расход (Город/Трасса)",
+        "mpgCity": "Город",
+        "mpgHighway": "Трасса",
+        "features": "Особенности",
+        "commaSeparated": "через запятую",
+        "featuresPlaceholder": "Кожаный салон, Люк, Камера 360...",
+        "mainImage": "Главная фотография (URL)",
+        "gallery": "Галерея изображений",
+        "galleryPlaceholder": "https://image1.jpg\\nhttps://image2.jpg",
+        "dealer": "Дилерский центр",
+        "locationCity": "Город",
+        "locationState": "Штат / Регион",
+        "sourceUrl": "Источник объявления (URL)",
+        "dataError": "Ошибка при подготовке данных",
+        "saveError": "Ошибка при сохранении данных",
+        "deleteError": "Ошибка при удалении"
+    },
+    "users": {
+        "title": "Сотрудники",
+        "subtitle": "Управление доступом и ролями системы",
+        "user": "Пользователь",
+        "addUser": "Добавить сотрудника",
+        "editUser": "Редактировать",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "role": "Роль",
+        "active": "Активен",
+        "blocked": "Заблокирован",
+        "block": "Бан",
+        "activate": "Активировать",
+        "roles": {
+            "operator": "Оператор",
+            "supervisor": "Супервизор",
+            "manager": "Менеджер",
+            "admin": "Админ",
+            "owner": "Владелец",
+            "client": "Клиент"
+        },
+        "confirmBlock": {
+            "title": "Блокировка доступа",
+            "message": "Вы уверены, что хотите заблокировать {name}? Пользователь будет также добавлен в черный список."
+        },
+        "confirmActivate": {
+            "title": "Активация доступа",
+            "message": "Восстановить доступ для {name}? Пользователь также будет удален из черного списка."
+        },
+        "allRoles": "Все роли",
+        "searchPlaceholder": "Поиск по имени, телефону..."
+    },
+    "blacklist": {
+        "title": "Черный список",
+        "subtitle": "Заблокированные номера телефонов",
+        "addToBlacklist": "Добавить в черный список",
+        "phone": "Телефон",
+        "reason": "Причина",
+        "blockType": "Тип блокировки",
+        "blockedUntil": "Заблокирован до",
+        "addedBy": "Добавил",
+        "unblock": "Разблокировать",
+        "reasons": {
+            "fraud": "Мошенничество",
+            "spam": "Спам",
+            "abuse": "Нарушение правил",
+            "other": "Другое"
+        },
+        "blockTypes": {
+            "permanent": "Навсегда",
+            "temporary": "Временно"
+        }
+    },
+    "payments": {
+        "title": "Платежи",
+        "subtitle": "История транзакций",
+        "amount": "Сумма",
+        "method": "Способ оплаты",
+        "date": "Дата",
+        "client": "Клиент",
+        "application": "Заявка",
+        "statuses": {
+            "pending": "Ожидает",
+            "completed": "Завершён",
+            "failed": "Ошибка",
+            "refunded": "Возврат"
+        }
+    },
+    "stories": {
+        "title": "Сторис",
+        "subtitle": "Управление историями для приложения",
+        "addStory": "Добавить сторис",
+        "editStory": "Редактировать",
+        "storyTitle": "Заголовок",
+        "preview": "Превью",
+        "slides": "Слайды",
+        "addSlide": "Добавить слайд",
+        "slideTypes": {
+            "image": "Изображение",
+            "video": "Видео",
+            "text": "Текст"
+        },
+        "published": "Опубликовано",
+        "draft": "Черновик"
+    },
+    "settings": {
+        "title": "Настройки",
+        "subtitle": "Параметры системы",
+        "theme": "Тема оформления",
+        "darkTheme": "Темная тема",
+        "lightTheme": "Светлая тема",
+        "language": "Язык интерфейса",
+        "notifications": "Уведомления",
+        "profile": "Профиль",
+        "changePassword": "Изменить пароль",
+        "currentPassword": "Текущий пароль",
+        "newPassword": "Новый пароль",
+        "confirmPassword": "Подтвердите пароль",
+        "leaveBlank": "Оставьте пустым, чтобы не менять"
+    },
+    "toast": {
+        "error": "Ошибка",
+        "success": "Успешно",
+        "warning": "Предупреждение",
+        "info": "Информация"
+    }
+}

@@ -4,8 +4,8 @@
             <div class="container">
                 <div class="flex-between items-end">
                     <div>
-                        <h1 class="text-thin">Автопарк</h1>
-                        <p class="text-secondary text-light">Управление запасами, характеристиками и медиа-контентом</p>
+                        <h1 class="text-thin">{{ $t('cars.title') }}</h1>
+                        <p class="text-secondary text-light">{{ $t('cars.subtitle') }}</p>
                     </div>
                     <div class="header-actions flex gap-4">
                         <div class="view-switcher-minimal">
@@ -33,7 +33,7 @@
                             </button>
                         </div>
                         <button v-if="hasRole('manager')" class="btn btn-primary btn-sm shadow-lg" @click="openModal()">
-                            <span class="mr-2">+</span> Добавить авто
+                            <span class="mr-2">+</span> {{ $t('cars.add') }}
                         </button>
                     </div>
                 </div>
@@ -45,20 +45,21 @@
             <div class="controls-bar-dark mb-8 card card-minimal py-3 px-5">
                 <div class="flex gap-6 items-center flex-wrap">
                     <div class="search-wrap-minimal flex-grow max-w-lg">
-                        <input v-model="searchQuery" type="text" placeholder="Поиск по марке, модели, VIN или году..."
-                            class="input-clean" style="width: 100%;">
+                        <input v-model="searchQuery" type="text" :placeholder="$t('cars.search')" class="input-clean"
+                            style="width: 100%;">
                     </div>
                     <div class="filter-wrap">
                         <select v-model="statusFilter" class="select-clean">
-                            <option value="all">Весь инвентарь</option>
-                            <option value="available">В наличии</option>
-                            <option value="sold">Продано</option>
-                            <option value="reserved">Забронировано</option>
+                            <option value="all">{{ $t('applications.filters.all') }}</option>
+                            <option value="available">{{ $t('cars.status.available') }}</option>
+                            <option value="sold">{{ $t('cars.status.sold') }}</option>
+                            <option value="reserved">{{ $t('cars.status.reserved') }}</option>
                         </select>
                     </div>
                     <div class="flex-grow"></div>
                     <div class="text-tertiary smaller-text font-bold tracking-widest opacity-50">
-                        {{ loading ? 'СИНХРОНИЗАЦИЯ...' : `${filteredCars.length} ОБЪЕКТОВ` }}
+                        {{ loading ? $t('common.loading').toUpperCase() : `${filteredCars.length}
+                        ${$t('common.objects').toUpperCase()}` }}
                     </div>
                 </div>
             </div>
@@ -119,19 +120,19 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th class="pl-8">Автомобиль</th>
-                                    <th>Характеристики</th>
-                                    <th>Пробег</th>
-                                    <th>Цена закупа</th>
-                                    <th>Розничная цена</th>
-                                    <th>Статус</th>
-                                    <th class="text-right pr-8">Действия</th>
+                                    <th class="pl-8">{{ $t('cars.car') }}</th>
+                                    <th>{{ $t('cars.specs') }}</th>
+                                    <th>{{ $t('cars.mileage') }}</th>
+                                    <th>{{ $t('cars.sourcePrice') }}</th>
+                                    <th>{{ $t('cars.price') }}</th>
+                                    <th>{{ $t('common.status') }}</th>
+                                    <th class="text-right pr-8">{{ $t('common.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-if="loading && cars.length === 0" v-for="i in 5" :key="i">
-                                    <td colspan="7" class="py-10 text-center text-tertiary smaller-text">Синхронизация
-                                        записей...</td>
+                                    <td colspan="7" class="py-10 text-center text-tertiary smaller-text">{{
+                                        $t('common.loading') }}</td>
                                 </tr>
                                 <tr v-else v-for="car in filteredCars" :key="car.id" class="premium-row clickable-row"
                                     @click="openModal(car)">
@@ -191,7 +192,7 @@
                                         </div>
                                     </td>
                                     <td v-else class="text-right pr-8 py-5 text-tertiary smaller-text italic">
-                                        Только просмотр
+                                        {{ $t('common.viewOnly') }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -201,7 +202,7 @@
             </div>
 
             <p class="smaller-text text-tertiary mt-6 opacity-30 italic">
-                * Цены включают автоматическую системную наценку (12-15%).
+                * {{ $t('cars.priceNote') }}
             </p>
 
             <div class="spacer"></div>
@@ -214,8 +215,7 @@
                     <header class="modal-header-minimal flex-between items-start mb-8">
                         <div>
                             <h2 class="text-thin m-0 text-white">{{ modalTitle }}</h2>
-                            <p class="text-secondary smaller-text">Полная спецификация, изображения и информация о
-                                дилере</p>
+                            <p class="text-secondary smaller-text">{{ $t('cars.modal.subtitle') }}</p>
                         </div>
                         <button class="btn-close-minimal" @click="showModal = false">&times;</button>
                     </header>
@@ -232,60 +232,60 @@
                         <div v-show="activeTab === 'general'" class="grid gap-6">
                             <div class="grid grid-3 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Производитель / Марка</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.brand') }}</label>
                                     <input v-model="form.brand" type="text" class="input input-sm"
-                                        placeholder="например, BMW">
+                                        placeholder="e.g. BMW">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Модель</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.model') }}</label>
                                     <input v-model="form.model" type="text" class="input input-sm"
-                                        placeholder="например, X5">
+                                        placeholder="e.g. X5">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Комплектация (Trim)</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.trim') }}</label>
                                     <input v-model="form.trim" type="text" class="input input-sm"
-                                        placeholder="например, M Sport">
+                                        placeholder="e.g. M Sport">
                                 </div>
                             </div>
 
                             <div class="grid grid-3 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Год выпуска</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.year') }}</label>
                                     <input v-model.number="form.year" type="number" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Пробег (КМ)</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.mileage') }}</label>
                                     <input v-model.number="form.mileage" type="number" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">VIN номер</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.vin') }}</label>
                                     <input v-model="form.vin" type="text" class="input input-sm"
-                                        placeholder="17-значный код">
+                                        placeholder="17-char code">
                                 </div>
                             </div>
 
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Базовая цена дилера (USD)</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.sourcePrice') }}</label>
                                     <input v-model.number="form.source_price_usd" type="number" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Статус инвентаря</label>
+                                    <label class="micro-label mb-2">{{ $t('common.status') }}</label>
                                     <select v-model="form.status" class="input input-sm">
-                                        <option value="available">В наличии</option>
-                                        <option value="sold">Продано</option>
-                                        <option value="reserved">Забронировано</option>
+                                        <option value="available">{{ $t('cars.status.available') }}</option>
+                                        <option value="sold">{{ $t('cars.status.sold') }}</option>
+                                        <option value="reserved">{{ $t('cars.status.reserved') }}</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Тип кузова</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.bodyType') }}</label>
                                     <input v-model="form.body_type" type="text" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Двигатель</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.engine') }}</label>
                                     <input v-model="form.engine" type="text" class="input input-sm">
                                 </div>
                             </div>
@@ -295,57 +295,58 @@
                         <div v-show="activeTab === 'specs'" class="grid gap-6">
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Трансмиссия</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.transmission') }}</label>
                                     <input v-model="form.transmission" type="text" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Привод</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.drivetrain') }}</label>
                                     <input v-model="form.drivetrain" type="text" class="input input-sm">
                                 </div>
                             </div>
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Цвет кузова</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.exteriorColor') }}</label>
                                     <input v-model="form.exterior_color" type="text" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Цвет салона</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.interiorColor') }}</label>
                                     <input v-model="form.interior_color" type="text" class="input input-sm">
                                 </div>
                             </div>
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Тип топлива</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.fuelType') }}</label>
                                     <input v-model="form.fuel_type" type="text" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Расход (Город/Трасса)</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.mpg') }}</label>
                                     <div class="flex gap-2">
                                         <input v-model.number="form.mpg_city" type="number" class="input input-sm"
-                                            placeholder="Город">
+                                            :placeholder="$t('cars.mpgCity')">
                                         <input v-model.number="form.mpg_highway" type="number" class="input input-sm"
-                                            placeholder="Трасса">
+                                            :placeholder="$t('cars.mpgHighway')">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="micro-label mb-2">Особенности (через запятую)</label>
+                                <label class="micro-label mb-2">{{ $t('cars.features') }} ({{ $t('cars.commaSeparated')
+                                    }})</label>
                                 <textarea v-model="featuresString" class="input input-sm" rows="3"
-                                    placeholder="Кожаный салон, Люк, Камера 360..."></textarea>
+                                    :placeholder="$t('cars.featuresPlaceholder')"></textarea>
                             </div>
                         </div>
 
                         <!-- Медиа и Фото -->
                         <div v-show="activeTab === 'media'" class="grid gap-6">
                             <div class="form-group">
-                                <label class="micro-label mb-2">Главная фотография (URL)</label>
+                                <label class="micro-label mb-2">{{ $t('cars.mainImage') }}</label>
                                 <input v-model="form.image_url" type="text" class="input input-sm"
                                     placeholder="https://...">
                             </div>
                             <div class="form-group">
-                                <label class="micro-label mb-2">Галерея изображений (одна ссылка на строку)</label>
+                                <label class="micro-label mb-2">{{ $t('cars.gallery') }}</label>
                                 <textarea v-model="photosString" class="input input-sm" rows="8"
-                                    placeholder="https://image1.jpg&#10;https://image2.jpg"></textarea>
+                                    :placeholder="$t('cars.galleryPlaceholder')"></textarea>
                             </div>
                             <!-- Image Grid Preview -->
                             <div v-if="form.photos?.length" class="photos-preview-grid">
@@ -358,21 +359,21 @@
                         <!-- Дилер и Локация -->
                         <div v-show="activeTab === 'dealer'" class="grid gap-6">
                             <div class="form-group">
-                                <label class="micro-label mb-2">Дилерский центр</label>
+                                <label class="micro-label mb-2">{{ $t('cars.dealer') }}</label>
                                 <input v-model="form.dealer" type="text" class="input input-sm">
                             </div>
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Город</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.locationCity') }}</label>
                                     <input v-model="form.location_city" type="text" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">Штат / Регион</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.locationState') }}</label>
                                     <input v-model="form.location_state" type="text" class="input input-sm">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="micro-label mb-2">Источник объявления (URL)</label>
+                                <label class="micro-label mb-2">{{ $t('cars.sourceUrl') }}</label>
                                 <input v-model="form.source_url" type="text" class="input input-sm"
                                     placeholder="https://cars.com/...">
                             </div>
@@ -380,9 +381,10 @@
                     </div>
 
                     <footer class="modal-footer-minimal flex gap-3 mt-8">
-                        <button class="btn btn-sm flex-grow font-medium" @click="showModal = false">Закрыть</button>
+                        <button class="btn btn-sm flex-grow font-medium" @click="showModal = false">{{
+                            $t('common.close') }}</button>
                         <button v-if="hasRole('manager')" class="btn btn-primary btn-sm flex-grow font-bold"
-                            @click="saveCar">Сохранить</button>
+                            @click="saveCar">{{ $t('common.save') }}</button>
                     </footer>
                 </div>
             </div>
@@ -392,6 +394,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+
+const { t } = useI18n()
+const toast = useToast()
 
 const { getCars, createCar, updateCar, deleteCar, hasRole } = useApi()
 
@@ -404,14 +409,14 @@ const editingId = ref<string | null>(null)
 const viewMode = ref<'grid' | 'list'>('grid')
 const activeTab = ref('general')
 
-const modalTitle = computed(() => editingId.value ? 'Редактировать авто' : 'Новый автомобиль')
+const modalTitle = computed(() => editingId.value ? t('cars.modal.edit') : t('cars.modal.add'))
 
-const tabs = [
-    { id: 'general', label: 'Основные' },
-    { id: 'specs', label: 'Технические' },
-    { id: 'media', label: 'Медиа' },
-    { id: 'dealer', label: 'Дилер' }
-]
+const tabs = computed(() => [
+    { id: 'general', label: t('cars.modal.tabs.general') },
+    { id: 'specs', label: t('cars.modal.tabs.specs') },
+    { id: 'media', label: t('cars.modal.tabs.media') },
+    { id: 'dealer', label: t('cars.modal.tabs.dealer') }
+])
 
 const form = ref<any>({
     brand: '',
@@ -509,7 +514,7 @@ const openModal = (car?: any) => {
             form.value.features = features
         } catch (e) {
             console.error('Error preparing form data:', e)
-            alert('Ошибка при подготовке данных автомобиля. Проверьте консоль.')
+            toast.error(t('common.error'), t('cars.dataError'))
         }
     } else {
         editingId.value = null
@@ -537,28 +542,23 @@ const saveCar = async () => {
         showModal.value = false
         fetchCars()
     } catch (err: any) {
-        alert(err?.data?.detail || 'Ошибка при сохранении данных автомобиля')
+        toast.error(t('common.error'), err?.data?.detail || t('cars.saveError'))
     }
 }
 
 const handleDelete = async (id: string) => {
-    if (confirm('Вы уверены, что хотите полностью удалить этот автомобиль из каталога?')) {
+    if (confirm(t('common.confirmDelete'))) {
         try {
             await deleteCar(id)
             fetchCars()
         } catch (err: any) {
-            alert(err?.data?.detail || 'Ошибка при удалении')
+            toast.error(t('common.error'), err?.data?.detail || t('cars.deleteError'))
         }
     }
 }
 
 const translateStatus = (s: string) => {
-    const map: Record<string, string> = {
-        'available': 'В наличии',
-        'sold': 'Продано',
-        'reserved': 'Забронировано'
-    }
-    return map[s.toLowerCase()] || s
+    return t(`cars.status.${s?.toLowerCase()}`)
 }
 
 onMounted(fetchCars)
@@ -660,7 +660,7 @@ definePageMeta({ layout: false })
     height: 100%;
     object-fit: contain;
     transition: transform 0.5s ease;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
 }
 
 .status-pill {
@@ -676,7 +676,7 @@ definePageMeta({ layout: false })
     backdrop-filter: blur(12px);
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 2;
     letter-spacing: 0.05em;
 }
@@ -711,7 +711,8 @@ definePageMeta({ layout: false })
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 3.2em; /* Ensure consistent height for 2 lines */
+    height: 3.2em;
+    /* Ensure consistent height for 2 lines */
 }
 
 .price-box {
@@ -764,6 +765,7 @@ definePageMeta({ layout: false })
         opacity: 0;
         transform: scale(0.95) translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);

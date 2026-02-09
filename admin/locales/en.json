@@ -1,0 +1,317 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "add": "Add",
+        "search": "Search...",
+        "loading": "Loading...",
+        "noData": "No data available",
+        "confirm": "Confirm",
+        "back": "Back",
+        "close": "Close",
+        "all": "All",
+        "actions": "Actions",
+        "status": "Status",
+        "date": "Date",
+        "phone": "Phone",
+        "email": "Email",
+        "name": "Name",
+        "yes": "Yes",
+        "no": "No",
+        "error": "Error",
+        "success": "Success",
+        "warning": "Warning",
+        "viewOnly": "View only",
+        "objects": "objects",
+        "confirmDelete": "Are you sure you want to delete?",
+        "saveError": "Save error",
+        "deleteError": "Delete error",
+        "optional": "Optional"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "applications": "Applications",
+        "cars": "Catalog",
+        "users": "Staff",
+        "blacklist": "Blacklist",
+        "payments": "Payments",
+        "stories": "Stories",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "auth": {
+        "login": "Login",
+        "loginTitle": "Sign In",
+        "loginSubtitle": "Welcome to STL Auto",
+        "phone": "Phone Number",
+        "password": "Password",
+        "loginButton": "Sign In",
+        "loggingIn": "Signing in...",
+        "invalidCredentials": "Invalid phone or password",
+        "accessDenied": "Access Denied",
+        "checkingAccess": "Checking access...",
+        "noPermission": "You do not have permission to manage staff"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Key metrics overview",
+        "totalApplications": "Total Applications",
+        "pendingApplications": "Pending",
+        "completedDeals": "Completed Deals",
+        "totalRevenue": "Total Revenue",
+        "recentActivity": "Recent Activity",
+        "quickStats": "Quick Stats"
+    },
+    "applications": {
+        "title": "Applications (CRM)",
+        "subtitle": "Manage customer applications",
+        "newApplication": "New Application",
+        "applicationDetails": "Application Details",
+        "currentStage": "Current Stage",
+        "contactStatus": "Contact Status",
+        "operator": "Assigned Operator",
+        "notAssigned": "Not Assigned",
+        "clientProfile": "Client Profile",
+        "carInfo": "Car Information",
+        "checklist": "Data Verification (Checklist)",
+        "operationLog": "Operation Log",
+        "addComment": "Add internal note...",
+        "status": {
+            "new": "New",
+            "confirmed": "Confirmed",
+            "contract_signed": "Contract Signed",
+            "paid": "Paid",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+        },
+        "contactStatuses": {
+            "not_touched": "Not Processed",
+            "contacted": "Contacted",
+            "confirmed_interest": "Interest Confirmed",
+            "rejected": "Rejected"
+        },
+        "checklistItems": {
+            "confirmed_interest": "Interest Confirmed",
+            "confirmed_budget": "Budget Confirmed",
+            "confirmed_timeline": "Timeline Agreed",
+            "agreed_visit": "Visit Scheduled",
+            "agreed_contract": "Contract Agreed",
+            "test_drive": "Test Drive",
+            "documents": "Documents Received"
+        },
+        "actions": {
+            "confirm": "Confirm",
+            "reject": "Cancel",
+            "signContract": "Sign Contract",
+            "markPaid": "Mark as Paid",
+            "markDelivered": "Mark as Delivered"
+        },
+        "filters": {
+            "all": "All",
+            "new": "New",
+            "confirmed": "Confirmed",
+            "paid": "Paid",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "fillRequired": "Select a car and enter a phone number",
+        "createModal": {
+            "title": "Create New Application",
+            "selectCar": "Car",
+            "searchCar": "Search by brand, model or year...",
+            "client": "Client",
+            "searchClient": "Find existing by number or name",
+            "clientPhone": "Phone",
+            "clientName": "Full Name",
+            "source": "Source",
+            "createButton": "Create Application"
+        },
+        "sources": {
+            "admin": "Admin Panel (Manual)",
+            "app": "Mobile App",
+            "website": "Website"
+        },
+        "validation": {
+            "fillForm": "Fill out the form",
+            "selectCarAndPhone": "Select a car and enter a phone number",
+            "cannotConfirm": "Cannot confirm",
+            "changeContactStatus": "First change contact status to \"Contacted\" or \"Interest Confirmed\"",
+            "fillChecklist": "Complete the checklist",
+            "checklistRequired": "Must be checked"
+        },
+        "errors": {
+            "createFailed": "Failed to create application",
+            "updateStatusFailed": "Failed to update status",
+            "updateContactFailed": "Failed to update contact status",
+            "addCommentFailed": "Failed to add comment",
+            "updateChecklistFailed": "Failed to update checklist",
+            "assignOperatorFailed": "Failed to assign operator"
+        }
+    },
+    "cars": {
+        "title": "Car Catalog",
+        "subtitle": "Fleet Management",
+        "add": "Add Car",
+        "search": "Search by brand, model, VIN or year...",
+        "car": "Car",
+        "specs": "Specs",
+        "mileage": "Mileage",
+        "sourcePrice": "Dealer Price",
+        "price": "Retail Price",
+        "priceNote": "Prices include automatic system markup (12-15%).",
+        "status": {
+            "title": "Inventory Status",
+            "available": "Available",
+            "sold": "Sold",
+            "reserved": "Reserved"
+        },
+        "modal": {
+            "edit": "Edit Car",
+            "add": "New Car",
+            "subtitle": "Full specifications, images and dealer info",
+            "tabs": {
+                "general": "General",
+                "specs": "Specs",
+                "media": "Media",
+                "dealer": "Dealer"
+            }
+        },
+        "brand": "Make / Brand",
+        "model": "Model",
+        "trim": "Trim",
+        "year": "Year",
+        "vin": "VIN",
+        "bodyType": "Body Type",
+        "engine": "Engine",
+        "transmission": "Transmission",
+        "drivetrain": "Drivetrain",
+        "exteriorColor": "Exterior Color",
+        "interiorColor": "Interior Color",
+        "fuelType": "Fuel Type",
+        "mpg": "MPG (City/Hwy)",
+        "mpgCity": "City",
+        "mpgHighway": "Hwy",
+        "features": "Features",
+        "commaSeparated": "comma separated",
+        "featuresPlaceholder": "Leather seats, Sunroof, 360 Camera...",
+        "mainImage": "Main Image (URL)",
+        "gallery": "Image Gallery",
+        "galleryPlaceholder": "https://image1.jpg\\nhttps://image2.jpg",
+        "dealer": "Dealer Center",
+        "locationCity": "City",
+        "locationState": "State / Region",
+        "sourceUrl": "Listing Source (URL)",
+        "dataError": "Error preparing data",
+        "saveError": "Error saving data",
+        "deleteError": "Error deleting"
+    },
+    "users": {
+        "title": "Staff",
+        "subtitle": "Manage system access and roles",
+        "user": "User",
+        "addUser": "Add Staff Member",
+        "editUser": "Edit",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "role": "Role",
+        "active": "Active",
+        "blocked": "Blocked",
+        "block": "Block",
+        "activate": "Activate",
+        "roles": {
+            "operator": "Operator",
+            "supervisor": "Supervisor",
+            "manager": "Manager",
+            "admin": "Admin",
+            "owner": "Owner",
+            "client": "Client"
+        },
+        "confirmBlock": {
+            "title": "Block Access",
+            "message": "Are you sure you want to block {name}? User will also be added to blacklist."
+        },
+        "confirmActivate": {
+            "title": "Activate Access",
+            "message": "Restore access for {name}? User will also be removed from blacklist."
+        },
+        "allRoles": "All Roles",
+        "searchPlaceholder": "Search by name, phone..."
+    },
+    "blacklist": {
+        "title": "Blacklist",
+        "subtitle": "Blocked phone numbers",
+        "addToBlacklist": "Add to Blacklist",
+        "phone": "Phone",
+        "reason": "Reason",
+        "blockType": "Block Type",
+        "blockedUntil": "Blocked Until",
+        "addedBy": "Added By",
+        "unblock": "Unblock",
+        "reasons": {
+            "fraud": "Fraud",
+            "spam": "Spam",
+            "abuse": "Abuse",
+            "other": "Other"
+        },
+        "blockTypes": {
+            "permanent": "Permanent",
+            "temporary": "Temporary"
+        }
+    },
+    "payments": {
+        "title": "Payments",
+        "subtitle": "Transaction History",
+        "amount": "Amount",
+        "method": "Payment Method",
+        "date": "Date",
+        "client": "Client",
+        "application": "Application",
+        "statuses": {
+            "pending": "Pending",
+            "completed": "Completed",
+            "failed": "Failed",
+            "refunded": "Refunded"
+        }
+    },
+    "stories": {
+        "title": "Stories",
+        "subtitle": "Manage app stories",
+        "addStory": "Add Story",
+        "editStory": "Edit",
+        "storyTitle": "Title",
+        "preview": "Preview",
+        "slides": "Slides",
+        "addSlide": "Add Slide",
+        "slideTypes": {
+            "image": "Image",
+            "video": "Video",
+            "text": "Text"
+        },
+        "published": "Published",
+        "draft": "Draft"
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "System Parameters",
+        "theme": "Theme",
+        "darkTheme": "Dark Theme",
+        "lightTheme": "Light Theme",
+        "language": "Interface Language",
+        "notifications": "Notifications",
+        "profile": "Profile",
+        "changePassword": "Change Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "leaveBlank": "Leave blank to keep current"
+    },
+    "toast": {
+        "error": "Error",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Info"
+    }
+}

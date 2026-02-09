@@ -1,0 +1,316 @@
+{
+    "common": {
+        "save": "Saqlash",
+        "cancel": "Bekor qilish",
+        "delete": "O'chirish",
+        "edit": "Tahrirlash",
+        "create": "Yaratish",
+        "add": "Qo'shish",
+        "search": "Qidirish...",
+        "loading": "Yuklanmoqda...",
+        "noData": "Ma'lumot yo'q",
+        "confirm": "Tasdiqlash",
+        "back": "Orqaga",
+        "close": "Yopish",
+        "all": "Hammasi",
+        "actions": "Harakatlar",
+        "status": "Holat",
+        "date": "Sana",
+        "phone": "Telefon",
+        "email": "Email",
+        "name": "Ism",
+        "yes": "Ha",
+        "no": "Yo'q",
+        "error": "Xato",
+        "success": "Muvaffaqiyatli",
+        "warning": "Ogohlantirish",
+        "viewOnly": "Faqat ko'rish",
+        "objects": "obyektlar",
+        "confirmDelete": "O'chirishni xohlaysizmi?",
+        "saveError": "Saqlashda xato",
+        "deleteError": "O'chirishda xato"
+    },
+    "nav": {
+        "dashboard": "Boshqaruv paneli",
+        "applications": "Arizalar",
+        "cars": "Katalog",
+        "users": "Xodimlar",
+        "blacklist": "Qora ro'yxat",
+        "payments": "To'lovlar",
+        "stories": "Hikoyalar",
+        "settings": "Sozlamalar",
+        "logout": "Chiqish"
+    },
+    "auth": {
+        "login": "Kirish",
+        "loginTitle": "Tizimga kirish",
+        "loginSubtitle": "STL Auto'ga xush kelibsiz",
+        "phone": "Telefon raqami",
+        "password": "Parol",
+        "loginButton": "Kirish",
+        "loggingIn": "Kirish...",
+        "invalidCredentials": "Noto'g'ri raqam yoki parol",
+        "accessDenied": "Kirish taqiqlangan",
+        "checkingAccess": "Kirish huquqi tekshirilmoqda...",
+        "noPermission": "Sizda xodimlarni boshqarish huquqi yo'q"
+    },
+    "dashboard": {
+        "title": "Boshqaruv paneli",
+        "subtitle": "Asosiy ko'rsatkichlar sharhi",
+        "totalApplications": "Jami arizalar",
+        "pendingApplications": "Kutilmoqda",
+        "completedDeals": "Tugallangan bitimlar",
+        "totalRevenue": "Umumiy daromad",
+        "recentActivity": "So'nggi harakatlar",
+        "quickStats": "Tezkor statistika"
+    },
+    "applications": {
+        "title": "Arizalar (CRM)",
+        "subtitle": "Mijozlar arizalarini boshqarish",
+        "newApplication": "Yangi ariza",
+        "applicationDetails": "Ariza tafsilotlari",
+        "currentStage": "Joriy bosqich",
+        "contactStatus": "Aloqa holati",
+        "operator": "Mas'ul operator",
+        "notAssigned": "Tayinlanmagan",
+        "clientProfile": "Mijoz profili",
+        "carInfo": "Avtomobil haqida",
+        "checklist": "Ma'lumotlarni tekshirish",
+        "operationLog": "Operatsiya jurnali",
+        "addComment": "Ichki izoh qo'shish...",
+        "status": {
+            "new": "Yangi",
+            "confirmed": "Tasdiqlangan",
+            "contract_signed": "Shartnoma imzolangan",
+            "paid": "To'langan",
+            "delivered": "Yetkazilgan",
+            "cancelled": "Bekor qilingan"
+        },
+        "contactStatuses": {
+            "not_touched": "Ko'rilmagan",
+            "contacted": "Bog'lanildi",
+            "confirmed_interest": "Qiziqish tasdiqlandi",
+            "rejected": "Rad etildi"
+        },
+        "checklistItems": {
+            "confirmed_interest": "Qiziqish tasdiqlandi",
+            "confirmed_budget": "Byudjet tasdiqlandi",
+            "confirmed_timeline": "Muddatlar kelishildi",
+            "agreed_visit": "Tashrif belgilandi",
+            "agreed_contract": "Shartnoma kelishildi",
+            "test_drive": "Test-drayv",
+            "documents": "Hujjatlar olingan"
+        },
+        "actions": {
+            "confirm": "Tasdiqlash",
+            "reject": "Bekor qilish",
+            "signContract": "Shartnoma imzolash",
+            "markPaid": "To'langan deb belgilash",
+            "markDelivered": "Yetkazildi deb belgilash"
+        },
+        "filters": {
+            "all": "Barchasi",
+            "new": "Yangi",
+            "confirmed": "Tasdiqlangan",
+            "paid": "To'langan",
+            "completed": "Yakunlangan",
+            "cancelled": "Bekor qilingan"
+        },
+        "fillRequired": "Avtomobil tanlang va telefon raqamini kiriting",
+        "createModal": {
+            "title": "Yangi ariza yaratish",
+            "selectCar": "Avtomobil",
+            "searchCar": "Marka, model yoki yil bo'yicha qidirish...",
+            "client": "Mijoz",
+            "searchClient": "Raqam yoki ism bo'yicha qidirish",
+            "clientPhone": "Telefon",
+            "clientName": "Ism (To'liq)",
+            "source": "Manba",
+            "createButton": "Ariza yaratish"
+        },
+        "sources": {
+            "admin": "Admin panel (Qo'lda)",
+            "app": "Mobil ilova",
+            "website": "Veb-sayt"
+        },
+        "validation": {
+            "fillForm": "Formani to'ldiring",
+            "selectCarAndPhone": "Avtomobil tanlang va telefon raqamini kiriting",
+            "cannotConfirm": "Tasdiqlash imkonsiz",
+            "changeContactStatus": "Avval aloqa holatini \"Bog'lanildi\" yoki \"Qiziqish tasdiqlandi\"ga o'zgartiring",
+            "fillChecklist": "Tekshiruv ro'yxatini to'ldiring",
+            "checklistRequired": "Belgilash kerak"
+        },
+        "errors": {
+            "createFailed": "Ariza yaratib bo'lmadi",
+            "updateStatusFailed": "Holatni yangilab bo'lmadi",
+            "updateContactFailed": "Aloqa holatini yangilab bo'lmadi",
+            "addCommentFailed": "Izoh qo'shib bo'lmadi",
+            "updateChecklistFailed": "Tekshiruv ro'yxatini yangilab bo'lmadi",
+            "assignOperatorFailed": "Operatorni tayinlab bo'lmadi"
+        }
+    },
+    "cars": {
+        "title": "Avtomobillar katalogi",
+        "subtitle": "Avtopark boshqaruvi",
+        "add": "Avto qo'shish",
+        "search": "Marka, model, VIN yoki yil bo'yicha qidirish...",
+        "car": "Avtomobil",
+        "specs": "Xususiyatlar",
+        "mileage": "Yurgan masofasi",
+        "sourcePrice": "Diler narxi",
+        "price": "Chakana narx",
+        "priceNote": "Narxlar tizimning avtomatik ustamasini (12-15%) o'z ichiga oladi.",
+        "status": {
+            "title": "Inventar holati",
+            "available": "Mavjud",
+            "sold": "Sotilgan",
+            "reserved": "Band qilingan"
+        },
+        "modal": {
+            "edit": "Tahrirlash",
+            "add": "Yangi avtomobil",
+            "subtitle": "To'liq spetsifikatsiya, rasmlar va diler ma'lumotlari",
+            "tabs": {
+                "general": "Asosiy",
+                "specs": "Texnik",
+                "media": "Media",
+                "dealer": "Diler"
+            }
+        },
+        "brand": "Marka / Brend",
+        "model": "Model",
+        "trim": "Komplektatsiya",
+        "year": "Ishlab chiqarilgan yili",
+        "vin": "VIN raqam",
+        "bodyType": "Kuzov turi",
+        "engine": "Dvigatel",
+        "transmission": "Uzatma qutisi",
+        "drivetrain": "Privod",
+        "exteriorColor": "Kuzov rangi",
+        "interiorColor": "Salon rangi",
+        "fuelType": "Yoqilg'i turi",
+        "mpg": "Sarf (Shahar/Trassa)",
+        "mpgCity": "Shahar",
+        "mpgHighway": "Trassa",
+        "features": "Xususiyatlar",
+        "commaSeparated": "vergul bilan ajrating",
+        "featuresPlaceholder": "Ko'ja salon, Lyuk, 360 kamera...",
+        "mainImage": "Asosiy rasm (URL)",
+        "gallery": "Rasmlar galereyasi",
+        "galleryPlaceholder": "https://image1.jpg\\nhttps://image2.jpg",
+        "dealer": "Diler markazi",
+        "locationCity": "Shahar",
+        "locationState": "Viloyat",
+        "sourceUrl": "E'lon manbasi (URL)",
+        "dataError": "Ma'lumotlarni tayyorlashda xato",
+        "saveError": "Saqlashda xato",
+        "deleteError": "O'chirishda xato"
+    },
+    "users": {
+        "title": "Xodimlar",
+        "subtitle": "Tizim kirishlarini boshqarish",
+        "user": "Foydalanuvchi",
+        "addUser": "Xodim qo'shish",
+        "editUser": "Tahrirlash",
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "role": "Rol",
+        "active": "Faol",
+        "blocked": "Bloklangan",
+        "block": "Bloklash",
+        "activate": "Faollashtirish",
+        "roles": {
+            "operator": "Operator",
+            "supervisor": "Supervayzer",
+            "manager": "Menejer",
+            "admin": "Admin",
+            "owner": "Egasi",
+            "client": "Mijoz"
+        },
+        "confirmBlock": {
+            "title": "Kirishni bloklash",
+            "message": "{name}ni bloklashni xohlaysizmi? Foydalanuvchi qora ro'yxatga ham qo'shiladi."
+        },
+        "confirmActivate": {
+            "title": "Kirishni faollashtirish",
+            "message": "{name} uchun kirishni tiklash? Foydalanuvchi qora ro'yxatdan ham o'chiriladi."
+        },
+        "allRoles": "Barcha rollar",
+        "searchPlaceholder": "Ism, telefon bo'yicha qidirish..."
+    },
+    "blacklist": {
+        "title": "Qora ro'yxat",
+        "subtitle": "Bloklangan telefon raqamlari",
+        "addToBlacklist": "Qora ro'yxatga qo'shish",
+        "phone": "Telefon",
+        "reason": "Sabab",
+        "blockType": "Bloklash turi",
+        "blockedUntil": "Gacha bloklangan",
+        "addedBy": "Kim qo'shdi",
+        "unblock": "Blokdan chiqarish",
+        "reasons": {
+            "fraud": "Firibgarlik",
+            "spam": "Spam",
+            "abuse": "Qoidabuzarlik",
+            "other": "Boshqa"
+        },
+        "blockTypes": {
+            "permanent": "Doimiy",
+            "temporary": "Vaqtincha"
+        }
+    },
+    "payments": {
+        "title": "To'lovlar",
+        "subtitle": "Tranzaksiyalar tarixi",
+        "amount": "Summa",
+        "method": "To'lov usuli",
+        "date": "Sana",
+        "client": "Mijoz",
+        "application": "Ariza",
+        "statuses": {
+            "pending": "Kutilmoqda",
+            "completed": "Tugallangan",
+            "failed": "Xato",
+            "refunded": "Qaytarilgan"
+        }
+    },
+    "stories": {
+        "title": "Hikoyalar",
+        "subtitle": "Ilova uchun hikoyalarni boshqarish",
+        "addStory": "Hikoya qo'shish",
+        "editStory": "Tahrirlash",
+        "storyTitle": "Sarlavha",
+        "preview": "Oldindan ko'rish",
+        "slides": "Slaydlar",
+        "addSlide": "Slayd qo'shish",
+        "slideTypes": {
+            "image": "Rasm",
+            "video": "Video",
+            "text": "Matn"
+        },
+        "published": "Nashr qilingan",
+        "draft": "Qoralama"
+    },
+    "settings": {
+        "title": "Sozlamalar",
+        "subtitle": "Tizim parametrlari",
+        "theme": "Mavzu",
+        "darkTheme": "Qorong'i mavzu",
+        "lightTheme": "Yorug' mavzu",
+        "language": "Interfeys tili",
+        "notifications": "Bildirishnomalar",
+        "profile": "Profil",
+        "changePassword": "Parolni o'zgartirish",
+        "currentPassword": "Joriy parol",
+        "newPassword": "Yangi parol",
+        "confirmPassword": "Parolni tasdiqlang",
+        "leaveBlank": "O'zgartirmaslik uchun bo'sh qoldiring"
+    },
+    "toast": {
+        "error": "Xato",
+        "success": "Muvaffaqiyatli",
+        "warning": "Ogohlantirish",
+        "info": "Ma'lumot"
+    }
+}
