@@ -2,8 +2,8 @@
     <div class="settings-page animate-fade-in">
         <header class="page-header">
             <div class="container">
-                <h1 class="text-thin">System Settings</h1>
-                <p class="text-secondary">Configure business rules, API keys and general preferences</p>
+                <h1 class="text-thin">{{ $t('settings.title') }}</h1>
+                <p class="text-secondary">{{ $t('settings.subtitle') }}</p>
             </div>
         </header>
 
@@ -19,7 +19,7 @@
                         <div class="spacer-flex"></div>
                         <button class="btn btn-outline btn-sm m-4 text-error" @click="handleLogout"
                             style="border-color: rgba(217, 0, 75, 0.1);">
-                            Sign Out
+                            {{ $t('settings.logout') }}
                         </button>
                     </div>
 
@@ -27,70 +27,70 @@
                     <div class="settings-content">
                         <!-- General Tab -->
                         <div v-if="activeTab === 'general'" class="tab-pane">
-                            <h3 class="mb-6">General Configuration</h3>
+                            <h3 class="mb-6">{{ $t('settings.general.title') }}</h3>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Company Name</label>
+                                    <label class="label mb-1 block">{{ $t('settings.general.company') }}</label>
                                     <input v-model="settings.company_name" type="text" class="input"
                                         placeholder="STL Auto">
                                 </div>
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Contact Email</label>
+                                    <label class="label mb-1 block">{{ $t('settings.general.email') }}</label>
                                     <input v-model="settings.contact_email" type="email" class="input"
                                         placeholder="info@stlauto.uz">
                                 </div>
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Support Phone</label>
+                                    <label class="label mb-1 block">{{ $t('settings.general.phone') }}</label>
                                     <input v-model="settings.support_phone" type="text" class="input"
                                         placeholder="+998 90 123 45 67">
                                 </div>
                             </div>
                             <button class="btn btn-primary mt-8" @click="saveSettings" :disabled="saving">{{ saving ?
-                                'Saving...' : 'Save Changes' }}</button>
+                                $t('settings.saving') : $t('settings.save') }}</button>
                         </div>
 
                         <!-- Business Rules Tab -->
                         <div v-if="activeTab === 'business'" class="tab-pane">
-                            <h3 class="mb-6">Business Logic & Pricing</h3>
+                            <h3 class="mb-6">{{ $t('settings.business.title') }}</h3>
                             <div class="card bg-hover p-4 mb-8">
-                                <p class="small-text text-secondary m-0">These values affect calculation of car prices
-                                    and loan eligibility across the platform.</p>
+                                <p class="small-text text-secondary m-0">{{ $t('settings.business.description') }}</p>
                             </div>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Default Markup (%)</label>
+                                    <label class="label mb-1 block">{{ $t('settings.business.markup') }}</label>
                                     <input v-model.number="settings.markup_percent" type="number" class="input"
                                         step="0.1">
-                                    <p class="smaller-text text-tertiary mt-1">Added to car source price</p>
+                                    <p class="smaller-text text-tertiary mt-1">{{ $t('settings.business.markupHint') }}
+                                    </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Min Down Payment (%)</label>
+                                    <label class="label mb-1 block">{{ $t('settings.business.downPayment') }}</label>
                                     <input v-model.number="settings.min_down_payment" type="number" class="input">
                                 </div>
                                 <div class="form-group">
-                                    <label class="label mb-1 block">Blacklist Threshold</label>
+                                    <label class="label mb-1 block">{{ $t('settings.business.blacklist') }}</label>
                                     <input v-model.number="settings.blacklist_threshold" type="number" class="input">
-                                    <p class="smaller-text text-tertiary mt-1">Number of rejections before auto-block
+                                    <p class="smaller-text text-tertiary mt-1">{{ $t('settings.business.blacklistHint')
+                                        }}
                                     </p>
                                 </div>
                             </div>
-                            <button class="btn btn-primary mt-8" @click="saveSettings" :disabled="saving">Update
-                                Rules</button>
+                            <button class="btn btn-primary mt-8" @click="saveSettings" :disabled="saving">{{
+                                $t('settings.update') }}</button>
                         </div>
 
                         <!-- API tab placeholder -->
                         <div v-if="activeTab === 'api'" class="tab-pane">
-                            <h3 class="mb-6">API & Integrations</h3>
+                            <h3 class="mb-6">{{ $t('settings.api.title') }}</h3>
                             <div class="form-group mb-4">
-                                <label class="label mb-1 block">Public API Base</label>
+                                <label class="label mb-1 block">{{ $t('settings.api.base') }}</label>
                                 <input v-model="settings.api_base" type="text" class="input text-secondary" readonly>
                             </div>
                             <div class="form-group mb-6">
-                                <label class="label mb-1 block">Maps API Key</label>
+                                <label class="label mb-1 block">{{ $t('settings.api.maps') }}</label>
                                 <input type="password" value="************************" class="input" readonly>
                             </div>
-                            <p class="text-tertiary small-text">API keys are managed via environment variables for
-                                security.</p>
+                            <p class="text-tertiary small-text">{{ $t('settings.api.hint') }}</p>
                         </div>
                     </div>
                 </div>
@@ -101,16 +101,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
+const { t } = useI18n()
 const { getSettings, updateSetting, logout } = useApi()
+const toast = useToast()
 const router = useRouter()
 
-const tabs = [
-    { id: 'general', label: 'General' },
-    { id: 'business', label: 'Business Rules' },
-    { id: 'api', label: 'Integrations' }
-]
+const tabs = computed(() => [
+    { id: 'general', label: t('settings.tabs.general') },
+    { id: 'business', label: t('settings.tabs.business') },
+    { id: 'api', label: t('settings.tabs.api') }
+])
 
 const activeTab = ref('general')
 const saving = ref(false)
@@ -143,14 +145,13 @@ const fetchSettings = async () => {
 const saveSettings = async () => {
     saving.value = true
     try {
-        // We save settings one by one or as needed
         const promises = Object.entries(settings.value).map(([key, value]) => {
             return updateSetting(key, value)
         })
         await Promise.all(promises)
-        alert('Settings updated successfully!')
+        toast.success(t('common.success'))
     } catch (err: any) {
-        alert(err?.data?.detail || 'Failed to save settings')
+        toast.error(t('common.error'), err?.data?.detail || 'Failed to save settings')
     } finally {
         saving.value = false
     }

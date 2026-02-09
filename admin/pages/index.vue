@@ -3,31 +3,31 @@
         <div class="login-container">
             <div class="login-card animate-fade-in">
                 <h1>STL Auto</h1>
-                <p class="subtitle">Панель управления</p>
+                <p class="subtitle">{{ $t('auth.title') }}</p>
 
                 <div class="auth-tabs">
                     <button class="auth-tab" :class="{ active: mode === 'login' }" @click="mode = 'login'">
-                        Вход
+                        {{ $t('auth.login') }}
                     </button>
                     <button class="auth-tab" :class="{ active: mode === 'register' }" @click="mode = 'register'">
-                        Регистрация
+                        {{ $t('auth.register') }}
                     </button>
                 </div>
 
                 <div v-if="mode === 'login'" class="demo-hint">
-                    <p>Демо: +998901111111 / admin123</p>
+                    <p>{{ $t('auth.demo') }}</p>
                 </div>
 
                 <!-- Login Form -->
                 <form v-if="mode === 'login'" @submit.prevent="handleLogin" class="login-form">
                     <div class="form-group">
                         <input id="phone" v-model="loginForm.phone" type="tel" class="input"
-                            placeholder="Телефон (+998...)" required />
+                            :placeholder="$t('auth.phone')" required />
                     </div>
 
                     <div class="form-group">
                         <input id="password" v-model="loginForm.password" type="password" class="input"
-                            placeholder="Пароль" required />
+                            :placeholder="$t('auth.password')" required />
                     </div>
 
                     <div v-if="error" class="error-message">
@@ -35,8 +35,8 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-full" :disabled="loading">
-                        <span v-if="loading">Вход...</span>
-                        <span v-else>Войти</span>
+                        <span v-if="loading">{{ $t('auth.signingIn') }}</span>
+                        <span v-else>{{ $t('auth.signIn') }}</span>
                     </button>
                 </form>
 
@@ -44,28 +44,28 @@
                 <form v-else @submit.prevent="handleRegister" class="login-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <input v-model="registerForm.first_name" type="text" class="input" placeholder="Имя"
-                                required />
+                            <input v-model="registerForm.first_name" type="text" class="input"
+                                :placeholder="$t('auth.firstName')" required />
                         </div>
                         <div class="form-group">
-                            <input v-model="registerForm.last_name" type="text" class="input" placeholder="Фамилия"
-                                required />
+                            <input v-model="registerForm.last_name" type="text" class="input"
+                                :placeholder="$t('auth.lastName')" required />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <input v-model="registerForm.phone" type="tel" class="input" placeholder="Телефон (+998...)"
+                        <input v-model="registerForm.phone" type="tel" class="input" :placeholder="$t('auth.phone')"
                             required />
                     </div>
 
                     <div class="form-group">
                         <input v-model="registerForm.email" type="email" class="input"
-                            placeholder="Email (необязательно)" />
+                            :placeholder="$t('auth.email')" />
                     </div>
 
                     <div class="form-group">
                         <input v-model="registerForm.password" type="password" class="input"
-                            placeholder="Пароль (мин. 6 симв.)" minlength="6" required />
+                            :placeholder="$t('auth.passwordHint')" minlength="6" required />
                     </div>
 
                     <div v-if="error" class="error-message">
@@ -77,8 +77,8 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-full" :disabled="loading">
-                        <span v-if="loading">Регистрация...</span>
-                        <span v-else>Зарегистрироваться</span>
+                        <span v-if="loading">{{ $t('auth.signingUp') }}</span>
+                        <span v-else>{{ $t('auth.signUp') }}</span>
                     </button>
                 </form>
 
@@ -92,6 +92,7 @@ import { ref } from 'vue'
 
 const router = useRouter()
 const { login, register, getCurrentUser } = useApi()
+const { t } = useI18n()
 
 const mode = ref<'login' | 'register'>('login')
 const loading = ref(false)
@@ -121,7 +122,7 @@ const handleLogin = async () => {
         const user: any = await getCurrentUser()
 
         if (user && user.role === 'client') {
-            error.value = 'Ошибка: Доступ к админ-панели разрешен только сотрудникам.'
+            error.value = t('auth.errorAdmin')
             return
         }
 
@@ -136,7 +137,7 @@ const handleLogin = async () => {
                 error.value = err.data.detail
             }
         } else {
-            error.value = 'Ошибка входа. Проверьте соединение с сервером.'
+            error.value = t('auth.errorGeneric')
         }
     } finally {
         loading.value = false
@@ -151,7 +152,7 @@ const handleRegister = async () => {
     try {
         const payload = { ...registerForm.value, phone: registerForm.value.phone.trim() }
         await register(payload)
-        successMsg.value = 'Регистрация успешна! Теперь войдите.'
+        successMsg.value = t('auth.success')
 
         // Pre-fill login
         loginForm.value.phone = registerForm.value.phone.trim()
@@ -170,7 +171,7 @@ const handleRegister = async () => {
                 error.value = err.data.detail
             }
         } else {
-            error.value = 'Ошибка регистрации. Попробуйте позже.'
+            error.value = t('auth.errorGeneric')
         }
     } finally {
         loading.value = false
@@ -182,7 +183,7 @@ definePageMeta({
 })
 
 useHead({
-    title: 'Вход - STL Auto Admin'
+    title: 'STL Auto Admin'
 })
 </script>
 

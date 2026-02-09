@@ -276,36 +276,156 @@
         }
     },
     "stories": {
-        "title": "Hikoyalar",
-        "subtitle": "Ilova uchun hikoyalarni boshqarish",
-        "addStory": "Hikoya qo'shish",
-        "editStory": "Tahrirlash",
-        "storyTitle": "Sarlavha",
-        "preview": "Oldindan ko'rish",
-        "slides": "Slaydlar",
-        "addSlide": "Slayd qo'shish",
-        "slideTypes": {
-            "image": "Rasm",
-            "video": "Video",
-            "text": "Matn"
+        "title": "Stories boshqaruvi",
+        "subtitle": "Ilova kontentini yaratish va tahrirlash",
+        "addStory": "Guruh yaratish",
+        "status": {
+            "active": "Faol",
+            "draft": "Qoralama"
         },
-        "published": "Nashr qilingan",
-        "draft": "Qoralama"
+        "empty": {
+            "title": "Hozircha stories yo'q",
+            "text": "Foydalanuvchilar yangiliklarni ko'rishi uchun guruh yarating"
+        },
+        "modal": {
+            "create": "Yangi guruh",
+            "edit": "Guruhni tahrirlash",
+            "addSlide": "Slayd qo'shish"
+        },
+        "form": {
+            "title": "Sarlavha (RU/UZ/EN)",
+            "icon": "Ikonka (Rasm)",
+            "order": "Tartib",
+            "slides": "Slaydlar",
+            "noSlides": "Slaydlar yo'q",
+            "slideTitle": "Slayd sarlavhasi",
+            "content": "Mazmun",
+            "image": "Rasm",
+            "btnText": "Tugma matni (Ixtiyoriy)",
+            "link": "Havola"
+        },
+        "confirmDelete": "Guruh o'chirilsinmi?",
+        "confirmDeleteSlide": "Slayd o'chirilsinmi?",
+        "edit": "Tahrirlash"
+    },
+    "blacklist": {
+        "title": "Qora ro'yxat",
+        "subtitle": "Bloklangan foydalanuvchilarni boshqarish",
+        "block": "Bloklash",
+        "unblock": "Blokdan chiqarish",
+        "confirmBlock": "BLOKLASH",
+        "bannerTitle": "Xavfsizlik protokollari faol",
+        "bannerText": "Ushbu ro'yxatdagi identifikatorlar doimiy cheklovga ega.",
+        "table": {
+            "identifier": "Identifikator (Telefon)",
+            "reason": "Sabab",
+            "issuer": "Kim tomonidan",
+            "date": "Sana"
+        },
+        "empty": {
+            "checking": "Tekshirilmoqda...",
+            "clean": "Faol bloklashlar yo'q"
+        },
+        "modal": {
+            "title": "Kirishni bloklash",
+            "subtitle": "Ma'lumotlarni kiriting"
+        },
+        "form": {
+            "phone": "Telefon",
+            "category": "Kategoriya",
+            "note": "Tafsilotlar",
+            "reasonNote": "Tafsilotlarni yozing...",
+            "select": "Kategoriyani tanlang..."
+        },
+        "reasons": {
+            "fraud": "Firibgarlik",
+            "spam": "Spam / Reklama",
+            "badHistory": "Yomon kredit tarixi",
+            "harassment": "Tajovuzkor xatti-harakat",
+            "policyViolation": "Qoidabuzarlik",
+            "other": "Boshqa",
+            "notSpecified": "Ko'rsatilmagan"
+        },
+        "confirmRemove": "Blokdan chiqarishni xohlaysizmi?",
+        "error": "Bloklash xatosi",
+        "removeError": "O'chirish xatosi"
+    },
+    "payments": {
+        "title": "Moliyaviy tarix",
+        "subtitle": "Daromad va to'lovlar tarixi",
+        "stats": {
+            "revenue": "Jami daromad",
+            "loans": "Faol kreditlar",
+            "pending": "Kutilayotgan to'lovlar",
+            "fromLastMonth": "o'tgan oydan",
+            "repaid": "To'lanmoqda",
+            "endOfWeek": "Hafta oxirigacha"
+        },
+        "table": {
+            "id": "ID",
+            "client": "Mijoz",
+            "vehicle": "Avto",
+            "amount": "Summa",
+            "type": "Tur",
+            "status": "Holat",
+            "date": "Sana"
+        },
+        "updating": "Yangilanmoqda..."
     },
     "settings": {
-        "title": "Sozlamalar",
-        "subtitle": "Tizim parametrlari",
+        "title": "Tizim sozlamalari",
+        "subtitle": "Biznes qoidalari, API kalitlari va umumiy afzalliklarni sozlang",
+        "tabs": {
+            "general": "Asosiy",
+            "business": "Biznes qoidalari",
+            "api": "Integratsiyalar"
+        },
+        "general": {
+            "title": "Umumiy konfiguratsiya",
+            "company": "Kompaniya nomi",
+            "email": "Aloqa emaili",
+            "phone": "Qo'llab-quvvatlash telefoni"
+        },
+        "business": {
+            "title": "Biznes mantiq va narxlar",
+            "description": "Ushbu qiymatlar avtomobil narxlari va kredit olish huquqini hisoblashga ta'sir qiladi.",
+            "markup": "Standart ustama (%)",
+            "markupHint": "Avtomobil manba narxiga qo'shiladi",
+            "downPayment": "Min oldindan to'lov (%)",
+            "blacklist": "Qora ro'yxat chegarasi",
+            "blacklistHint": "Avtomatik bloklanishdan oldin rad etishlar"
+        },
+        "api": {
+            "title": "API va Integratsiyalar",
+            "base": "Ommaviy API bazasi",
+            "maps": "Xarita API kaliti",
+            "hint": "Xavfsizlik uchun API kalitlari muhit o'zgaruvchilari orqali boshqariladi."
+        },
+        "save": "O'zgarishlarni saqlash",
+        "saving": "Saqlanmoqda...",
+        "update": "Qoidalarni yangilash",
+        "logout": "Chiqish",
         "theme": "Mavzu",
-        "darkTheme": "Qorong'i mavzu",
-        "lightTheme": "Yorug' mavzu",
-        "language": "Interfeys tili",
-        "notifications": "Bildirishnomalar",
-        "profile": "Profil",
-        "changePassword": "Parolni o'zgartirish",
-        "currentPassword": "Joriy parol",
-        "newPassword": "Yangi parol",
-        "confirmPassword": "Parolni tasdiqlang",
-        "leaveBlank": "O'zgartirmaslik uchun bo'sh qoldiring"
+        "language": "Interfeys tili"
+    },
+    "auth": {
+        "title": "Boshqaruv paneli",
+        "login": "Kirish",
+        "register": "Ro'yxatdan o'tish",
+        "demo": "Demo kirish: +998901111111 / admin123",
+        "phone": "Telefon (+998...)",
+        "password": "Parol",
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "email": "Email (ixtiyoriy)",
+        "passwordHint": "Parol (min. 6 belgi)",
+        "signIn": "Kirish",
+        "signingIn": "Kirilmoqda...",
+        "signUp": "Ro'yxatdan o'tish",
+        "signingUp": "Ro'yxatdan o'tilmoqda...",
+        "errorAdmin": "Kirish faqat administratorlarga ruxsat etiladi",
+        "success": "Ro'yxatdan o'tish muvaffaqiyatli! Endi kiring.",
+        "errorGeneric": "Server xatosi. Keyinroq qayta urinib ko'ring."
     },
     "toast": {
         "error": "Xato",

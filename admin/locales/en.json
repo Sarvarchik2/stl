@@ -277,36 +277,156 @@
         }
     },
     "stories": {
-        "title": "Stories",
-        "subtitle": "Manage app stories",
-        "addStory": "Add Story",
-        "editStory": "Edit",
-        "storyTitle": "Title",
-        "preview": "Preview",
-        "slides": "Slides",
-        "addSlide": "Add Slide",
-        "slideTypes": {
-            "image": "Image",
-            "video": "Video",
-            "text": "Text"
+        "title": "Stories Management",
+        "subtitle": "Create and edit app content",
+        "addStory": "Create Group",
+        "status": {
+            "active": "Active",
+            "draft": "Draft"
         },
-        "published": "Published",
-        "draft": "Draft"
+        "empty": {
+            "title": "No stories yet",
+            "text": "Create the first group to show news to users"
+        },
+        "modal": {
+            "create": "New Group",
+            "edit": "Edit Group",
+            "addSlide": "Add Slide"
+        },
+        "form": {
+            "title": "Title (RU/UZ/EN)",
+            "icon": "Icon (Preview Image)",
+            "order": "Order",
+            "slides": "Slides",
+            "noSlides": "No slides yet",
+            "slideTitle": "Slide Title",
+            "content": "Content",
+            "image": "Image",
+            "btnText": "Button Text (Optional)",
+            "link": "Link"
+        },
+        "confirmDelete": "Delete this group?",
+        "confirmDeleteSlide": "Delete this slide?",
+        "edit": "Edit"
+    },
+    "blacklist": {
+        "title": "Blacklist",
+        "subtitle": "Manage blocked users",
+        "block": "Block Access",
+        "unblock": "Unblock",
+        "confirmBlock": "BLOCK ACCESS",
+        "bannerTitle": "Security Protocols Active",
+        "bannerText": "Identifiers in this list are permanently restricted.",
+        "table": {
+            "identifier": "Identifier (Phone)",
+            "reason": "Reason",
+            "issuer": "Issued By",
+            "date": "Date Added"
+        },
+        "empty": {
+            "checking": "Checking security status...",
+            "clean": "System is clean. No active blocks."
+        },
+        "modal": {
+            "title": "Block Access",
+            "subtitle": "Enter details to restrict access"
+        },
+        "form": {
+            "phone": "Phone",
+            "category": "Violation Category",
+            "note": "Details (Note)",
+            "reasonNote": "Describe details...",
+            "select": "Select category..."
+        },
+        "reasons": {
+            "fraud": "Fraud",
+            "spam": "Spam / Promotion",
+            "badHistory": "Bad Credit History",
+            "harassment": "Harassment",
+            "policyViolation": "Policy Violation",
+            "other": "Other",
+            "notSpecified": "Not specified"
+        },
+        "confirmRemove": "Unblock this identifier?",
+        "error": "Block error",
+        "removeError": "Remove error"
+    },
+    "payments": {
+        "title": "Financial History",
+        "subtitle": "Income and loan tracking",
+        "stats": {
+            "revenue": "Total Revenue",
+            "loans": "Active Loans",
+            "pending": "Pending Payments",
+            "fromLastMonth": "from last month",
+            "repaid": "Currently being repaid",
+            "endOfWeek": "Expected by end of week"
+        },
+        "table": {
+            "id": "Transaction ID",
+            "client": "Client",
+            "vehicle": "Vehicle",
+            "amount": "Amount",
+            "type": "Type",
+            "status": "Status",
+            "date": "Date"
+        },
+        "updating": "Updating records..."
     },
     "settings": {
-        "title": "Settings",
-        "subtitle": "System Parameters",
+        "title": "System Settings",
+        "subtitle": "Configure business rules, API keys and general preferences",
+        "tabs": {
+            "general": "General",
+            "business": "Business Rules",
+            "api": "Integrations"
+        },
+        "general": {
+            "title": "General Configuration",
+            "company": "Company Name",
+            "email": "Contact Email",
+            "phone": "Support Phone"
+        },
+        "business": {
+            "title": "Business Logic & Pricing",
+            "description": "These values affect calculation of car prices and loan eligibility across the platform.",
+            "markup": "Default Markup (%)",
+            "markupHint": "Added to car source price",
+            "downPayment": "Min Down Payment (%)",
+            "blacklist": "Blacklist Threshold",
+            "blacklistHint": "Rejections before auto-block"
+        },
+        "api": {
+            "title": "API & Integrations",
+            "base": "Public API Base",
+            "maps": "Maps API Key",
+            "hint": "API keys are managed via environment variables for security."
+        },
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "update": "Update Rules",
+        "logout": "Sign Out",
         "theme": "Theme",
-        "darkTheme": "Dark Theme",
-        "lightTheme": "Light Theme",
-        "language": "Interface Language",
-        "notifications": "Notifications",
-        "profile": "Profile",
-        "changePassword": "Change Password",
-        "currentPassword": "Current Password",
-        "newPassword": "New Password",
-        "confirmPassword": "Confirm Password",
-        "leaveBlank": "Leave blank to keep current"
+        "language": "Interface Language"
+    },
+    "auth": {
+        "title": "Control Panel",
+        "login": "Login",
+        "register": "Register",
+        "demo": "Demo Access: +998901111111 / admin123",
+        "phone": "Phone (+998...)",
+        "password": "Password",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email (Optional)",
+        "passwordHint": "Password (min. 6 chars)",
+        "signIn": "Sign In",
+        "signingIn": "Signing in...",
+        "signUp": "Sign Up",
+        "signingUp": "Signing up...",
+        "errorAdmin": "Access restricted to administrators",
+        "success": "Registration successful! Please log in.",
+        "errorGeneric": "Server error. Please try again later."
     },
     "toast": {
         "error": "Error",

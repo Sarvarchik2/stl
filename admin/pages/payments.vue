@@ -2,8 +2,8 @@
     <div class="payments-page animate-fade-in">
         <header class="page-header">
             <div class="container">
-                <h1 class="text-thin">Financial History</h1>
-                <p class="text-secondary text-light">Track income from car sales and loan repayments</p>
+                <h1 class="text-thin">{{ $t('payments.title') }}</h1>
+                <p class="text-secondary text-light">{{ $t('payments.subtitle') }}</p>
             </div>
         </header>
 
@@ -11,24 +11,25 @@
             <!-- Stats Summary -->
             <div class="grid grid-3 mb-12">
                 <div class="detail-card">
-                    <p class="section-label mb-2">Total Revenue</p>
+                    <p class="section-label mb-2">{{ $t('payments.stats.revenue') }}</p>
                     <div class="number-medium text-primary">
                         {{ stats.total_revenue.toLocaleString() }} <span class="smaller-text text-tertiary">UZS</span>
                     </div>
-                    <p class="smaller-text text-success mt-3 font-medium">↑ 12.5% from last month</p>
+                    <p class="smaller-text text-success mt-3 font-medium">↑ 12.5% {{ $t('payments.stats.fromLastMonth')
+                        }}</p>
                 </div>
                 <div class="detail-card">
-                    <p class="section-label mb-2">Active Loans</p>
+                    <p class="section-label mb-2">{{ $t('payments.stats.loans') }}</p>
                     <div class="number-medium text-primary">{{ stats.active_loans }}</div>
-                    <p class="smaller-text text-tertiary mt-3">Currently being repaid</p>
+                    <p class="smaller-text text-tertiary mt-3">{{ $t('payments.stats.repaid') }}</p>
                 </div>
                 <div class="detail-card">
-                    <p class="section-label mb-2">Pending Payments</p>
+                    <p class="section-label mb-2">{{ $t('payments.stats.pending') }}</p>
                     <div class="number-medium text-error">
                         {{ stats.pending_payments.toLocaleString() }} <span
                             class="smaller-text text-tertiary">UZS</span>
                     </div>
-                    <p class="smaller-text text-tertiary mt-3">Expected by end of week</p>
+                    <p class="smaller-text text-tertiary mt-3">{{ $t('payments.stats.endOfWeek') }}</p>
                 </div>
             </div>
 
@@ -38,18 +39,19 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="pl-8">Transaction ID</th>
-                                <th>Client</th>
-                                <th>Vehicle</th>
-                                <th>Amount</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th class="text-right pr-8">Date</th>
+                                <th class="pl-8">{{ $t('payments.table.id') }}</th>
+                                <th>{{ $t('payments.table.client') }}</th>
+                                <th>{{ $t('payments.table.vehicle') }}</th>
+                                <th>{{ $t('payments.table.amount') }}</th>
+                                <th>{{ $t('payments.table.type') }}</th>
+                                <th>{{ $t('payments.table.status') }}</th>
+                                <th class="text-right pr-8">{{ $t('payments.table.date') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="loading" v-for="i in 5" :key="i">
-                                <td colspan="7" class="py-12 text-center text-tertiary">Updating records...</td>
+                                <td colspan="7" class="py-12 text-center text-tertiary">{{ $t('payments.updating') }}
+                                </td>
                             </tr>
                             <tr v-else v-for="item in payments" :key="item.id" class="premium-row clickable-row">
                                 <td class="pl-8 py-5">
@@ -66,8 +68,8 @@
                                         <span class="smaller-text text-tertiary font-normal ml-1">UZS</span>
                                     </div>
                                 </td>
-                                <td><span class="type-badge" :class="item.type">{{ item.type }}</span></td>
-                                <td><span class="badge" :class="item.status">{{ item.status }}</span></td>
+                                <td><span class="type-badge" :class="item.type">{{ formatType(item.type) }}</span></td>
+                                <td><span class="badge" :class="item.status">{{ formatStatus(item.status) }}</span></td>
                                 <td class="text-right pr-8 text-secondary smaller-text font-medium">{{
                                     formatDate(item.date) }}</td>
                             </tr>
@@ -83,6 +85,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+const { t, locale } = useI18n()
 const { getPayments, getPaymentStats } = useApi()
 
 const payments = ref<any[]>([])
@@ -115,7 +118,9 @@ const fetchData = async () => {
     }
 }
 
-const formatDate = (d: string) => new Date(d).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
+const formatDate = (d: string) => new Date(d).toLocaleDateString(locale.value, { day: '2-digit', month: '2-digit', year: 'numeric' })
+const formatType = (type: string) => t(`payments.type.${type?.toLowerCase() || 'income'}`)
+const formatStatus = (status: string) => t(`payments.status.${status?.toLowerCase() || 'pending'}`)
 
 onMounted(fetchData)
 
