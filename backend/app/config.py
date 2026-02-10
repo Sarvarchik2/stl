@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     ALLOWED_DOCUMENT_TYPES: list = ["application/pdf"]
     ALLOWED_VIDEO_TYPES: list = ["video/mp4", "video/quicktime", "video/x-msvideo"]
     
+    # Telegram
+    TELEGRAM_BOT_TOKEN: str = "8380529939:AAFRjxdXOhtuZIlMoCiisJZ2pUK2k4RoWFY"
+    TELEGRAM_CHAT_ID: str = "-5155301261"
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

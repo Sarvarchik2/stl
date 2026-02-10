@@ -15,7 +15,7 @@ async def check_users():
         users = result.scalars().all()
         print(f"Total Users: {len(users)}")
         for user in users:
-            print(f"ID: {user.id}, Phone: {user.phone}, Role: {user.role.value}")
+            print(f"ID: {user.id}, Phone: {user.phone}, Role: {user.role.value}, Active: {user.is_active}")
 
 if __name__ == "__main__":
     asyncio.run(check_users())

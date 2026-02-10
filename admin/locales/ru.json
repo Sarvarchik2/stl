@@ -59,6 +59,7 @@
         "register": "Регистрация",
         "demo": "Демо доступ: +998901111111 / admin123",
         "phone": "Телефон",
+        "phonePlaceholder": "90 123 45 67",
         "password": "Пароль",
         "firstName": "Имя",
         "lastName": "Фамилия",

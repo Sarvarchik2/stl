@@ -6,10 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_db
 from ..models.user import User
 from ..models.enums import Role
+import time
+import random
+from typing import Dict, Union
+
 from ..schemas.user import (
     LoginRequest, RegisterRequest, Token, TokenRefresh,
     UserResponse, OTPRequest, OTPVerify
 )
+from ..services.telegram import send_telegram_message
 from ..services.auth import (
     verify_password, get_password_hash, create_tokens, decode_token
 )
@@ -18,6 +23,8 @@ from ..services.audit import log_action
 from ..dependencies import CurrentUser, DB
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+OTP_STORE: Dict[str, Dict[str, Union[str, float]]] = {}
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -118,33 +125,7 @@ async def login(request: LoginRequest, db: DB):
     )
     await db.commit()
     
-    # Return tokens directly, bypassing OTP
-    return create_tokens(str(user.id), user.role.value)
-
-
-@router.post("/refresh", response_model=Token)
-async def refresh_token(request: TokenRefresh, db: DB):
-    """
-    Refresh access token using refresh token.
-    """
-    payload = decode_token(request.refresh_token)
-    
-    if not payload or payload.get("type") != "refresh":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token"
-        )
-    
-    user_id = payload.get("sub")
-    result = await db.execute(select(User).where(User.id == user_id))
-    user = result.scalar_one_or_none()
-    
-    if not user or not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found or disabled"
-        )
-    
+    # Return tokens directly
     return create_tokens(str(user.id), user.role.value)
 
 
@@ -152,7 +133,7 @@ async def refresh_token(request: TokenRefresh, db: DB):
 async def send_otp(request: OTPRequest, db: DB):
     """
     Request OTP code for phone number.
-    In dev mode, code is always 1234.
+    Sends code via Telegram bot.
     """
     # Check if blocked
     is_blocked, reason = await is_phone_blocked(db, request.phone)
@@ -162,11 +143,16 @@ async def send_otp(request: OTPRequest, db: DB):
             detail=f"Blocked: {reason}"
         )
         
-    # Simulate sending SMS
-    # In production: call SMS provider here
-    print(f"OTP for {request.phone}: 1234")
+    # Generate and send OTP
+    code = str(random.randint(100000, 999999))
+    expiration = time.time() + 300  # 5 minutes
+    OTP_STORE[request.phone] = {"code": code, "expires": expiration}
     
-    return {"message": "OTP sent successfully", "dev_code": "1234"}
+    # Send to Telegram
+    message = f"🔐 <b>Tasdiqlash kodi: {code}</b>\n\n👤 Telefon: {request.phone}"
+    await send_telegram_message(message)
+    
+    return {"message": "OTP sent successfully"}
 
 
 @router.post("/verify-otp", response_model=Token)
@@ -174,19 +160,37 @@ async def verify_otp(request: OTPVerify, db: DB):
     """
     Verify OTP and login/register.
     """
-    # Bypass OTP verification for development
-    # if request.code != "1234":
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="Invalid OTP code"
-    #     )
+    # Check against stored OTP
+    stored_otp = OTP_STORE.get(request.phone)
+    
+    if not stored_otp:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP code expired or not requested"
+        )
+        
+    if stored_otp['expires'] < time.time():
+        del OTP_STORE[request.phone]
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP code expired"
+        )
+        
+    if stored_otp['code'] != request.code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid OTP code"
+        )
+    
+    # OTP is valid
+    del OTP_STORE[request.phone]
         
     # Check if user exists
     result = await db.execute(select(User).where(User.phone == request.phone))
     user = result.scalar_one_or_none()
     
     if not user:
-        # Auto-register user if not found (Bypass for dev/testing)
+        # Auto-register user if not found
         user = User(
             phone=request.phone,
             first_name="User",

@@ -57,6 +57,7 @@
         "register": "Ro'yxatdan o'tish",
         "demo": "Demo kirish: +998901111111 / admin123",
         "phone": "Telefon",
+        "phonePlaceholder": "90 123 45 67",
         "password": "Parol",
         "firstName": "Ism",
         "lastName": "Familiya",

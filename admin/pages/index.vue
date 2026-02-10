@@ -8,24 +8,21 @@
                 </div>
                 <p class="subtitle">{{ $t('auth.title') }}</p>
 
-                <div class="auth-tabs">
-                    <button class="auth-tab" :class="{ active: mode === 'login' }" @click="mode = 'login'">
-                        {{ $t('auth.login') }}
-                    </button>
-                    <button class="auth-tab" :class="{ active: mode === 'register' }" @click="mode = 'register'">
-                        {{ $t('auth.register') }}
-                    </button>
-                </div>
 
-                <div v-if="mode === 'login'" class="demo-hint">
+
+                <div class="demo-hint">
                     <p>{{ $t('auth.demo') }}</p>
                 </div>
 
                 <!-- Login Form -->
-                <form v-if="mode === 'login'" @submit.prevent="handleLogin" class="login-form">
+                <form @submit.prevent="handleLogin" class="login-form">
                     <div class="form-group">
-                        <input id="phone" v-model="loginForm.phone" type="tel" class="input"
-                            :placeholder="$t('auth.phone')" required />
+                        <div class="phone-input-wrapper">
+                            <span class="phone-prefix">+998</span>
+                            <input id="phone" v-model="phoneNumber" @input="formatPhoneInput" type="tel"
+                                class="input phone-input" :placeholder="$t('auth.phonePlaceholder')" maxlength="15"
+                                required />
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -43,48 +40,6 @@
                     </button>
                 </form>
 
-                <!-- Register Form -->
-                <form v-else @submit.prevent="handleRegister" class="login-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input v-model="registerForm.first_name" type="text" class="input"
-                                :placeholder="$t('auth.firstName')" required />
-                        </div>
-                        <div class="form-group">
-                            <input v-model="registerForm.last_name" type="text" class="input"
-                                :placeholder="$t('auth.lastName')" required />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <input v-model="registerForm.phone" type="tel" class="input" :placeholder="$t('auth.phone')"
-                            required />
-                    </div>
-
-                    <div class="form-group">
-                        <input v-model="registerForm.email" type="email" class="input"
-                            :placeholder="$t('auth.email')" />
-                    </div>
-
-                    <div class="form-group">
-                        <input v-model="registerForm.password" type="password" class="input"
-                            :placeholder="$t('auth.passwordHint')" minlength="6" required />
-                    </div>
-
-                    <div v-if="error" class="error-message">
-                        {{ error }}
-                    </div>
-
-                    <div v-if="successMsg" class="success-message">
-                        {{ successMsg }}
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-full" :disabled="loading">
-                        <span v-if="loading">{{ $t('auth.signingUp') }}</span>
-                        <span v-else>{{ $t('auth.signUp') }}</span>
-                    </button>
-                </form>
-
             </div>
         </div>
     </div>
@@ -94,26 +49,39 @@
 import { ref } from 'vue'
 
 const router = useRouter()
-const { login, register, getCurrentUser } = useApi()
+const { login, getCurrentUser } = useApi()
 const { t } = useI18n()
 
-const mode = ref<'login' | 'register'>('login')
 const loading = ref(false)
 const error = ref('')
 const successMsg = ref('')
+const phoneNumber = ref('')
 
 const loginForm = ref({
     phone: '',
     password: ''
 })
 
-const registerForm = ref({
-    phone: '',
-    password: '',
-    first_name: '',
-    last_name: '',
-    email: ''
-})
+const formatPhoneInput = () => {
+    // Remove all non-digit characters and limit to 9 digits (Uzbekistan standard)
+    let cleaned = phoneNumber.value.replace(/\D/g, '').slice(0, 9)
+
+    // Add spaces for formatting: XX XXX XX XX
+    let formatted = cleaned
+    if (cleaned.length > 2) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
+    }
+    if (cleaned.length > 5) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
+    }
+    if (cleaned.length > 7) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
+    }
+
+    phoneNumber.value = formatted
+    // Update the full phone number with +998 prefix
+    loginForm.value.phone = '+998' + cleaned
+}
 
 const handleLogin = async () => {
     loading.value = true
@@ -147,39 +115,7 @@ const handleLogin = async () => {
     }
 }
 
-const handleRegister = async () => {
-    loading.value = true
-    error.value = ''
-    successMsg.value = ''
 
-    try {
-        const payload = { ...registerForm.value, phone: registerForm.value.phone.trim() }
-        await register(payload)
-        successMsg.value = t('auth.success')
-
-        // Pre-fill login
-        loginForm.value.phone = registerForm.value.phone.trim()
-        loginForm.value.password = registerForm.value.password
-
-        // Auto login or switch to login tab
-        // Let's try auto login for convenience
-        await handleLogin()
-
-    } catch (err: any) {
-        console.error('Registration error:', err)
-        if (err.data && err.data.detail) {
-            if (Array.isArray(err.data.detail)) {
-                error.value = err.data.detail.map((e: any) => `${e.loc[1] || e.loc[0]}: ${e.msg}`).join('; ')
-            } else {
-                error.value = err.data.detail
-            }
-        } else {
-            error.value = t('auth.errorGeneric')
-        }
-    } finally {
-        loading.value = false
-    }
-}
 
 definePageMeta({
     layout: false
@@ -320,6 +256,26 @@ useHead({
     border-color: var(--color-primary);
     outline: none;
     box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.phone-input-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.phone-prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.phone-input {
+    padding-left: 4rem !important;
 }
 
 .error-message {

@@ -58,6 +58,7 @@
         "register": "Register",
         "demo": "Demo Access: +998901111111 / admin123",
         "phone": "Phone",
+        "phonePlaceholder": "90 123 45 67",
         "password": "Password",
         "firstName": "First Name",
         "lastName": "Last Name",

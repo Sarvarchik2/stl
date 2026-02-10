@@ -140,7 +140,12 @@
                     </div>
                     <div class="form-group mt-4">
                         <label class="micro-label mb-2">{{ $t('users.phone') }}</label>
-                        <input v-model="form.phone" type="text" class="input input-sm">
+                        <div class="phone-input-wrapper">
+                            <span class="phone-prefix">+998</span>
+                            <input v-model="phoneNumber" @input="formatPhoneInput" type="tel"
+                                class="input input-sm phone-input" :placeholder="$t('auth.phonePlaceholder')"
+                                maxlength="15">
+                        </div>
                     </div>
                     <div class="form-group mt-4">
                         <label class="micro-label mb-2">{{ $t('users.role') }}</label>
@@ -254,6 +259,29 @@ const form = ref({
     password: ''
 })
 
+const phoneNumber = ref('')
+
+const formatPhoneInput = () => {
+    // Remove all non-digit characters and limit to 9 digits (Uzbekistan standard)
+    let cleaned = phoneNumber.value.replace(/\D/g, '').slice(0, 9)
+
+    // Add spaces for formatting: XX XXX XX XX
+    let formatted = cleaned
+    if (cleaned.length > 2) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
+    }
+    if (cleaned.length > 5) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
+    }
+    if (cleaned.length > 7) {
+        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
+    }
+
+    phoneNumber.value = formatted
+    // Update the full phone number with +998 prefix for the form
+    form.value.phone = '+998' + cleaned
+}
+
 const fetchUsers = async () => {
     loading.value = true
     try {
@@ -270,9 +298,27 @@ const openModal = (user?: any) => {
     if (user) {
         editingId.value = user.id
         form.value = { ...user, password: '' }
+        // Extract phone number without +998 prefix for display
+        if (user.phone && user.phone.startsWith('+998')) {
+            const cleaned = user.phone.replace('+998', '').replace(/\D/g, '')
+            let formatted = cleaned
+            if (cleaned.length > 2) {
+                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
+            }
+            if (cleaned.length > 5) {
+                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
+            }
+            if (cleaned.length > 7) {
+                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
+            }
+            phoneNumber.value = formatted
+        } else {
+            phoneNumber.value = ''
+        }
     } else {
         editingId.value = null
         form.value = { first_name: '', last_name: '', email: '', phone: '', role: 'operator', password: '' }
+        phoneNumber.value = ''
     }
     showModal.value = true
 }
@@ -549,6 +595,26 @@ definePageMeta({ layout: false })
 
 .spacer {
     height: 8rem;
+}
+
+.phone-input-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.phone-prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.phone-input {
+    padding-left: 4rem !important;
 }
 
 @media (max-width: 640px) {

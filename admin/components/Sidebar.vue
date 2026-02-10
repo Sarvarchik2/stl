@@ -208,6 +208,7 @@ defineEmits(['close'])
     letter-spacing: -0.5px;
     color: var(--color-text-primary);
     background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
