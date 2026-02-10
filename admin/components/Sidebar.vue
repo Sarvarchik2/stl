@@ -1,7 +1,13 @@
 <template>
     <aside class="sidebar" :class="{ 'show': isOpen }">
         <div class="sidebar-brand">
-            <h2 style="margin: 0; font-weight: 200; letter-spacing: -1px;">STL Admin</h2>
+            <div class="brand-wrapper">
+                <img src="/favicon.svg" alt="STL Admin" class="brand-logo" />
+                <div class="brand-text">
+                    <span class="brand-title">STL</span>
+                    <span class="brand-subtitle">Admin</span>
+                </div>
+            </div>
         </div>
 
         <nav class="sidebar-nav">
@@ -174,8 +180,44 @@ defineEmits(['close'])
 }
 
 .sidebar-brand {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
     color: var(--color-text-primary);
+}
+
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 32px;
+    height: 32px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1;
+}
+
+.brand-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    color: var(--color-text-primary);
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .sidebar-nav {

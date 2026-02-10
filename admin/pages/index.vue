@@ -2,7 +2,10 @@
     <div class="admin-login">
         <div class="login-container">
             <div class="login-card animate-fade-in">
-                <h1>STL Auto</h1>
+                <div class="logo-area">
+                    <img src="/favicon.svg" alt="STL Auto" class="login-logo" />
+                    <h1>STL Auto</h1>
+                </div>
                 <p class="subtitle">{{ $t('auth.title') }}</p>
 
                 <div class="auth-tabs">
@@ -210,6 +213,20 @@ useHead({
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.login-logo {
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 4px 12px rgba(79, 70, 229, 0.3));
 }
 
 .login-card h1 {
