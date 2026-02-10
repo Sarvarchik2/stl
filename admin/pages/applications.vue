@@ -406,6 +406,74 @@
                             </div>
                         </div>
 
+                        <!-- Documents Section -->
+                        <div class="detail-section mb-10">
+                            <div class="flex-between mb-4">
+                                <h4 class="section-label m-0">{{ $t('applications.detail.documents') }}</h4>
+                                <button v-if="hasRole('manager')" class="btn btn-xs btn-outline"
+                                    @click="fileInputContract?.click()" :disabled="isUploading">
+                                    {{ isUploading ? '...' : $t('applications.detail.uploadContract') }}
+                                </button>
+                                <input ref="fileInputContract" type="file" class="hidden"
+                                    @change="handleFileUpload($event, 'contract')" accept=".pdf,.doc,.docx,.jpg,.png">
+                            </div>
+                            <div class="document-list-premium">
+                                <div v-for="doc in appDocuments" :key="doc.id" class="doc-item-premium">
+                                    <div class="doc-icon">📄</div>
+                                    <div class="doc-info">
+                                        <div class="doc-name">{{ doc.original_filename }}</div>
+                                        <div class="doc-meta">{{ formatDate(doc.created_at) }}</div>
+                                    </div>
+                                    <a :href="`${apiBase}/documents/${doc.id}/download?token=${authToken}`"
+                                        target="_blank" class="doc-download">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+                                            <polyline points="7 10 12 15 17 10" />
+                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div v-if="appDocuments.length === 0" class="text-tertiary smaller-text italic py-2">
+                                    {{ $t('applications.detail.noDocuments') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Videos Section -->
+                        <div class="detail-section mb-10">
+                            <div class="flex-between mb-4">
+                                <h4 class="section-label m-0">{{ $t('applications.detail.videos') }}</h4>
+                                <button v-if="hasRole('manager')" class="btn btn-xs btn-outline"
+                                    @click="fileInputVideo?.click()" :disabled="isUploading">
+                                    {{ isUploading ? '...' : $t('applications.detail.uploadVideo') }}
+                                </button>
+                                <input ref="fileInputVideo" type="file" class="hidden"
+                                    @change="handleFileUpload($event, 'video_signature')" accept="video/*">
+                            </div>
+                            <div class="document-list-premium">
+                                <div v-for="vid in appVideos" :key="vid.id" class="doc-item-premium">
+                                    <div class="doc-icon">🎥</div>
+                                    <div class="doc-info">
+                                        <div class="doc-name">{{ vid.original_filename }}</div>
+                                        <div class="doc-meta">{{ formatDate(vid.created_at) }}</div>
+                                    </div>
+                                    <a :href="`${apiBase}/documents/${vid.id}/download?token=${authToken}`"
+                                        target="_blank" class="doc-download">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+                                            <polyline points="7 10 12 15 17 10" />
+                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div v-if="appVideos.length === 0" class="text-tertiary smaller-text italic py-2">
+                                    {{ $t('applications.detail.noVideos') }}
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Comments Section -->
                         <div class="detail-section">
                             <h4 class="section-label">{{ $t('applications.detail.comments') }}</h4>
@@ -464,7 +532,12 @@ const {
     assignOperator,
     adminCreateApplication,
     getCars,
-    hasRole
+    hasRole,
+    uploadDocument,
+    getDocuments,
+    getVideos,
+    apiBase,
+    authToken
 } = useApi()
 
 const filterStatuses = computed(() => [
@@ -484,6 +557,11 @@ const comments = ref<any[]>([])
 const newComment = ref('')
 const operators = ref<any[]>([])
 const showAssign = ref(false)
+const appDocuments = ref<any[]>([])
+const appVideos = ref<any[]>([])
+const isUploading = ref(false)
+const fileInputContract = ref<HTMLInputElement | null>(null)
+const fileInputVideo = ref<HTMLInputElement | null>(null)
 
 // Create Application Modal
 const showCreateModal = ref(false)
@@ -659,6 +737,46 @@ const openDetail = async (app: any) => {
         comments.value = res || []
     } catch (err) {
         comments.value = []
+    }
+
+    fetchDocuments(app.id)
+    fetchVideos(app.id)
+}
+
+const fetchDocuments = async (appId: string) => {
+    try {
+        const res: any = await getDocuments(appId)
+        appDocuments.value = res || []
+    } catch (err) {
+        appDocuments.value = []
+    }
+}
+
+const fetchVideos = async (appId: string) => {
+    try {
+        const res: any = await getVideos(appId)
+        appVideos.value = res || []
+    } catch (err) {
+        appVideos.value = []
+    }
+}
+
+const handleFileUpload = async (event: Event, type: 'contract' | 'video_signature') => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+    if (!file || !selectedApp.value) return
+
+    isUploading.value = true
+    try {
+        await uploadDocument(selectedApp.value.id, file, type)
+        toast.success(t('common.success'), t('common.fileUploaded'))
+        if (type === 'contract') fetchDocuments(selectedApp.value.id)
+        else fetchVideos(selectedApp.value.id)
+    } catch (err: any) {
+        toast.error(t('common.error'), err?.data?.detail || t('common.error'))
+    } finally {
+        isUploading.value = false
+        target.value = ''
     }
 }
 
@@ -1124,6 +1242,60 @@ definePageMeta({ layout: false })
     font-family: inherit;
     color: var(--color-text-primary);
     min-height: 80px;
+}
+
+/* Document List Styles */
+.document-list-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.doc-item-premium {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.doc-item-premium:hover {
+    border-color: var(--color-accent);
+}
+
+.doc-icon {
+    font-size: 1.25rem;
+}
+
+.doc-info {
+    flex: 1;
+}
+
+.doc-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+
+.doc-meta {
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+}
+
+.doc-download {
+    color: var(--color-text-tertiary);
+    transition: var(--transition);
+}
+
+.doc-download:hover {
+    color: var(--color-accent);
 }
 
 /* Animations */

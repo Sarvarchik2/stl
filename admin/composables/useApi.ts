@@ -356,14 +356,29 @@ export const useApi = () => {
     const uploadDocument = async (applicationId: string, file: File, documentType: string) => {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('document_type', documentType)
 
-        return await $fetch(`${apiBase}/documents/upload/${applicationId}`, {
+        return await $fetch(`${apiBase}/documents/upload`, {
             method: 'POST',
+            params: {
+                app_id: applicationId,
+                type: documentType
+            },
             body: formData,
             headers: {
                 'Authorization': `Bearer ${authToken.value}`
             }
+        })
+    }
+
+    const getDocuments = async (applicationId: string) => {
+        return await $fetch(`${apiBase}/documents/applications/${applicationId}/documents`, {
+            headers: headers.value
+        })
+    }
+
+    const getVideos = async (applicationId: string) => {
+        return await $fetch(`${apiBase}/documents/applications/${applicationId}/videos`, {
+            headers: headers.value
         })
     }
 
@@ -376,6 +391,7 @@ export const useApi = () => {
         authToken,
         currentUser,
         hasRole,
+        apiBase,
 
         // Admin & System
         getStats,
@@ -425,6 +441,8 @@ export const useApi = () => {
         getPaymentStats,
 
         // Documents
-        uploadDocument
+        uploadDocument,
+        getDocuments,
+        getVideos
     }
 }

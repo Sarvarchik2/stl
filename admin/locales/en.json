@@ -106,8 +106,14 @@
             "clientProfile": "Client Profile",
             "carInfo": "Car Information",
             "checklist": "Data Verification",
-            "comments": "Comments / Notes",
-            "addNote": "Add internal note..."
+            "comments": "Comments",
+            "documents": "Documents",
+            "videos": "Deal Videos",
+            "uploadContract": "Upload Contract",
+            "uploadVideo": "Upload Deal Video",
+            "noDocuments": "No documents uploaded",
+            "noVideos": "No videos uploaded",
+            "addNote": "Add a note..."
         },
         "status": {
             "new": "New",

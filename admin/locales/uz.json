@@ -97,6 +97,12 @@
             "carInfo": "Avtomobil haqida",
             "checklist": "Ma'lumotlarni tekshirish",
             "comments": "Izohlar / Qaydlar",
+            "documents": "Hujjatlar",
+            "videos": "Kelishuv videolari",
+            "uploadContract": "Shartnoma yuklash",
+            "uploadVideo": "Video yuklash",
+            "noDocuments": "Hujjatlar yo'q",
+            "noVideos": "Videolar yo'q",
             "addNote": "Ichki izoh qo'shish..."
         },
         "operator": "Mas'ul operator",
