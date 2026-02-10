@@ -86,9 +86,10 @@
                         </div>
                         <div class="car-details-area p-5">
                             <div class="flex-between mb-1">
-                                <span class="smaller-text text-tertiary font-bold">{{ car.year }} г.в.</span>
+                                <span class="smaller-text text-tertiary font-bold">{{ car.year }} {{
+                                    $t('cars.yearShort') }}</span>
                                 <span class="smaller-text text-secondary">{{ (car.mileage || 0).toLocaleString() }}
-                                    КМ</span>
+                                    {{ $t('cars.km') }}</span>
                             </div>
                             <h3 class="car-title text-white">{{ car.brand }} {{ car.model }}</h3>
                             <div class="flex-between items-center mt-auto">
@@ -330,7 +331,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="micro-label mb-2">{{ $t('cars.features') }} ({{ $t('cars.commaSeparated')
-                                    }})</label>
+                                }})</label>
                                 <textarea v-model="featuresString" class="input input-sm" rows="3"
                                     :placeholder="$t('cars.featuresPlaceholder')"></textarea>
                             </div>

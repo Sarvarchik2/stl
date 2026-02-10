@@ -29,7 +29,13 @@
         "confirmDelete": "Are you sure you want to delete?",
         "saveError": "Save error",
         "deleteError": "Delete error",
-        "optional": "Optional"
+        "optional": "Optional",
+        "notAssigned": "Not Assigned",
+        "next": "Next",
+        "searching": "Searching...",
+        "new": "New",
+        "billion": "Bn",
+        "million": "M"
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -43,17 +49,30 @@
         "logout": "Logout"
     },
     "auth": {
+        "title": "Control Panel",
         "login": "Login",
         "loginTitle": "Sign In",
         "loginSubtitle": "Welcome to STL Auto",
-        "phone": "Phone Number",
+        "register": "Register",
+        "demo": "Demo Access: +998901111111 / admin123",
+        "phone": "Phone",
         "password": "Password",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email (Optional)",
+        "passwordHint": "Password (min. 6 chars)",
         "loginButton": "Sign In",
-        "loggingIn": "Signing in...",
+        "signIn": "Sign In",
+        "signingIn": "Signing in...",
+        "signUp": "Sign Up",
+        "signingUp": "Signing up...",
         "invalidCredentials": "Invalid phone or password",
         "accessDenied": "Access Denied",
         "checkingAccess": "Checking access...",
-        "noPermission": "You do not have permission to manage staff"
+        "noPermission": "You do not have permission to manage staff",
+        "errorAdmin": "Access restricted to administrators",
+        "success": "Registration successful! Please log in.",
+        "errorGeneric": "Server error. Please try again later."
     },
     "dashboard": {
         "title": "Dashboard",
@@ -63,7 +82,9 @@
         "completedDeals": "Completed Deals",
         "totalRevenue": "Total Revenue",
         "recentActivity": "Recent Activity",
-        "quickStats": "Quick Stats"
+        "quickStats": "Quick Stats",
+        "high": "High",
+        "realTime": "Real-time updates."
     },
     "applications": {
         "title": "Applications (CRM)",
@@ -73,12 +94,21 @@
         "currentStage": "Current Stage",
         "contactStatus": "Contact Status",
         "operator": "Assigned Operator",
-        "notAssigned": "Not Assigned",
         "clientProfile": "Client Profile",
         "carInfo": "Car Information",
         "checklist": "Data Verification (Checklist)",
         "operationLog": "Operation Log",
         "addComment": "Add internal note...",
+        "detail": {
+            "title": "Application Details",
+            "currentStage": "Current Stage",
+            "contactStatus": "Contact Status",
+            "clientProfile": "Client Profile",
+            "carInfo": "Car Information",
+            "checklist": "Data Verification",
+            "comments": "Comments / Notes",
+            "addNote": "Add internal note..."
+        },
         "status": {
             "new": "New",
             "confirmed": "Confirmed",
@@ -183,6 +213,8 @@
         "model": "Model",
         "trim": "Trim",
         "year": "Year",
+        "yearShort": "yr",
+        "km": "KM",
         "vin": "VIN",
         "bodyType": "Body Type",
         "engine": "Engine",
@@ -216,11 +248,16 @@
         "editUser": "Edit",
         "firstName": "First Name",
         "lastName": "Last Name",
+        "email": "Email",
+        "noEmail": "No email",
         "role": "Role",
         "active": "Active",
         "blocked": "Blocked",
         "block": "Block",
         "activate": "Activate",
+        "create": {
+            "title": "Create client"
+        },
         "roles": {
             "operator": "Operator",
             "supervisor": "Supervisor",
@@ -239,42 +276,6 @@
         },
         "allRoles": "All Roles",
         "searchPlaceholder": "Search by name, phone..."
-    },
-    "blacklist": {
-        "title": "Blacklist",
-        "subtitle": "Blocked phone numbers",
-        "addToBlacklist": "Add to Blacklist",
-        "phone": "Phone",
-        "reason": "Reason",
-        "blockType": "Block Type",
-        "blockedUntil": "Blocked Until",
-        "addedBy": "Added By",
-        "unblock": "Unblock",
-        "reasons": {
-            "fraud": "Fraud",
-            "spam": "Spam",
-            "abuse": "Abuse",
-            "other": "Other"
-        },
-        "blockTypes": {
-            "permanent": "Permanent",
-            "temporary": "Temporary"
-        }
-    },
-    "payments": {
-        "title": "Payments",
-        "subtitle": "Transaction History",
-        "amount": "Amount",
-        "method": "Payment Method",
-        "date": "Date",
-        "client": "Client",
-        "application": "Application",
-        "statuses": {
-            "pending": "Pending",
-            "completed": "Completed",
-            "failed": "Failed",
-            "refunded": "Refunded"
-        }
     },
     "stories": {
         "title": "Stories Management",
@@ -407,26 +408,9 @@
         "update": "Update Rules",
         "logout": "Sign Out",
         "theme": "Theme",
+        "darkTheme": "Dark Theme",
+        "lightTheme": "Light Theme",
         "language": "Interface Language"
-    },
-    "auth": {
-        "title": "Control Panel",
-        "login": "Login",
-        "register": "Register",
-        "demo": "Demo Access: +998901111111 / admin123",
-        "phone": "Phone (+998...)",
-        "password": "Password",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email (Optional)",
-        "passwordHint": "Password (min. 6 chars)",
-        "signIn": "Sign In",
-        "signingIn": "Signing in...",
-        "signUp": "Sign Up",
-        "signingUp": "Signing up...",
-        "errorAdmin": "Access restricted to administrators",
-        "success": "Registration successful! Please log in.",
-        "errorGeneric": "Server error. Please try again later."
     },
     "toast": {
         "error": "Error",

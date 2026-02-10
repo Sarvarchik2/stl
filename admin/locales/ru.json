@@ -18,6 +18,7 @@
         "date": "Дата",
         "phone": "Телефон",
         "email": "Email",
+        "noEmail": "Нет email",
         "name": "Имя",
         "yes": "Да",
         "no": "Нет",
@@ -29,7 +30,13 @@
         "confirmDelete": "Вы уверены, что хотите удалить?",
         "saveError": "Ошибка сохранения",
         "deleteError": "Ошибка удаления",
-        "optional": "Необязательно"
+        "optional": "Необязательно",
+        "notAssigned": "Не назначен",
+        "next": "Вперед",
+        "searching": "Идет поиск...",
+        "new": "Новый",
+        "billion": "Млрд",
+        "million": "Млн"
     },
     "nav": {
         "dashboard": "Дашборд",
@@ -43,17 +50,30 @@
         "logout": "Выйти"
     },
     "auth": {
+        "title": "Панель управления",
         "login": "Вход",
         "loginTitle": "Вход в систему",
         "loginSubtitle": "Добро пожаловать в STL Auto",
-        "phone": "Номер телефона",
+        "register": "Регистрация",
+        "demo": "Демо доступ: +998901111111 / admin123",
+        "phone": "Телефон",
         "password": "Пароль",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "email": "Email (необязательно)",
+        "passwordHint": "Пароль (мин. 6 симв.)",
         "loginButton": "Войти",
-        "loggingIn": "Вход...",
+        "signIn": "Войти",
+        "signingIn": "Вход...",
+        "signUp": "Зарегистрироваться",
+        "signingUp": "Регистрация...",
         "invalidCredentials": "Неверный номер или пароль",
         "accessDenied": "Доступ запрещен",
         "checkingAccess": "Проверка доступа...",
-        "noPermission": "У вас нет прав для управления персоналом"
+        "noPermission": "У вас нет прав для управления персоналом",
+        "errorAdmin": "Доступ разрешен только администраторам",
+        "success": "Регистрация успешна! Теперь войдите.",
+        "errorGeneric": "Ошибка сервера. Попробуйте позже."
     },
     "dashboard": {
         "title": "Панель управления",
@@ -63,7 +83,9 @@
         "completedDeals": "Завершенные сделки",
         "totalRevenue": "Общий доход",
         "recentActivity": "Последние действия",
-        "quickStats": "Быстрая статистика"
+        "quickStats": "Быстрая статистика",
+        "high": "Высокий",
+        "realTime": "Обновление в реальном времени."
     },
     "applications": {
         "title": "Заявки (CRM)",
@@ -73,12 +95,21 @@
         "currentStage": "Текущий этап",
         "contactStatus": "Статус контакта",
         "operator": "Ответственный оператор",
-        "notAssigned": "Не назначен",
         "clientProfile": "Профиль клиента",
         "carInfo": "Информация об авто",
         "checklist": "Проверка данных (Чек-лист)",
         "operationLog": "Операционный журнал",
         "addComment": "Добавить внутреннюю заметку...",
+        "detail": {
+            "title": "Детали заявки",
+            "currentStage": "Текущий этап",
+            "contactStatus": "Статус контакта",
+            "clientProfile": "Профиль клиента",
+            "carInfo": "Информация об авто",
+            "checklist": "Проверка данных",
+            "comments": "Комментарии / Заметки",
+            "addNote": "Добавить внутреннюю заметку..."
+        },
         "status": {
             "new": "Новая",
             "confirmed": "Подтверждена",
@@ -183,6 +214,8 @@
         "model": "Модель",
         "trim": "Комплектация (Trim)",
         "year": "Год выпуска",
+        "yearShort": "г.в.",
+        "km": "КМ",
         "vin": "VIN номер",
         "bodyType": "Тип кузова",
         "engine": "Двигатель",
@@ -221,6 +254,9 @@
         "blocked": "Заблокирован",
         "block": "Бан",
         "activate": "Активировать",
+        "create": {
+            "title": "Создать клиента"
+        },
         "roles": {
             "operator": "Оператор",
             "supervisor": "Супервизор",
@@ -239,42 +275,6 @@
         },
         "allRoles": "Все роли",
         "searchPlaceholder": "Поиск по имени, телефону..."
-    },
-    "blacklist": {
-        "title": "Черный список",
-        "subtitle": "Заблокированные номера телефонов",
-        "addToBlacklist": "Добавить в черный список",
-        "phone": "Телефон",
-        "reason": "Причина",
-        "blockType": "Тип блокировки",
-        "blockedUntil": "Заблокирован до",
-        "addedBy": "Добавил",
-        "unblock": "Разблокировать",
-        "reasons": {
-            "fraud": "Мошенничество",
-            "spam": "Спам",
-            "abuse": "Нарушение правил",
-            "other": "Другое"
-        },
-        "blockTypes": {
-            "permanent": "Навсегда",
-            "temporary": "Временно"
-        }
-    },
-    "payments": {
-        "title": "Платежи",
-        "subtitle": "История транзакций",
-        "amount": "Сумма",
-        "method": "Способ оплаты",
-        "date": "Дата",
-        "client": "Клиент",
-        "application": "Заявка",
-        "statuses": {
-            "pending": "Ожидает",
-            "completed": "Завершён",
-            "failed": "Ошибка",
-            "refunded": "Возврат"
-        }
     },
     "stories": {
         "title": "Управление Stories",
@@ -407,26 +407,9 @@
         "update": "Обновить правила",
         "logout": "Выйти из системы",
         "theme": "Тема оформления",
+        "darkTheme": "Темная тема",
+        "lightTheme": "Светлая тема",
         "language": "Язык интерфейса"
-    },
-    "auth": {
-        "title": "Панель управления",
-        "login": "Вход",
-        "register": "Регистрация",
-        "demo": "Демо доступ: +998901111111 / admin123",
-        "phone": "Телефон (+998...)",
-        "password": "Пароль",
-        "firstName": "Имя",
-        "lastName": "Фамилия",
-        "email": "Email (необязательно)",
-        "passwordHint": "Пароль (мин. 6 симв.)",
-        "signIn": "Войти",
-        "signingIn": "Вход...",
-        "signUp": "Зарегистрироваться",
-        "signingUp": "Регистрация...",
-        "errorAdmin": "Доступ разрешен только администраторам",
-        "success": "Регистрация успешна! Теперь войдите.",
-        "errorGeneric": "Ошибка сервера. Попробуйте позже."
     },
     "toast": {
         "error": "Ошибка",

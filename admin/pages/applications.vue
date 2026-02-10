@@ -102,8 +102,7 @@
             <div class="flex-center mt-12 gap-3">
                 <button class="btn btn-sm btn-outline btn-minimal" disabled>{{ $t('common.back') }}</button>
                 <button class="btn btn-sm btn-primary shadow-sm" style="min-width: 40px;">1</button>
-                <button class="btn btn-sm btn-outline btn-minimal" disabled>{{ $t('common.close').replace('Закрыть',
-                    'Вперед') }}</button>
+                <button class="btn btn-sm btn-outline btn-minimal" disabled>{{ $t('common.next') }}</button>
             </div>
 
             <div class="spacer"></div>
@@ -140,8 +139,9 @@
                                             <div>
                                                 <div class="font-bold text-primary">{{ car.brand }} {{ car.model }}
                                                 </div>
-                                                <div class="smaller-text text-tertiary">{{ car.year }} г.в. — {{
-                                                    car.source_price_usd?.toLocaleString() }}$</div>
+                                                <div class="smaller-text text-tertiary">{{ car.year }} {{
+                                                    $t('cars.yearShort') }} — {{
+                                                        car.source_price_usd?.toLocaleString() }}$</div>
                                             </div>
                                             <div v-if="createForm.car_id === car.id" class="text-success">✓</div>
                                         </div>
@@ -276,16 +276,16 @@
                             <div class="flex-between mb-4">
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </div>
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
                                         <select v-if="hasRole('operator')" :value="selectedApp.contact_status"
                                             @change="handleContactStatusUpdate(($event.target as HTMLSelectElement).value)"
@@ -319,7 +319,7 @@
                                             class="input input-sm">
                                             <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                            }} {{ op.last_name }}</option>
+                                                }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
@@ -383,7 +383,7 @@
                                         <div class="text-primary font-bold mb-1">{{ selectedApp.car_brand }} {{
                                             selectedApp.car_model }}</div>
                                         <div class="text-accent font-bold">{{ selectedApp.final_price?.toLocaleString()
-                                        }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
+                                            }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
                                         <div class="smaller-text text-tertiary mt-1" v-if="selectedApp.car_year">{{
                                             selectedApp.car_year }} г.в.</div>
                                     </div>
@@ -425,7 +425,7 @@
                                     <div class="ledger-entry">
                                         <div class="flex-between mb-2">
                                             <span class="ledger-user">{{ c.user_first_name }} {{ c.user_last_name
-                                            }}</span>
+                                                }}</span>
                                             <span class="ledger-time">{{ formatDate(c.created_at) }}</span>
                                         </div>
                                         <p class="ledger-text">{{ c.text }}</p>

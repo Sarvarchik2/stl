@@ -57,7 +57,7 @@
                             <div class="flex-between mt-2">
                                 <span class="smaller-text text-tertiary">{{ $t('dashboard.pendingApplications')
                                     }}</span>
-                                <span class="smaller-text text-accent font-bold">High</span>
+                                <span class="smaller-text text-accent font-bold">{{ $t('dashboard.high') }}</span>
                             </div>
                         </div>
                     </div>
@@ -199,7 +199,7 @@
 
                         <div class="mt-6 p-4 rounded bg-bg-secondary border border-light">
                             <p class="smaller-text m-0 text-secondary italic">
-                                "Real-time updates."
+                                "{{ $t('dashboard.realTime') }}"
                             </p>
                         </div>
                     </div>
@@ -215,6 +215,7 @@
 import { ref, onMounted, computed } from 'vue'
 
 const { getStats, getApplications } = useApi()
+const { t } = useI18n()
 
 const stats = ref({
     total_volume_uzs: 0,
@@ -236,10 +237,10 @@ const formatMoney = (amount: number) => {
 
 const formatMoneyUZS = (amount: number) => {
     if (amount >= 1000000000) {
-        return (amount / 1000000000).toFixed(1) + ' Млрд'
+        return (amount / 1000000000).toFixed(1) + ' ' + t('common.billion')
     }
     if (amount >= 1000000) {
-        return (amount / 1000000).toFixed(1) + ' Млн'
+        return (amount / 1000000).toFixed(1) + ' ' + t('common.million')
     }
     return amount.toLocaleString()
 }
@@ -275,7 +276,7 @@ const pieChartStyle = computed(() => {
     }
 })
 
-const { t } = useI18n()
+
 
 const fetchData = async () => {
     loading.value = true

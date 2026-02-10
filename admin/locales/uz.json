@@ -28,7 +28,13 @@
         "objects": "obyektlar",
         "confirmDelete": "O'chirishni xohlaysizmi?",
         "saveError": "Saqlashda xato",
-        "deleteError": "O'chirishda xato"
+        "deleteError": "O'chirishda xato",
+        "notAssigned": "Tayinlanmagan",
+        "next": "Oldinga",
+        "searching": "Qidirilmoqda...",
+        "new": "Yangi",
+        "billion": "Mlrd",
+        "million": "Mln"
     },
     "nav": {
         "dashboard": "Boshqaruv paneli",
@@ -42,17 +48,30 @@
         "logout": "Chiqish"
     },
     "auth": {
+        "title": "Boshqaruv paneli",
         "login": "Kirish",
         "loginTitle": "Tizimga kirish",
         "loginSubtitle": "STL Auto'ga xush kelibsiz",
-        "phone": "Telefon raqami",
+        "register": "Ro'yxatdan o'tish",
+        "demo": "Demo kirish: +998901111111 / admin123",
+        "phone": "Telefon",
         "password": "Parol",
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "email": "Email (ixtiyoriy)",
+        "passwordHint": "Parol (min. 6 belgi)",
         "loginButton": "Kirish",
-        "loggingIn": "Kirish...",
+        "signIn": "Kirish",
+        "signingIn": "Kirilmoqda...",
+        "signUp": "Ro'yxatdan o'tish",
+        "signingUp": "Ro'yxatdan o'tilmoqda...",
         "invalidCredentials": "Noto'g'ri raqam yoki parol",
         "accessDenied": "Kirish taqiqlangan",
         "checkingAccess": "Kirish huquqi tekshirilmoqda...",
-        "noPermission": "Sizda xodimlarni boshqarish huquqi yo'q"
+        "noPermission": "Sizda xodimlarni boshqarish huquqi yo'q",
+        "errorAdmin": "Kirish faqat administratorlarga ruxsat etiladi",
+        "success": "Ro'yxatdan o'tish muvaffaqiyatli! Endi kiring.",
+        "errorGeneric": "Server xatosi. Keyinroq qayta urinib ko'ring."
     },
     "dashboard": {
         "title": "Boshqaruv paneli",
@@ -62,22 +81,26 @@
         "completedDeals": "Tugallangan bitimlar",
         "totalRevenue": "Umumiy daromad",
         "recentActivity": "So'nggi harakatlar",
-        "quickStats": "Tezkor statistika"
+        "quickStats": "Tezkor statistika",
+        "high": "Yuqori",
+        "realTime": "Real vaqt yangilanishlari."
     },
     "applications": {
-        "title": "Arizalar (CRM)",
+        "title": "Arizalar",
         "subtitle": "Mijozlar arizalarini boshqarish",
         "newApplication": "Yangi ariza",
-        "applicationDetails": "Ariza tafsilotlari",
-        "currentStage": "Joriy bosqich",
-        "contactStatus": "Aloqa holati",
+        "detail": {
+            "title": "Ariza tafsilotlari",
+            "currentStage": "Joriy bosqich",
+            "contactStatus": "Aloqa holati",
+            "clientProfile": "Mijoz profili",
+            "carInfo": "Avtomobil haqida",
+            "checklist": "Ma'lumotlarni tekshirish",
+            "comments": "Izohlar / Qaydlar",
+            "addNote": "Ichki izoh qo'shish..."
+        },
         "operator": "Mas'ul operator",
         "notAssigned": "Tayinlanmagan",
-        "clientProfile": "Mijoz profili",
-        "carInfo": "Avtomobil haqida",
-        "checklist": "Ma'lumotlarni tekshirish",
-        "operationLog": "Operatsiya jurnali",
-        "addComment": "Ichki izoh qo'shish...",
         "status": {
             "new": "Yangi",
             "confirmed": "Tasdiqlangan",
@@ -182,6 +205,8 @@
         "model": "Model",
         "trim": "Komplektatsiya",
         "year": "Ishlab chiqarilgan yili",
+        "yearShort": "y.",
+        "km": "KM",
         "vin": "VIN raqam",
         "bodyType": "Kuzov turi",
         "engine": "Dvigatel",
@@ -215,11 +240,16 @@
         "editUser": "Tahrirlash",
         "firstName": "Ism",
         "lastName": "Familiya",
+        "email": "Email",
+        "noEmail": "Email yo'q",
         "role": "Rol",
         "active": "Faol",
         "blocked": "Bloklangan",
         "block": "Bloklash",
         "activate": "Faollashtirish",
+        "create": {
+            "title": "Yangi mijoz yaratish"
+        },
         "roles": {
             "operator": "Operator",
             "supervisor": "Supervayzer",
@@ -238,42 +268,6 @@
         },
         "allRoles": "Barcha rollar",
         "searchPlaceholder": "Ism, telefon bo'yicha qidirish..."
-    },
-    "blacklist": {
-        "title": "Qora ro'yxat",
-        "subtitle": "Bloklangan telefon raqamlari",
-        "addToBlacklist": "Qora ro'yxatga qo'shish",
-        "phone": "Telefon",
-        "reason": "Sabab",
-        "blockType": "Bloklash turi",
-        "blockedUntil": "Gacha bloklangan",
-        "addedBy": "Kim qo'shdi",
-        "unblock": "Blokdan chiqarish",
-        "reasons": {
-            "fraud": "Firibgarlik",
-            "spam": "Spam",
-            "abuse": "Qoidabuzarlik",
-            "other": "Boshqa"
-        },
-        "blockTypes": {
-            "permanent": "Doimiy",
-            "temporary": "Vaqtincha"
-        }
-    },
-    "payments": {
-        "title": "To'lovlar",
-        "subtitle": "Tranzaksiyalar tarixi",
-        "amount": "Summa",
-        "method": "To'lov usuli",
-        "date": "Sana",
-        "client": "Mijoz",
-        "application": "Ariza",
-        "statuses": {
-            "pending": "Kutilmoqda",
-            "completed": "Tugallangan",
-            "failed": "Xato",
-            "refunded": "Qaytarilgan"
-        }
     },
     "stories": {
         "title": "Stories boshqaruvi",
@@ -406,26 +400,9 @@
         "update": "Qoidalarni yangilash",
         "logout": "Chiqish",
         "theme": "Mavzu",
+        "darkTheme": "Tungi rejim",
+        "lightTheme": "Kunduzgi rejim",
         "language": "Interfeys tili"
-    },
-    "auth": {
-        "title": "Boshqaruv paneli",
-        "login": "Kirish",
-        "register": "Ro'yxatdan o'tish",
-        "demo": "Demo kirish: +998901111111 / admin123",
-        "phone": "Telefon (+998...)",
-        "password": "Parol",
-        "firstName": "Ism",
-        "lastName": "Familiya",
-        "email": "Email (ixtiyoriy)",
-        "passwordHint": "Parol (min. 6 belgi)",
-        "signIn": "Kirish",
-        "signingIn": "Kirilmoqda...",
-        "signUp": "Ro'yxatdan o'tish",
-        "signingUp": "Ro'yxatdan o'tilmoqda...",
-        "errorAdmin": "Kirish faqat administratorlarga ruxsat etiladi",
-        "success": "Ro'yxatdan o'tish muvaffaqiyatli! Endi kiring.",
-        "errorGeneric": "Server xatosi. Keyinroq qayta urinib ko'ring."
     },
     "toast": {
         "error": "Xato",

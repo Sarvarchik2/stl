@@ -77,7 +77,8 @@
                                         <div>
                                             <div class="font-medium text-primary">{{ user.first_name }} {{
                                                 user.last_name }}</div>
-                                            <div class="smaller-text text-tertiary">{{ user.email || 'Нет email' }}
+                                            <div class="smaller-text text-tertiary">{{ user.email || $t('users.noEmail')
+                                                }}
                                             </div>
                                         </div>
                                     </div>
@@ -155,13 +156,13 @@
                     </div>
                     <div class="form-group mt-4" v-else>
                         <label class="micro-label mb-2">{{ $t('settings.newPassword') }} ({{ $t('common.optional')
-                            }})</label>
+                        }})</label>
                         <input v-model="form.password" type="password" class="input input-sm"
                             :placeholder="$t('settings.leaveBlank')">
                     </div>
                     <div class="flex gap-3 mt-8">
                         <button class="btn btn-sm flex-grow" @click="showModal = false">{{ $t('common.close')
-                            }}</button>
+                        }}</button>
                         <button class="btn btn-primary btn-sm flex-grow font-bold" @click="saveUser" :disabled="saving">
                             {{ saving ? $t('common.loading') : $t('common.save') }}
                         </button>
