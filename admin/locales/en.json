@@ -143,6 +143,7 @@
             "all": "All",
             "new": "New",
             "confirmed": "Confirmed",
+            "inProgress": "In Progress",
             "paid": "Paid",
             "completed": "Completed",
             "cancelled": "Cancelled"
@@ -198,6 +199,11 @@
             "sold": "Sold",
             "reserved": "Reserved"
         },
+        "statuses": {
+            "available": "Available",
+            "sold": "Sold",
+            "reserved": "Reserved"
+        },
         "modal": {
             "edit": "Edit Car",
             "add": "New Car",
@@ -248,8 +254,10 @@
         "editUser": "Edit",
         "firstName": "First Name",
         "lastName": "Last Name",
-        "email": "Email",
+        "phone": "Phone",
+        "status": "Status",
         "noEmail": "No email",
+        "email": "Email",
         "role": "Role",
         "active": "Active",
         "blocked": "Blocked",
@@ -297,6 +305,7 @@
         "form": {
             "title": "Title (RU/UZ/EN)",
             "icon": "Icon (Preview Image)",
+            "previewHint": "Upload image or enter URL",
             "order": "Order",
             "slides": "Slides",
             "noSlides": "No slides yet",
@@ -372,6 +381,7 @@
             "status": "Status",
             "date": "Date"
         },
+        "amount": "Amount",
         "updating": "Updating records..."
     },
     "settings": {

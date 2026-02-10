@@ -170,7 +170,7 @@ defineEmits(['close'])
     flex-direction: column;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .sidebar-brand {

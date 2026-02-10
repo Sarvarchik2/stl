@@ -132,12 +132,13 @@
             "markDelivered": "Yetkazildi deb belgilash"
         },
         "filters": {
-            "all": "Barchasi",
-            "new": "Yangi",
-            "confirmed": "Tasdiqlangan",
-            "paid": "To'langan",
-            "completed": "Yakunlangan",
-            "cancelled": "Bekor qilingan"
+            "all": "Hammasi",
+            "new": "Yangilar",
+            "confirmed": "Tasdiqlanganlar",
+            "inProgress": "Jarayonda",
+            "paid": "To'langanlar",
+            "completed": "Tugallanganlar",
+            "cancelled": "Bekor qilinganlar"
         },
         "fillRequired": "Avtomobil tanlang va telefon raqamini kiriting",
         "createModal": {
@@ -185,7 +186,12 @@
         "price": "Chakana narx",
         "priceNote": "Narxlar tizimning avtomatik ustamasini (12-15%) o'z ichiga oladi.",
         "status": {
-            "title": "Inventar holati",
+            "title": "Holat",
+            "available": "Mavjud",
+            "sold": "Sotilgan",
+            "reserved": "Band qilingan"
+        },
+        "statuses": {
             "available": "Mavjud",
             "sold": "Sotilgan",
             "reserved": "Band qilingan"
@@ -234,12 +240,14 @@
     },
     "users": {
         "title": "Xodimlar",
-        "subtitle": "Tizim kirishlarini boshqarish",
+        "subtitle": "Tizimga kirish va rollarni boshqarish",
         "user": "Foydalanuvchi",
         "addUser": "Xodim qo'shish",
         "editUser": "Tahrirlash",
         "firstName": "Ism",
         "lastName": "Familiya",
+        "phone": "Telefon",
+        "status": "Holat",
         "email": "Email",
         "noEmail": "Email yo'q",
         "role": "Rol",
@@ -289,6 +297,7 @@
         "form": {
             "title": "Sarlavha (RU/UZ/EN)",
             "icon": "Ikonka (Rasm)",
+            "previewHint": "Rasm yuklang yoki URL kiriting",
             "order": "Tartib",
             "slides": "Slaydlar",
             "noSlides": "Slaydlar yo'q",
@@ -360,10 +369,11 @@
             "client": "Mijoz",
             "vehicle": "Avto",
             "amount": "Summa",
-            "type": "Tur",
-            "status": "Holat",
+            "type": "Turi",
+            "status": "Holati",
             "date": "Sana"
         },
+        "amount": "Summa",
         "updating": "Yangilanmoqda..."
     },
     "settings": {
