@@ -1,5 +1,5 @@
 """Pydantic Schemas - Payments, Documents, Blacklist, Settings."""
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
@@ -57,6 +57,11 @@ class DocumentResponse(BaseModel):
     uploaded_by: UUID
     version: str
     created_at: datetime
+
+    @computed_field
+    @property
+    def download_url(self) -> str:
+        return f"/api/v1/documents/{self.id}/download"
 
     class Config:
         from_attributes = True

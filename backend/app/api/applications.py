@@ -317,54 +317,36 @@ async def get_application(
         selectinload(Application.client),
         selectinload(Application.comments),
         selectinload(Application.status_history),
-        selectinload(Application.documents)
+        selectinload(Application.documents),
+        selectinload(Application.payments)
     )
     result = await db.execute(query)
     app = result.scalar_one_or_none()
     
     # Convert to response
+    # Convert to response (validates nested objects too)
     resp = ApplicationDetailResponse.model_validate(app)
+
+    # Pre-calculate dynamic fields for Nested Schemas AND update the response object
+    if app.car and resp.car:
+        from ..services.pricing import get_final_price
+        final_price, markup = await get_final_price(db, app.car.source_price_usd)
+        
+        # Update the Pydantic model instance, NOT the ORM object
+        resp.car.final_price_usd = final_price
+        resp.car.markup_percent = float(markup)
+
+    # Populate denormalized top-level fields manually (since they don't map 1:1 to Application attrs)
     if app.car:
         resp.car_brand = app.car.brand
         resp.car_model = app.car.model
         resp.car_year = app.car.year
         resp.car_image_url = app.car.image_url
-        # Also set the nested car object
-        from ..schemas.car import CarResponse
-        # Calculate markup for nested car
-        from ..services.pricing import get_final_price
-        final_price, markup = await get_final_price(db, app.car.source_price_usd)
-        car_dict = {
-            "id": app.car.id,
-            "source": app.car.source,
-            "brand": app.car.brand,
-            "make": app.car.make,
-            "model": app.car.model,
-            "year": app.car.year,
-            "source_price_usd": app.car.source_price_usd,
-            "final_price_usd": final_price,
-            "markup_percent": float(markup),
-            "image_url": app.car.image_url,
-            "photos": app.car.photos or [],
-            "features": app.car.features or [],
-            "is_active": app.car.is_active,
-            "exterior_color": app.car.exterior_color,
-            "engine": app.car.engine,
-            "vin": app.car.vin if current_user.role != Role.CLIENT else None
-        }
-        resp.car = car_dict
         
     if app.client:
         resp.client_first_name = app.client.first_name
         resp.client_last_name = app.client.last_name
         resp.client_phone = app.client.phone
-        resp.client = {
-             "id": app.client.id,
-             "first_name": app.client.first_name,
-             "last_name": app.client.last_name,
-             "phone": app.client.phone,
-             "email": app.client.email
-        }
         
     return resp
 

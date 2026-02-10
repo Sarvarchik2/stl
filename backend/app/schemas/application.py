@@ -5,6 +5,9 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 from ..models.enums import ApplicationStatus, ContactStatus, RejectionReason
+from .user import UserResponse
+from .car import CarResponse
+from .common import DocumentResponse, PaymentResponse
 
 
 # --- Checklist ---
@@ -75,18 +78,6 @@ class ApplicationResponse(BaseModel):
         from_attributes = True
 
 
-class ApplicationDetailResponse(ApplicationResponse):
-    """Full details including comments."""
-    operator_comment: Optional[str] = None
-    internal_note: Optional[str] = None
-    cargo_notes: Optional[str] = None
-    
-    # Related data
-    client: Optional[Dict[str, Any]] = None
-    car: Optional[Dict[str, Any]] = None
-    documents: List[Dict[str, Any]] = []
-    payments: List[Dict[str, Any]] = []
-    status_history: List[Dict[str, Any]] = []
 
 
 class ApplicationStatusUpdate(BaseModel):
@@ -170,6 +161,23 @@ class StatusHistoryResponse(BaseModel):
     changed_by: UUID
     reason: Optional[str]
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ApplicationDetailResponse(ApplicationResponse):
+    """Full details including comments."""
+    operator_comment: Optional[str] = None
+    internal_note: Optional[str] = None
+    cargo_notes: Optional[str] = None
+    
+    # Related data
+    client: Optional[UserResponse] = None
+    car: Optional[CarResponse] = None
+    documents: List[DocumentResponse] = []
+    payments: List[PaymentResponse] = []
+    status_history: List[StatusHistoryResponse] = []
 
     class Config:
         from_attributes = True
