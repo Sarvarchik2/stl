@@ -35,6 +35,8 @@
         "next": "Вперед",
         "searching": "Идет поиск...",
         "new": "Новый",
+        "updated": "Обновлено",
+        "fileUploaded": "Файл загружен",
         "billion": "Млрд",
         "million": "Млн"
     },
@@ -97,7 +99,7 @@
         "operator": "Ответственный оператор",
         "clientProfile": "Профиль клиента",
         "carInfo": "Информация об авто",
-        "checklist": "Проверка данных (Чек-лист)",
+        "checklistSummary": "Проверка данных (Чек-лист)",
         "operationLog": "Операционный журнал",
         "addComment": "Добавить внутреннюю заметку...",
         "detail": {
@@ -126,11 +128,13 @@
         },
         "contactStatuses": {
             "not_touched": "Не обработано",
+            "no_answer": "Не отвечает",
             "contacted": "Связались",
+            "callback": "Перезвонить",
             "confirmed_interest": "Интерес подтвержден",
             "rejected": "Отклонен"
         },
-        "checklistItems": {
+        "checklist": {
             "confirmed_interest": "Подтвержден интерес",
             "confirmed_budget": "Подтвержден бюджет",
             "confirmed_timeline": "Сроки согласованы",
@@ -141,10 +145,14 @@
         },
         "actions": {
             "confirm": "Подтвердить",
-            "reject": "Отменить",
+            "reject": "Отклонить",
+            "cancel": "Отмена",
             "signContract": "Подписать договор",
+            "contractSigned": "Договор подписан",
             "markPaid": "Отметить как оплачено",
-            "markDelivered": "Отметить как доставлено"
+            "paid": "Оплачено",
+            "markDelivered": "Отметить как доставлено",
+            "delivered": "Доставлено"
         },
         "filters": {
             "all": "Все",

@@ -33,6 +33,8 @@
         "next": "Oldinga",
         "searching": "Qidirilmoqda...",
         "new": "Yangi",
+        "updated": "Yangilandi",
+        "fileUploaded": "Fayl yuklandi",
         "billion": "Mlrd",
         "million": "Mln"
     },
@@ -117,11 +119,13 @@
         },
         "contactStatuses": {
             "not_touched": "Ko'rilmagan",
+            "no_answer": "Javob bermadi",
             "contacted": "Bog'lanildi",
+            "callback": "Qayta qo'ng'iroq",
             "confirmed_interest": "Qiziqish tasdiqlandi",
             "rejected": "Rad etildi"
         },
-        "checklistItems": {
+        "checklist": {
             "confirmed_interest": "Qiziqish tasdiqlandi",
             "confirmed_budget": "Byudjet tasdiqlandi",
             "confirmed_timeline": "Muddatlar kelishildi",
@@ -132,10 +136,14 @@
         },
         "actions": {
             "confirm": "Tasdiqlash",
-            "reject": "Bekor qilish",
+            "reject": "Rad etish",
+            "cancel": "Bekor qilish",
             "signContract": "Shartnoma imzolash",
+            "contractSigned": "Shartnoma imzolandi",
             "markPaid": "To'langan deb belgilash",
-            "markDelivered": "Yetkazildi deb belgilash"
+            "paid": "To'landi",
+            "markDelivered": "Yetkazildi deb belgilash",
+            "delivered": "Yetkazildi"
         },
         "filters": {
             "all": "Hammasi",

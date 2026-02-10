@@ -34,6 +34,8 @@
         "next": "Next",
         "searching": "Searching...",
         "new": "New",
+        "updated": "Updated",
+        "fileUploaded": "File Uploaded",
         "billion": "Bn",
         "million": "M"
     },
@@ -96,7 +98,7 @@
         "operator": "Assigned Operator",
         "clientProfile": "Client Profile",
         "carInfo": "Car Information",
-        "checklist": "Data Verification (Checklist)",
+        "checklistSummary": "Data Verification (Checklist)",
         "operationLog": "Operation Log",
         "addComment": "Add internal note...",
         "detail": {
@@ -125,11 +127,13 @@
         },
         "contactStatuses": {
             "not_touched": "Not Processed",
+            "no_answer": "No Answer",
             "contacted": "Contacted",
+            "callback": "Call Back",
             "confirmed_interest": "Interest Confirmed",
             "rejected": "Rejected"
         },
-        "checklistItems": {
+        "checklist": {
             "confirmed_interest": "Interest Confirmed",
             "confirmed_budget": "Budget Confirmed",
             "confirmed_timeline": "Timeline Agreed",
@@ -140,10 +144,14 @@
         },
         "actions": {
             "confirm": "Confirm",
-            "reject": "Cancel",
+            "reject": "Reject",
+            "cancel": "Cancel",
             "signContract": "Sign Contract",
+            "contractSigned": "Contract Signed",
             "markPaid": "Mark as Paid",
-            "markDelivered": "Mark as Delivered"
+            "paid": "Paid",
+            "markDelivered": "Mark as Delivered",
+            "delivered": "Delivered"
         },
         "filters": {
             "all": "All",

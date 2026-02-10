@@ -276,16 +276,16 @@
                             <div class="flex-between mb-4">
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
-                                        }}</label>
+                                    }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </div>
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
-                                        }}</label>
+                                    }}</label>
                                     <div class="mt-1">
                                         <select v-if="hasRole('operator')" :value="selectedApp.contact_status"
                                             @change="handleContactStatusUpdate(($event.target as HTMLSelectElement).value)"
@@ -319,7 +319,7 @@
                                             class="input input-sm">
                                             <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                                }} {{ op.last_name }}</option>
+                                            }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
@@ -383,7 +383,7 @@
                                         <div class="text-primary font-bold mb-1">{{ selectedApp.car_brand }} {{
                                             selectedApp.car_model }}</div>
                                         <div class="text-accent font-bold">{{ selectedApp.final_price?.toLocaleString()
-                                            }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
+                                        }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
                                         <div class="smaller-text text-tertiary mt-1" v-if="selectedApp.car_year">{{
                                             selectedApp.car_year }} г.в.</div>
                                     </div>
@@ -493,7 +493,7 @@
                                     <div class="ledger-entry">
                                         <div class="flex-between mb-2">
                                             <span class="ledger-user">{{ c.user_first_name }} {{ c.user_last_name
-                                                }}</span>
+                                            }}</span>
                                             <span class="ledger-time">{{ formatDate(c.created_at) }}</span>
                                         </div>
                                         <p class="ledger-text">{{ c.text }}</p>
@@ -787,29 +787,31 @@ const updateStatus = async (newStatus: string) => {
     if (newStatus === 'confirmed') {
         const contactStatus = selectedApp.value.contact_status
         if (!['contacted', 'confirmed_interest'].includes(contactStatus)) {
-            toast.warning('Невозможно подтвердить', 'Сначала измените статус контакта на "Связались" или "Интерес подтвержден"')
+            toast.warning(t('applications.validation.cannotConfirm'), t('applications.validation.changeContactStatus'))
             return
         }
 
         const missing = Object.entries(selectedApp.value.checklist)
             .filter(([_, v]) => !v)
             .map(([k, _]) => translateKey(k))
+            .join(', ')
 
         if (missing.length > 0) {
-            toast.warning('Заполните чек-лист', `Необходимо отметить: ${missing.join(', ')}`)
+            toast.warning(t('applications.validation.fillChecklist'), `${t('applications.validation.checklistRequired')}: ${missing}`)
             return
         }
     }
 
-    const reason = prompt('Введите причину изменения статуса:', 'Обновление через админ-панель')
+    const reason = prompt(t('applications.actions.confirm'), t('common.updated'))
     if (reason === null) return
 
     try {
         await updateApplicationStatus(selectedApp.value.id, newStatus, reason)
         selectedApp.value.status = newStatus
         fetchApplications()
+        toast.success(t('common.success'), t('common.updated'))
     } catch (err: any) {
-        toast.error('Ошибка', err?.data?.detail || 'Не удалось обновить статус')
+        toast.error(t('common.error'), err?.data?.detail || t('applications.errors.updateStatusFailed'))
     }
 }
 
@@ -1331,5 +1333,9 @@ definePageMeta({ layout: false })
     .checklist-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.hidden {
+    display: none;
 }
 </style>
