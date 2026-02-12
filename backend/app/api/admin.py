@@ -181,19 +181,53 @@ async def override_status(
 
 
 @router.get("/stats")
-async def get_stats(db: DB, user: AdminUser):
+async def get_stats(
+    db: DB, 
+    user: AdminUser,
+    period: str = Query("all", enum=["day", "week", "month", "all"])
+):
     """
     Get real-time dashboard statistics.
+    Optional period filter: day, week, month, all.
     """
     from sqlalchemy import func
+    from datetime import datetime, timedelta
     from ..models.car import Car
     from ..models.enums import ApplicationStatus
     
-    # 1. Total Volume (Sum of final_price or snapshot)
-    volume_query = select(func.sum(Application.final_price)).where(
+    # Time filtering
+    start_date = None
+    now = datetime.now()
+    if period == "day":
+        start_date = now - timedelta(days=1)
+    elif period == "week":
+        start_date = now - timedelta(weeks=1)
+    elif period == "month":
+        start_date = now - timedelta(days=30)
+        
+    def apply_filter(q, date_col):
+        if start_date:
+            return q.where(date_col >= start_date)
+        return q
+
+    # 1. Total Volume (Revenue) & Profit
+    # Revenue = Sum(final_price)
+    # Profit = Sum(final_price - source_price_snapshot)
+    
+    # Note: source_price_snapshot might be null for old records, handle gracefully
+    profit_expr = Application.final_price - func.coalesce(Application.source_price_snapshot, 0)
+    
+    financials_query = select(
+        func.sum(Application.final_price).label("revenue"),
+        func.sum(profit_expr).label("profit")
+    ).where(
         Application.status.in_([ApplicationStatus.DELIVERED, ApplicationStatus.COMPLETED])
     )
-    total_volume = (await db.execute(volume_query)).scalar() or 0
+    financials_query = apply_filter(financials_query, Application.updated_at) # Use updated_at for completed deals
+    
+    fin_result = (await db.execute(financials_query)).one()
+    total_volume = fin_result.revenue or 0
+    total_profit = fin_result.profit or 0
     
     # 2. In Pipeline (Active applications)
     pipeline_query = select(func.count(Application.id)).where(
@@ -203,37 +237,52 @@ async def get_stats(db: DB, user: AdminUser):
             ApplicationStatus.IN_TRANSIT, ApplicationStatus.WAITING_PAYMENT
         ])
     )
+    # Pipeline is usually "current", so maybe date filter applies to created_at?
+    # User likely wants "New applications in this period" OR "Current pipeline state".
+    # Usually Dashboard count is state-based, not time-based. 
+    # BUT if filtering by "This Month", maybe they want "Created this month and currently in pipeline"? 
+    # Let's apply filter to created_at for pipeline to show "Volume of work generated in period"
+    pipeline_query = apply_filter(pipeline_query, Application.created_at)
     in_pipeline = (await db.execute(pipeline_query)).scalar() or 0
     
-    # 3. Fleet Status
+    # 3. Fleet Status (Snapshot, not time filtered usually)
     total_cars_query = select(func.count(Car.id)).where(Car.is_active == True)
     total_cars = (await db.execute(total_cars_query)).scalar() or 0
     
-    # 4. Conversion Rate
+    # 4. Conversion Rate (Based on created_at in period)
     total_apps_query = select(func.count(Application.id))
+    total_apps_query = apply_filter(total_apps_query, Application.created_at)
     total_apps = (await db.execute(total_apps_query)).scalar() or 0
     
     sold_query = select(func.count(Application.id)).where(
         Application.status.in_([ApplicationStatus.COMPLETED, ApplicationStatus.DELIVERED])
     )
+    sold_query = apply_filter(sold_query, Application.updated_at) # Closed in period
     sold_count = (await db.execute(sold_query)).scalar() or 0
     
+    # Conversion = Sold (in period) / Created (in period) ? 
+    # Or Sold (in period) / Total Apps? 
+    # Standard is usually Closed / Opened (if cohort) or just Closed / Total Active. 
+    # Let's keep smooth logic: Sold / Total Apps (Created in period)
     conversion = (sold_count / total_apps * 100) if total_apps > 0 else 0
     
-    # Recent Activity (Last 5 logs)
+    # Prior logic used logs for "Recent Activity". 
+    # If user wants "5 last actions" filtered by date, we can filter logs too.
     logs_query = select(AuditLog).order_by(AuditLog.created_at.desc()).limit(5)
+    logs_query = apply_filter(logs_query, AuditLog.created_at)
     logs = (await db.execute(logs_query)).scalars().all()
-    
     
     # 5. Canceled/Rejected
     canceled_query = select(func.count(Application.id)).where(
         Application.status == ApplicationStatus.CANCELLED
     )
+    canceled_query = apply_filter(canceled_query, Application.updated_at)
     canceled_count = (await db.execute(canceled_query)).scalar() or 0
 
     return {
-        "total_volume_uzs": float(total_volume) * 12500, # Approx UZS conversion
+        "total_volume_uzs": float(total_volume) * 12500,
         "total_volume_usd": float(total_volume),
+        "total_profit_usd": float(total_profit),
         "in_pipeline": in_pipeline,
         "fleet_count": total_cars,
         "conversion_rate": round(conversion, 1),

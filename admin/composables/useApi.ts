@@ -87,8 +87,9 @@ export const useApi = () => {
     }
 
     // Admin Specific
-    const getStats = async () => {
+    const getStats = async (params?: any) => {
         return await $fetch(`${apiBase}/admin/stats`, {
+            params,
             headers: headers.value
         })
     }

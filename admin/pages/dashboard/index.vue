@@ -7,12 +7,20 @@
                         <h1 class="text-thin">{{ $t('dashboard.title') }}</h1>
                         <p class="text-secondary text-light">{{ $t('dashboard.subtitle') }}</p>
                     </div>
-                    <div class="header-actions flex gap-3">
-                        <button class="btn btn-outline btn-sm hover-accent flex-grow" @click="fetchData">
-                            <span class="mr-2">↻</span> {{ $t('common.actions') }}
+                   <div class="header-actions flex gap-3 items-center">
+                        <div class="filter-group">
+                            <select v-model="selectedPeriod" @change="fetchData" class="select-filter">
+                                <option value="all">{{ $t('common.allTime') }}</option>
+                                <option value="month">{{ $t('common.thisMonth') }}</option>
+                                <option value="week">{{ $t('common.thisWeek') }}</option>
+                                <option value="day">{{ $t('common.today') }}</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline btn-sm hover-accent" @click="fetchData">
+                            <span class="mr-2">↻</span>
                         </button>
                         <NuxtLink to="/applications"
-                            class="btn btn-primary btn-sm shadow-lg flex-grow flex items-center justify-center text-white no-underline">
+                            class="btn btn-primary btn-sm shadow-lg flex items-center justify-center text-white no-underline">
                             <span class="mr-2">+</span> {{ $t('applications.newApplication') }}
                         </NuxtLink>
                     </div>
@@ -23,17 +31,33 @@
         <div class="container">
             <!-- Priority Metrics Cards -->
             <section class="metrics-grid mb-10">
-                <div class="grid grid-4 gap-6">
-                    <!-- Revenue Pulse -->
+                <div class="grid grid-5 gap-4">
+                    <!-- Turnover (Volume) -->
                     <div class="metric-card glass-card shadow-sm">
                         <div class="flex-between mb-4">
-                            <label class="section-label">{{ $t('dashboard.totalRevenue') }}</label>
+                            <label class="section-label">{{ $t('dashboard.turnover') }}</label>
                             <span class="trend-tag success">USD</span>
                         </div>
                         <div class="metric-value text-primary font-bold">
                             {{ formatMoney(stats.total_volume_usd) }}
                         </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Gross Sales</span>
+                        </div>
+                    </div>
 
+                    <!-- Profit (Income) -->
+                    <div class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('dashboard.income') }}</label>
+                            <span class="trend-tag success">USD</span>
+                        </div>
+                        <div class="metric-value text-success font-bold">
+                            +{{ formatMoney(stats.total_profit_usd || 0) }}
+                        </div>
+                         <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Net Margin</span>
+                        </div>
                     </div>
 
                     <!-- Pipeline Health -->
@@ -48,12 +72,7 @@
                         </div>
                         <div class="metric-footer mt-4">
                             <div class="progress-mini">
-                                <div class="progress-fill accent" style="width: 65%;"></div>
-                            </div>
-                            <div class="flex-between mt-2">
-                                <span class="smaller-text text-tertiary">{{ $t('dashboard.pendingApplications')
-                                    }}</span>
-                                <span class="smaller-text text-accent font-bold">{{ $t('dashboard.high') }}</span>
+                                <div class="progress-fill accent" :style="{ width: stats.total_applications ? (stats.in_pipeline / stats.total_applications * 100) + '%' : '0%' }"></div>
                             </div>
                         </div>
                     </div>
@@ -65,7 +84,7 @@
                             <span class="trend-tag neutral">{{ $t('cars.statuses.available') }}</span>
                         </div>
                         <div class="metric-value text-primary font-bold">
-                            {{ stats.fleet_count }} <span class="smaller-text text-tertiary">{{ $t('nav.cars') }}</span>
+                            {{ stats.fleet_count }}
                         </div>
                         <div class="metric-footer mt-4">
                             <div class="flex items-center gap-2 mb-1">
@@ -106,43 +125,38 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th class="pl-8">ID</th>
-                                    <th>{{ $t('applications.createModal.client') }}</th>
-                                    <th>{{ $t('applications.createModal.selectCar') }}</th>
-                                    <th>{{ $t('payments.amount') }}</th>
-                                    <th class="pr-8">{{ $t('common.status') }}</th>
+                                    <th class="pl-8">{{ $t('common.user') }}</th>
+                                    <th>{{ $t('common.action') }}</th>
+                                    <th>{{ $t('common.target') }}</th>
+                                    <th class="pr-8 text-right">{{ $t('common.date') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-if="loading" v-for="i in 3" :key="i">
-                                    <td colspan="5" class="py-12 text-center text-tertiary smaller-text">
+                                    <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
                                         {{ $t('common.loading') }}
                                     </td>
                                 </tr>
-                                <tr v-else-if="recentApplications.length === 0">
-                                    <td colspan="5" class="py-12 text-center text-tertiary smaller-text">
+                                <tr v-else-if="!stats.recent_activity || stats.recent_activity.length === 0">
+                                    <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
                                         {{ $t('common.noData') }}
                                     </td>
                                 </tr>
-                                <tr v-else v-for="app in recentApplications" :key="app.id"
-                                    class="premium-row clickable-row"
-                                    @click="$router.push(`/applications/${app.fullId}`)">
-                                    <td class="pl-8 py-5">
-                                        <code class="id-badge-minimal">#{{ app.id }}</code>
+                                <tr v-else v-for="log in stats.recent_activity" :key="log.id" class="premium-row">
+                                    <td class="pl-8 py-4">
+                                        <div class="font-bold text-primary">{{ log.user_id ? $t('users.roles.admin') : 'System' }}</div>
+                                        <div class="smaller-text text-tertiary monospace">#{{ log.user_id ? log.user_id.substring(0,6) : 'SYS' }}</div>
                                     </td>
                                     <td>
-                                        <div class="font-bold text-primary">{{ app.client }}</div>
+                                        <span class="badge neutral">{{ formatAction(log.action) }}</span>
                                     </td>
                                     <td>
-                                        <div class="text-secondary font-medium">{{ app.car }}</div>
+                                        <div class="text-secondary font-medium">{{ formatEntity(log.entity_type) }}</div>
+                                        <div class="smaller-text text-tertiary">#{{ log.entity_id ? log.entity_id.substring(0,8) : '-' }}</div>
                                     </td>
-                                    <td>
-                                        <div class="font-bold">{{ formatMoney(app.amount) }}</div>
-                                        <div class="smaller-text text-tertiary">USD</div>
-                                    </td>
-                                    <td class="pr-8">
-                                        <span class="badge" :class="app.status.toLowerCase()">{{
-                                            translateStatus(app.status) }}</span>
+                                    <td class="pr-8 text-right">
+                                        <div class="text-secondary">{{ new Date(log.created_at).toLocaleTimeString() }}</div>
+                                        <div class="smaller-text text-tertiary">{{ new Date(log.created_at).toLocaleDateString() }}</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -213,22 +227,36 @@ import { ref, onMounted, computed } from 'vue'
 const { getStats, getApplications } = useApi()
 const { t } = useI18n()
 
+const selectedPeriod = ref('all')
+
 const stats = ref({
     total_volume_uzs: 0,
     total_volume_usd: 0,
+    total_profit_usd: 0,
     in_pipeline: 0,
     fleet_count: 0,
     conversion_rate: 0,
     total_applications: 0,
     sold_count: 0,
-    canceled_count: 0
+    canceled_count: 0,
+    recent_activity: [] as any[]
 })
 
 const recentApplications = ref<any[]>([])
 const loading = ref(true)
 
 const formatMoney = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount)
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount || 0)
+}
+
+const formatAction = (action: string) => {
+    if (!action) return '-'
+    return action.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
+const formatEntity = (type: string) => {
+    if (!type) return '-'
+    return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 
@@ -270,12 +298,19 @@ const fetchData = async () => {
     loading.value = true
     try {
         const [statsData, appsRes]: any = await Promise.all([
-            getStats(),
+            getStats({ period: selectedPeriod.value }),
             getApplications({ limit: 5 })
         ])
 
         stats.value = statsData
 
+        // If user wants "Recent Actions" to be actual Audit Logs, we should switch the UI.
+        // For now, based on screenshot, they are showing Applications table.
+        // We will stick to Applications but maybe they want it filtered?
+        // Let's reload applications if they change date filter?
+        // Usually "Recent Applications" means just latest created, regardless of stats filter.
+        // But "Recent Actions" (Audit Logs) should be filtered. 
+        
         recentApplications.value = (appsRes.items || []).map((a: any) => ({
             id: a.id.substring(0, 8),
             fullId: a.id,
@@ -310,22 +345,80 @@ useHead({
     margin-bottom: var(--spacing-xl);
 }
 
+.grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1400px) {
+    .grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .grid-5 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-5 {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Metric Cards */
 .metric-card {
-    padding: 1.75rem;
-    background: var(--color-bg-primary);
+    padding: 1.5rem;
+    background: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    transition: var(--transition);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--color-accent);
+    opacity: 0.1;
 }
 
 .metric-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-text-tertiary);
+    transform: translateY(-4px);
+    border-color: var(--color-accent);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.metric-card:hover::after {
+    opacity: 1;
 }
 
 .metric-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     letter-spacing: -0.02em;
+    margin: 0.5rem 0;
+}
+
+.metric-value.text-success {
+    color: var(--color-success);
+}
+
+.badge.neutral {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
+}
+
+.monospace {
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .section-label {
@@ -526,5 +619,22 @@ useHead({
 
 .cancel-dot {
     background: var(--color-border);
+}
+
+.select-filter {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.select-filter:focus {
+    outline: none;
+    border-color: var(--color-primary);
 }
 </style>
