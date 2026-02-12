@@ -52,9 +52,7 @@
                         <!-- Business Rules Tab -->
                         <div v-if="activeTab === 'business'" class="tab-pane">
                             <h3 class="mb-6">{{ $t('settings.business.title') }}</h3>
-                            <div class="card bg-hover p-4 mb-8">
-                                <p class="small-text text-secondary m-0">{{ $t('settings.business.description') }}</p>
-                            </div>
+
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="label mb-1 block">{{ $t('settings.business.markup') }}</label>
@@ -63,35 +61,13 @@
                                     <p class="smaller-text text-tertiary mt-1">{{ $t('settings.business.markupHint') }}
                                     </p>
                                 </div>
-                                <div class="form-group">
-                                    <label class="label mb-1 block">{{ $t('settings.business.downPayment') }}</label>
-                                    <input v-model.number="settings.min_down_payment" type="number" class="input">
-                                </div>
-                                <div class="form-group">
-                                    <label class="label mb-1 block">{{ $t('settings.business.blacklist') }}</label>
-                                    <input v-model.number="settings.blacklist_threshold" type="number" class="input">
-                                    <p class="smaller-text text-tertiary mt-1">{{ $t('settings.business.blacklistHint')
-                                        }}
-                                    </p>
-                                </div>
+
                             </div>
                             <button class="btn btn-primary mt-8" @click="saveSettings" :disabled="saving">{{
                                 $t('settings.update') }}</button>
                         </div>
 
-                        <!-- API tab placeholder -->
-                        <div v-if="activeTab === 'api'" class="tab-pane">
-                            <h3 class="mb-6">{{ $t('settings.api.title') }}</h3>
-                            <div class="form-group mb-4">
-                                <label class="label mb-1 block">{{ $t('settings.api.base') }}</label>
-                                <input v-model="settings.api_base" type="text" class="input text-secondary" readonly>
-                            </div>
-                            <div class="form-group mb-6">
-                                <label class="label mb-1 block">{{ $t('settings.api.maps') }}</label>
-                                <input type="password" value="************************" class="input" readonly>
-                            </div>
-                            <p class="text-tertiary small-text">{{ $t('settings.api.hint') }}</p>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -110,8 +86,7 @@ const router = useRouter()
 
 const tabs = computed(() => [
     { id: 'general', label: t('settings.tabs.general') },
-    { id: 'business', label: t('settings.tabs.business') },
-    { id: 'api', label: t('settings.tabs.api') }
+    { id: 'business', label: t('settings.tabs.business') }
 ])
 
 const activeTab = ref('general')
@@ -121,10 +96,7 @@ const settings = ref({
     company_name: 'STL Auto',
     contact_email: 'admin@stlauto.uz',
     support_phone: '+998 90 000 00 00',
-    markup_percent: 15.0,
-    min_down_payment: 30,
-    blacklist_threshold: 3,
-    api_base: 'http://localhost:8000/api/v1'
+    markup_percent: 15.0
 })
 
 const fetchSettings = async () => {
@@ -149,7 +121,12 @@ const saveSettings = async () => {
             return updateSetting(key, value)
         })
         await Promise.all(promises)
-        toast.success(t('common.success'))
+        
+        if (activeTab.value === 'business') {
+            toast.success(t('common.success'), t('settings.markupUpdated', { value: settings.value.markup_percent }))
+        } else {
+            toast.success(t('common.success'), t('settings.saved'))
+        }
     } catch (err: any) {
         toast.error(t('common.error'), err?.data?.detail || 'Failed to save settings')
     } finally {

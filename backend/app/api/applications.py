@@ -374,23 +374,16 @@ async def update_status(
     # Business Rules
     
     # 1. CONFIRMED requires positive contact + Checklist (unless Override logic needed)
+    # 1. CONFIRMED requires positive contact + Checklist (unless Override logic needed)
     if new_status == ApplicationStatus.CONFIRMED:
-        # Allow both CONTACTED and CONFIRMED_INTEREST
-        allowed_contact = [ContactStatus.CONTACTED, ContactStatus.CONFIRMED_INTEREST]
-        if app.contact_status not in allowed_contact:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                detail=f"Cannot confirm: Contact status must be 'Contacted' or 'Confirmed Interest' (current: {app.contact_status})"
-            )
+        # Relaxed validation per user request: No contact status check, only visit required
+        
         # Check checklist
         checklist = app.checklist or {}
-        # We only require the first few items to be checked for basic confirmation if needed, 
-        # but let's keep it as is but maybe more informative
-        if not all(checklist.values()):
-             missing = [k for k, v in checklist.items() if not v]
+        if not checklist.get("agreed_visit"):
              raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, 
-                detail=f"Cannot confirm: Checklist incomplete. Missing: {', '.join(missing)}"
+                detail="Cannot confirm: Visit must be scheduled"
             )
             
     # 2. PAID requires Payment Confirmation (handled in payments module usually, but check here)

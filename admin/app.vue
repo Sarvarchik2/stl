@@ -22,6 +22,14 @@
         <main class="main-container" :class="{ 'full-width': !isLoggedIn }">
             <NuxtPage />
         </main>
+
+        <Toast 
+            v-model="toast.visible"
+            :title="toast.title"
+            :message="toast.message"
+            :type="toast.type"
+            :duration="toast.duration"
+        />
     </div>
 </template>
 
@@ -32,6 +40,8 @@ const isSidebarOpen = ref(false)
 const route = useRoute()
 const router = useRouter()
 const theme = ref('light')
+
+const { state: toast } = useToast()
 
 // Simple check for login state based on route
 const isLoggedIn = computed(() => {

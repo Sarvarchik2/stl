@@ -783,19 +783,9 @@ const updateStatus = async (newStatus: string) => {
 
     // Business validation on frontend
     if (newStatus === 'confirmed') {
-        const contactStatus = selectedApp.value.contact_status
-        if (!['contacted', 'confirmed_interest'].includes(contactStatus)) {
-            toast.warning(t('applications.validation.cannotConfirm'), t('applications.validation.changeContactStatus'))
-            return
-        }
-
-        const missing = Object.entries(selectedApp.value.checklist)
-            .filter(([_, v]) => !v)
-            .map(([k, _]) => translateKey(k))
-            .join(', ')
-
-        if (missing.length > 0) {
-            toast.warning(t('applications.validation.fillChecklist'), `${t('applications.validation.checklistRequired')}: ${missing}`)
+        // Relaxed validation: Only require 'agreed_visit' per user request
+        if (!selectedApp.value.checklist.agreed_visit) {
+            toast.warning(t('applications.validation.cannotConfirm'), t('applications.validation.visitRequired'))
             return
         }
     }

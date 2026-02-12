@@ -87,6 +87,42 @@ async def list_settings(db: DB, user: AdminUser):
     return result.scalars().all()
 
 
+@router.patch("/settings/{key}", response_model=SettingResponse)
+async def update_setting(
+    key: str,
+    setting_in: SettingUpdate,
+    db: DB,
+    user: AdminUser
+):
+    """Update a system setting."""
+    result = await db.execute(select(Setting).where(Setting.key == key))
+    setting = result.scalar_one_or_none()
+    
+    if not setting:
+        # Create new setting if it doesn't exist
+        setting = Setting(key=key, value=str(setting_in.value))
+        db.add(setting)
+    else:
+        setting.value = str(setting_in.value)
+            
+    setting.updated_by = user.id
+    
+    await log_action(
+        db=db,
+        action="update_setting",
+        entity_type="setting",
+        entity_id=setting.id,
+        user_id=user.id,
+        old_value={"value": setting.value} if setting.id else None,
+        new_value={"value": setting_in.value, "key": key},
+        reason=setting_in.reason
+    )
+    
+    await db.commit()
+    await db.refresh(setting)
+    return setting
+
+
 @router.patch("/applications/{app_id}/status", response_model=dict)
 async def override_status(
     app_id: UUID,

@@ -186,7 +186,8 @@
             "cannotConfirm": "Cannot confirm",
             "changeContactStatus": "First change contact status to \"Contacted\" or \"Interest Confirmed\"",
             "fillChecklist": "Complete the checklist",
-            "checklistRequired": "Must be checked"
+            "checklistRequired": "Must be checked",
+            "visitRequired": "Visit must be scheduled to confirm"
         },
         "errors": {
             "createFailed": "Failed to create application",
@@ -431,6 +432,8 @@
         "save": "Save Changes",
         "saving": "Saving...",
         "update": "Update Rules",
+        "saved": "Settings saved",
+        "markupUpdated": "Markup updated: {value}%",
         "logout": "Sign Out",
         "theme": "Theme",
         "darkTheme": "Dark Theme",

@@ -98,6 +98,9 @@
                                         {{ (car.final_price_usd || (car.source_price_usd * 1.15)).toLocaleString() }}
                                         <span class="smaller-text font-normal text-tertiary">USD</span>
                                     </div>
+                                    <div v-if="hasRole('manager')" class="text-secondary smaller-text" style="font-size: 0.7rem; opacity: 0.7;">
+                                        {{ $t('cars.sourcePrice') }}: {{ car.source_price_usd?.toLocaleString() }} USD
+                                    </div>
                                 </div>
                                 <div class="card-actions" @click.stop v-if="hasRole('manager')">
                                     <button class="btn-circle-action" @click="openModal(car)">
@@ -271,6 +274,15 @@
                                     <input v-model.number="form.source_price_usd" type="number" class="input input-sm">
                                 </div>
                                 <div class="form-group">
+                                    <label class="micro-label mb-2">{{ $t('cars.price') }} (Approx {{ form.markup_percent }}% markup)</label>
+                                    <div class="input input-sm flex items-center bg-disabled text-accent font-bold">
+                                        {{ ((form.source_price_usd || 0) * (1 + (form.markup_percent || 15) / 100)).toLocaleString(undefined, { maximumFractionDigits: 2 }) }} USD
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-2 gap-4">
+                                <div class="form-group">
                                     <label class="micro-label mb-2">{{ $t('common.status') }}</label>
                                     <select v-model="form.status" class="input input-sm">
                                         <option value="available">{{ $t('cars.status.available') }}</option>
@@ -439,6 +451,7 @@ const form = ref<any>({
     mpg_highway: null,
     vin: '',
     source_price_usd: 0,
+    markup_percent: 15,
     dealer: '',
     location_city: '',
     location_state: '',
@@ -503,6 +516,7 @@ const openModal = (car?: any) => {
         // Load all fields safely
         try {
             form.value = JSON.parse(JSON.stringify(car)) // Deep copy safety
+            if (!form.value.markup_percent) form.value.markup_percent = 15
 
             // Handle photos safely
             let photos = car.photos
@@ -533,7 +547,7 @@ const openModal = (car?: any) => {
         editingId.value = null
         form.value = {
             brand: '', model: '', year: 2024, mileage: 0, status: 'available',
-            source_price_usd: 0, trim: '', body_type: '', exterior_color: '',
+            source_price_usd: 0, markup_percent: 15, trim: '', body_type: '', exterior_color: '',
             interior_color: '', engine: '', transmission: '', photos: [], features: []
         }
         photosString.value = ''

@@ -1,6 +1,6 @@
 """Pydantic Schemas - Payments, Documents, Blacklist, Settings."""
 from pydantic import BaseModel, Field, computed_field
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
@@ -125,7 +125,7 @@ class SettingResponse(BaseModel):
 
 
 class SettingUpdate(BaseModel):
-    value: str
+    value: Any
     reason: Optional[str] = None
 
 
