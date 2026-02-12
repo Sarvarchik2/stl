@@ -38,7 +38,7 @@
         <button class="btn btn-primary btn-sm" @click="openCreateStory">{{ $t('stories.addStory') }}</button>
       </div>
 
-      <div v-else class="grid grid-3 gap-6">
+      <div v-else class="stories-grid gap-6">
         <div v-for="story in stories" :key="story.id" class="card story-card overflow-hidden">
           <div class="story-preview-bg" :style="{ backgroundImage: `url(${story.preview_image})` }">
             <div class="story-overlay">
@@ -463,6 +463,12 @@ definePageMeta({ layout: false })
   background: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 2rem;
+}
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .story-card {

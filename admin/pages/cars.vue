@@ -66,7 +66,7 @@
 
             <!-- Grid View -->
             <div v-if="viewMode === 'grid'" class="grid-view animate-slide-up">
-                <div class="grid grid-3 gap-8">
+                <div class="cars-grid gap-8">
                     <div v-if="loading && cars.length === 0" v-for="i in 6" :key="i" class="skeleton-card"></div>
 
                     <div v-else v-for="car in filteredCars" :key="car.id" class="car-pill-card clickable-row"
@@ -621,6 +621,12 @@ definePageMeta({ layout: false })
 }
 
 /* Grid View Improvements */
+.cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
 .car-pill-card {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
