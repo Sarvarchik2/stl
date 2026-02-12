@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from typing import List
 
-from ..dependencies import DB, SupervisorUser, AdminUser
+from ..dependencies import DB, AdminUser
 from ..models.blacklist import Blacklist
 from ..schemas.common import (
     BlacklistCreate, BlacklistUpdate, BlacklistListResponse, BlacklistResponse
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/blacklist", tags=["Blacklist"])
 @router.get("", response_model=BlacklistListResponse)
 async def list_blacklist(
     db: DB,
-    user: SupervisorUser,
+    user: AdminUser,
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100)
 ):
@@ -49,7 +49,7 @@ async def list_blacklist(
 @router.post("", response_model=BlacklistResponse)
 async def add_to_blacklist(
     request: BlacklistCreate,
-    current_user: SupervisorUser,
+    current_user: AdminUser,
     db: DB
 ):
     """Manually add number to blacklist."""

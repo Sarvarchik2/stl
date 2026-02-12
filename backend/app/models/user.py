@@ -27,6 +27,7 @@ class User(Base):
     # Relationships
     applications = relationship("Application", back_populates="client", foreign_keys="Application.client_id")
     assigned_applications = relationship("Application", back_populates="operator", foreign_keys="Application.operator_id")
+    managed_applications = relationship("Application", back_populates="manager", foreign_keys="Application.manager_id")
     audit_logs = relationship("AuditLog", back_populates="user")
     
     @property

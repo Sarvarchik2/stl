@@ -4,7 +4,7 @@
             <p>{{ $t('auth.checkingAccess') }}</p>
         </div>
     </div>
-    <div v-else-if="!hasRole('operator')" class="flex-center py-20">
+    <div v-else-if="!hasRole('admin')" class="flex-center py-20">
         <div class="text-center">
             <h2 class="text-thin">{{ $t('auth.accessDenied') }}</h2>
             <p class="text-secondary">{{ $t('auth.noPermission') }}</p>
@@ -16,10 +16,10 @@
             <div class="container">
                 <div class="flex-between">
                     <div>
-                        <h1 class="text-thin">{{ $t('users.title') }}</h1>
-                        <p class="text-secondary text-light">{{ $t('users.subtitle') }}</p>
+                        <h1 class="text-thin">{{ $t('staff.title') }}</h1>
+                        <p class="text-secondary text-light">{{ $t('staff.subtitle') }}</p>
                     </div>
-                    <div class="header-actions" v-if="hasRole('admin')">
+                    <div class="header-actions">
                         <button class="btn btn-primary btn-sm" @click="openModal()">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                                 stroke-width="2" style="margin-right: 8px;">
@@ -28,7 +28,7 @@
                                 <line x1="20" y1="8" x2="20" y2="14" />
                                 <line x1="23" y1="11" x2="17" y2="11" />
                             </svg>
-                            {{ $t('users.addUser') }}
+                            {{ $t('staff.addUser') }}
                         </button>
                     </div>
                 </div>
@@ -58,10 +58,10 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="pl-8">{{ $t('users.user') }}</th>
-                                <th>{{ $t('users.role') }}</th>
-                                <th>{{ $t('users.phone') }}</th>
-                                <th>{{ $t('users.status') }}</th>
+                                <th class="pl-8">{{ $t('staff.user') }}</th>
+                                <th>{{ $t('staff.role') }}</th>
+                                <th>{{ $t('staff.phone') }}</th>
+                                <th>{{ $t('staff.status') }}</th>
                                 <th class="text-right pr-8">{{ $t('common.actions') }}</th>
                             </tr>
                         </thead>
@@ -70,14 +70,14 @@
                                 <td colspan="5" class="py-12 text-center text-tertiary">{{ $t('common.loading') }}</td>
                             </tr>
                             <tr v-else v-for="user in filteredUsers" :key="user.id" class="premium-row clickable-row"
-                                @click="hasRole('admin') && openModal(user)">
+                                @click="openModal(user)">
                                 <td class="pl-8 py-5">
                                     <div class="flex items-center gap-4">
                                         <div class="user-id-circle">{{ user.first_name?.charAt(0) }}</div>
                                         <div>
                                             <div class="font-medium text-primary">{{ user.first_name }} {{
                                                 user.last_name }}</div>
-                                            <div class="smaller-text text-tertiary">{{ user.email || $t('users.noEmail')
+                                            <div class="smaller-text text-tertiary">{{ user.email || $t('staff.noEmail')
                                                 }}
                                             </div>
                                         </div>
@@ -88,16 +88,16 @@
                                 <td>
                                     <div class="flex items-center gap-2">
                                         <span class="status-dot" :class="{ active: user.is_active }"></span>
-                                        <span class="text-secondary smaller-text">{{ user.is_active ? $t('users.active')
+                                        <span class="text-secondary smaller-text">{{ user.is_active ? $t('staff.active')
                                             :
-                                            $t('users.blocked') }}</span>
+                                            $t('staff.blocked') }}</span>
                                     </div>
                                 </td>
                                 <td class="text-right pr-8">
-                                    <div class="flex justify-end gap-2" @click.stop v-if="hasRole('admin')">
+                                    <div class="flex justify-end gap-2" @click.stop>
                                         <button @click="toggleStatus(user)" class="btn btn-sm btn-outline btn-minimal"
                                             :class="user.is_active ? 'text-error' : 'text-success'">
-                                            {{ user.is_active ? $t('users.block') : $t('users.activate') }}
+                                            {{ user.is_active ? $t('staff.block') : $t('staff.activate') }}
                                         </button>
                                         <button @click="openModal(user)" class="btn btn-icon-only btn-ghost">
                                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor"
@@ -117,8 +117,6 @@
             <div class="spacer"></div>
         </div>
 
-
-
         <!-- User Modal -->
         <Teleport to="body">
             <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
@@ -126,20 +124,20 @@
                     <h2 class="text-xl font-bold mb-6">{{ modalTitle }}</h2>
                     <div class="grid grid-2 gap-4">
                         <div class="form-group">
-                            <label class="micro-label mb-2">{{ $t('users.firstName') }}</label>
+                            <label class="micro-label mb-2">{{ $t('staff.firstName') }}</label>
                             <input v-model="form.first_name" type="text" class="input input-sm">
                         </div>
                         <div class="form-group">
-                            <label class="micro-label mb-2">{{ $t('users.lastName') }}</label>
+                            <label class="micro-label mb-2">{{ $t('staff.lastName') }}</label>
                             <input v-model="form.last_name" type="text" class="input input-sm">
                         </div>
                     </div>
                     <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('users.email') }}</label>
+                        <label class="micro-label mb-2">{{ $t('common.email') }}</label>
                         <input v-model="form.email" type="email" class="input input-sm">
                     </div>
                     <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('users.phone') }}</label>
+                        <label class="micro-label mb-2">{{ $t('staff.phone') }}</label>
                         <div class="phone-input-wrapper">
                             <span class="phone-prefix">+998</span>
                             <input v-model="phoneNumber" @input="formatPhoneInput" type="tel"
@@ -148,7 +146,7 @@
                         </div>
                     </div>
                     <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('users.role') }}</label>
+                        <label class="micro-label mb-2">{{ $t('staff.role') }}</label>
                         <select v-model="form.role" class="input input-sm">
                             <option v-for="role in roles" :key="role.key" :value="role.key">
                                 {{ role.label }}
@@ -227,7 +225,7 @@ const saving = ref(false)
 // User Modal
 const showModal = ref(false)
 const editingId = ref<string | null>(null)
-const modalTitle = computed(() => editingId.value ? t('users.editUser') : t('users.addUser'))
+const modalTitle = computed(() => editingId.value ? t('staff.editUser') : t('staff.addUser'))
 
 // Confirmation Modal
 const showConfirmModal = ref(false)
@@ -242,7 +240,9 @@ const searchQuery = ref('')
 const roleFilter = ref('all')
 
 const roles = computed(() => [
-    { key: 'client', label: t('users.roles.client') }
+    { key: 'operator', label: t('users.roles.operator') },
+    { key: 'manager', label: t('users.roles.manager') },
+    { key: 'admin', label: t('users.roles.admin') }
 ])
 
 const form = ref({
@@ -250,30 +250,19 @@ const form = ref({
     last_name: '',
     email: '',
     phone: '',
-    role: 'client',
+    role: 'operator',
     password: ''
 })
 
 const phoneNumber = ref('')
 
 const formatPhoneInput = () => {
-    // Remove all non-digit characters and limit to 9 digits (Uzbekistan standard)
     let cleaned = phoneNumber.value.replace(/\D/g, '').slice(0, 9)
-
-    // Add spaces for formatting: XX XXX XX XX
     let formatted = cleaned
-    if (cleaned.length > 2) {
-        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
-    }
-    if (cleaned.length > 5) {
-        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
-    }
-    if (cleaned.length > 7) {
-        formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
-    }
-
+    if (cleaned.length > 2) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
+    if (cleaned.length > 5) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
+    if (cleaned.length > 7) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
     phoneNumber.value = formatted
-    // Update the full phone number with +998 prefix for the form
     form.value.phone = '+998' + cleaned
 }
 
@@ -293,26 +282,19 @@ const openModal = (user?: any) => {
     if (user) {
         editingId.value = user.id
         form.value = { ...user, password: '' }
-        // Extract phone number without +998 prefix for display
         if (user.phone && user.phone.startsWith('+998')) {
             const cleaned = user.phone.replace('+998', '').replace(/\D/g, '')
             let formatted = cleaned
-            if (cleaned.length > 2) {
-                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
-            }
-            if (cleaned.length > 5) {
-                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
-            }
-            if (cleaned.length > 7) {
-                formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
-            }
+            if (cleaned.length > 2) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2)
+            if (cleaned.length > 5) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5)
+            if (cleaned.length > 7) formatted = cleaned.slice(0, 2) + ' ' + cleaned.slice(2, 5) + ' ' + cleaned.slice(5, 7) + ' ' + cleaned.slice(7, 9)
             phoneNumber.value = formatted
         } else {
             phoneNumber.value = ''
         }
     } else {
         editingId.value = null
-        form.value = { first_name: '', last_name: '', email: '', phone: '', role: 'client', password: '' }
+        form.value = { first_name: '', last_name: '', email: '', phone: '', role: 'operator', password: '' }
         phoneNumber.value = ''
     }
     showModal.value = true
@@ -321,11 +303,7 @@ const openModal = (user?: any) => {
 const saveUser = async () => {
     saving.value = true
     try {
-        if (editingId.value) {
-            // Update profile logic
-        } else {
-            // Use createStaffUser but with role: 'client' - check if API allows this
-            // Actually, backend might have a separate client creation.
+        if (!editingId.value) {
             const newUser = await createStaffUser(form.value)
             users.value.unshift(newUser)
         }
@@ -338,12 +316,11 @@ const saveUser = async () => {
     }
 }
 
-// Custom Confirm Logic
 const openConfirm = (title: string, message: string, type: 'primary' | 'danger', action: () => Promise<void>) => {
     confirmTitle.value = title
     confirmMessage.value = message
     confirmType.value = type
-    confirmButtonText.value = type === 'danger' ? t('users.block') : t('users.activate')
+    confirmButtonText.value = type === 'danger' ? t('staff.block') : t('staff.activate')
     pendingConfirmAction = action
     showConfirmModal.value = true
 }
@@ -377,18 +354,15 @@ const toggleStatus = (user: any) => {
         try {
             await updateUserStatus(user.id, !user.is_active)
             user.is_active = !user.is_active
-
             if (isBlocking) {
-                // Blocking: add to blacklist
                 await addToBlacklist({
                     phone: user.phone,
                     reason: 'other',
-                    reason_note: `Client Block: ${user.first_name} ${user.last_name}`,
+                    reason_note: `Staff Block: ${user.first_name} ${user.last_name}`,
                     block_type: 'permanent'
-                }).catch(err => console.warn('Failed to auto-add to blacklist', err))
+                }).catch(() => { })
             } else {
-                // Unblocking: remove from blacklist
-                await removeFromBlacklistByPhone(user.phone).catch(err => console.warn('Failed to remove from blacklist', err))
+                await removeFromBlacklistByPhone(user.phone).catch(() => { })
             }
         } catch (err: any) {
             toast.error(t('common.error'), err?.data?.detail || t('users.statusError'))
@@ -398,8 +372,8 @@ const toggleStatus = (user: any) => {
 
 const filteredUsers = computed(() => {
     return users.value.filter(u => {
-        // ONLY clients on this page
-        if (u.role !== 'client') return false
+        // Exclude clients for Staff page
+        if (u.role === 'client') return false
 
         const fullName = `${u.first_name || ''} ${u.last_name || ''}`.toLowerCase()
         const matchesSearch = !searchQuery.value ||
@@ -415,7 +389,7 @@ const translateRole = (r: string) => {
 }
 
 onMounted(() => {
-    if (hasRole('operator')) {
+    if (hasRole('admin')) {
         fetchUsers()
     }
 })
@@ -487,7 +461,6 @@ definePageMeta({ layout: false })
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.85);
-    /* Darker backdrop */
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -496,7 +469,6 @@ definePageMeta({ layout: false })
     height: 100vh;
 }
 
-/* Modal Card Refinements */
 .modal-card {
     background: var(--color-bg-card);
     color: var(--color-text-primary);
@@ -508,12 +480,10 @@ definePageMeta({ layout: false })
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
 }
 
-/* Compact version for confirmation */
 .modal-compact {
     max-width: 400px;
     padding: 2.5rem 2rem;
     text-align: center;
-    /* Removed fixed background to respect theme */
 }
 
 .icon-circle {
@@ -526,7 +496,6 @@ definePageMeta({ layout: false })
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     margin: 0 auto 1.5rem auto;
-    /* Centered with margin */
 }
 
 .icon-circle.danger {

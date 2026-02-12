@@ -4,7 +4,7 @@ from sqlalchemy import select, func
 from uuid import UUID
 from typing import List, Optional
 
-from ..dependencies import DB, CurrentUser, AdminUser, OwnerUser, StaffUser, ManagerUser
+from ..dependencies import DB, CurrentUser, AdminUser, StaffUser, ManagerUser
 from ..models.user import User
 from ..models.enums import Role
 from ..schemas.user import (
@@ -93,19 +93,8 @@ async def create_staff_user(request: UserCreateStaff, admin_user: AdminUser, db:
     - Cannot create users with OWNER role
     - Admin can create operators, supervisors, managers
     """
-    # Prevent creating owner accounts
-    if request.role == Role.OWNER:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Cannot create Owner accounts"
-        )
-    
-    # Admin cannot create other admins (only owner can)
-    if request.role == Role.ADMIN and admin_user.role != Role.OWNER:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Owner can create Admin accounts"
-        )
+    # Admin can create staff
+    pass
     
     # Check if phone exists
     result = await db.execute(select(User).where(User.phone == request.phone))
@@ -141,9 +130,9 @@ async def create_staff_user(request: UserCreateStaff, admin_user: AdminUser, db:
 
 
 @router.patch("/{user_id}/role", response_model=UserResponse)
-async def update_user_role(user_id: UUID, request: UserRoleUpdate, owner_user: OwnerUser, db: DB):
+async def update_user_role(user_id: UUID, request: UserRoleUpdate, current_admin: AdminUser, db: DB):
     """
-    Update user's role (Owner only).
+    Update user's role (Admin only).
     """
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
@@ -151,7 +140,7 @@ async def update_user_role(user_id: UUID, request: UserRoleUpdate, owner_user: O
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
-    if user.id == owner_user.id:
+    if user.id == current_admin.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot change own role"
@@ -165,7 +154,7 @@ async def update_user_role(user_id: UUID, request: UserRoleUpdate, owner_user: O
         action="user_role_changed",
         entity_type="user",
         entity_id=user.id,
-        user_id=owner_user.id,
+        user_id=current_admin.id,
         old_value={"role": old_role.value},
         new_value={"role": request.role.value}
     )

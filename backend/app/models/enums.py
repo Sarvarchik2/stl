@@ -6,20 +6,16 @@ class Role(str, enum.Enum):
     """User roles with hierarchy."""
     CLIENT = "client"
     OPERATOR = "operator"
-    SUPERVISOR = "supervisor"
     MANAGER = "manager"
     ADMIN = "admin"
-    OWNER = "owner"
 
 
 # Role hierarchy (higher number = more permissions)
 ROLE_HIERARCHY = {
     Role.CLIENT: 1,
     Role.OPERATOR: 2,
-    Role.SUPERVISOR: 3,
-    Role.MANAGER: 4,
-    Role.ADMIN: 5,
-    Role.OWNER: 6,
+    Role.MANAGER: 3,
+    Role.ADMIN: 4,
 }
 
 

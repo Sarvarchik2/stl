@@ -99,6 +99,9 @@ class RejectionUpdate(BaseModel):
 class AssignOperatorRequest(BaseModel):
     operator_id: UUID
 
+class AssignManagerRequest(BaseModel):
+    manager_id: UUID
+
 
 class AssignManagerRequest(BaseModel):
     manager_id: UUID

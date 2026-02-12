@@ -143,7 +143,9 @@
                                                 </div>
                                                 <div class="smaller-text text-tertiary">{{ car.year }} {{
                                                     $t('cars.yearShort') }} — {{
-                                                        car.source_price_usd?.toLocaleString() }}$</div>
+                                                        (car.final_price_usd || (car.source_price_usd *
+                                                            1.2)).toLocaleString() }}$
+                                                </div>
                                             </div>
                                             <div v-if="createForm.car_id === car.id" class="text-success">✓</div>
                                         </div>
@@ -278,18 +280,19 @@
                             <div class="flex-between mb-4">
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </div>
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
-                                        <select v-if="hasRole('operator')" :value="selectedApp.contact_status"
+                                        <select v-if="hasRole('operator') || hasRole('manager') || hasRole('admin')"
+                                            :value="selectedApp.contact_status"
                                             @change="handleContactStatusUpdate(($event.target as HTMLSelectElement).value)"
                                             class="input input-sm contact-status-select"
                                             :class="selectedApp.contact_status">
@@ -316,16 +319,16 @@
                                 <div class="assignment-group">
                                     <label class="section-label mb-2">{{ $t('applications.operator') }}</label>
                                     <div class="flex items-center gap-2">
-                                        <select v-if="showAssign && hasRole('supervisor')"
+                                        <select v-if="showAssign && hasRole('admin')"
                                             @change="handleAssign(($event.target as HTMLSelectElement).value)"
                                             class="input input-sm">
                                             <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                            }} {{ op.last_name }}</option>
+                                                }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
-                                        <button v-if="hasRole('supervisor')" class="btn btn-icon-only btn-ghost btn-xs"
+                                        <button v-if="hasRole('admin')" class="btn btn-icon-only btn-ghost btn-xs"
                                             @click="showAssign = !showAssign">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2">
@@ -336,33 +339,54 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="action-buttons-group mt-6">
-                                <button v-if="hasRole('operator') && selectedApp.status === 'new'"
-                                    class="btn btn-sm btn-success flex-grow font-bold"
-                                    @click="updateStatus('confirmed')">
-                                    {{ $t('applications.actions.confirm') }}
-                                </button>
-                                <button v-if="hasRole('operator') && selectedApp.status === 'confirmed'"
-                                    class="btn btn-sm btn-outline flex-grow font-medium"
-                                    @click="updateStatus('contract_signed')">
-                                    {{ $t('applications.actions.contractSigned') }}
-                                </button>
-                                <button v-if="hasRole('manager') && selectedApp.status === 'contract_signed'"
-                                    class="btn btn-sm btn-success flex-grow font-bold" @click="updateStatus('paid')">
-                                    {{ $t('applications.actions.paid') }}
-                                </button>
-                                <button v-if="hasRole('manager') && selectedApp.status === 'paid'"
-                                    class="btn btn-sm btn-outline flex-grow font-medium"
-                                    @click="updateStatus('delivered')">
-                                    {{ $t('applications.actions.delivered') }}
-                                </button>
-                                <button v-if="hasRole('supervisor')"
-                                    class="btn btn-sm btn-outline text-error flex-grow font-medium"
-                                    @click="promptCancel">
-                                    {{ $t('applications.actions.cancel') }}
+                        </div>
+                        <div class="assignment-group">
+                            <label class="section-label mb-2">{{ $t('applications.manager') }}</label>
+                            <div class="flex items-center gap-2">
+                                <select v-if="showAssignManager && hasRole('admin')"
+                                    @change="handleAssignManager(($event.target as HTMLSelectElement).value)"
+                                    class="input input-sm">
+                                    <option value="">{{ $t('common.notAssigned') }}</option>
+                                    <option v-for="man in managers" :key="man.id" :value="man.id">{{ man.first_name
+                                    }} {{ man.last_name }}</option>
+                                </select>
+                                <div v-else class="text-primary font-bold">{{
+                                    getOperatorName(selectedApp.manager_id) }}</div>
+                                <button v-if="hasRole('admin')" class="btn btn-icon-only btn-ghost btn-xs"
+                                    @click="showAssignManager = !showAssignManager">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                    </svg>
                                 </button>
                             </div>
+                        </div>
+
+                        <div class="action-buttons-group mt-6">
+                            <!-- Operator Actions -->
+                            <button v-if="hasRole('operator') && selectedApp.status === 'new'"
+                                class="btn btn-sm btn-success flex-grow font-bold" @click="updateStatus('confirmed')">
+                                {{ $t('applications.actions.confirm') }}
+                            </button>
+
+                            <!-- Manager Actions -->
+                            <button v-if="hasRole('manager') && selectedApp.status === 'confirmed'"
+                                class="btn btn-sm btn-outline flex-grow font-medium"
+                                @click="updateStatus('contract_signed')">
+                                {{ $t('applications.actions.contractSigned') }}
+                            </button>
+                            <button v-if="hasRole('manager') && selectedApp.status === 'contract_signed'"
+                                class="btn btn-sm btn-success flex-grow font-bold" @click="updateStatus('paid')">
+                                {{ $t('applications.actions.paid') }}
+                            </button>
+                            <button v-if="hasRole('manager') && selectedApp.status === 'paid'"
+                                class="btn btn-sm btn-outline flex-grow font-medium" @click="updateStatus('delivered')">
+                                {{ $t('applications.actions.delivered') }}
+                            </button>
+                            <button v-if="hasRole('admin')"
+                                class="btn btn-sm btn-outline text-error flex-grow font-medium" @click="promptCancel">
+                                {{ $t('applications.actions.cancel') }}
+                            </button>
                         </div>
 
                         <!-- Info Cards Grid -->
@@ -375,10 +399,13 @@
                                 <div v-if="selectedApp.client_email" class="text-tertiary smaller-text">{{
                                     selectedApp.client_email }}</div>
                             </div>
-                            <div class="detail-card clickable-card" @click="navigateTo('/cars?open=' + selectedApp.car_id)">
+                            <div class="detail-card clickable-card"
+                                @click="navigateTo('/cars?open=' + selectedApp.car_id)">
                                 <div class="flex-between mb-3">
-                                    <label class="section-label cursor-pointer">{{ $t('applications.detail.carInfo') }}</label>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-tertiary">
+                                    <label class="section-label cursor-pointer">{{ $t('applications.detail.carInfo')
+                                    }}</label>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" class="text-tertiary">
                                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                                         <polyline points="15 3 21 3 21 9"></polyline>
                                         <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -391,8 +418,10 @@
                                     <div>
                                         <div class="text-primary font-bold mb-1">{{ selectedApp.car_brand }} {{
                                             selectedApp.car_model }}</div>
-                                        <div class="text-accent font-bold">{{ selectedApp.final_price?.toLocaleString()
-                                        }} <span class="smaller-text font-normal text-tertiary">USD</span></div>
+                                        <div class="text-accent font-bold">
+                                            {{ selectedApp.final_price?.toLocaleString() }}
+                                            <span class="smaller-text font-normal text-tertiary">USD</span>
+                                        </div>
                                         <div class="smaller-text text-tertiary mt-1" v-if="selectedApp.car_year">{{
                                             selectedApp.car_year }} г.в.</div>
                                     </div>
@@ -405,8 +434,8 @@
                             <h4 class="section-label">{{ $t('applications.detail.checklist') }}</h4>
                             <div class="checklist-grid">
                                 <div v-for="(val, key) in selectedApp.checklist" :key="key" class="check-item-premium"
-                                    :class="{ checked: val, disabled: !hasRole('operator') }"
-                                    @click="hasRole('operator') && toggleChecklist(key as string)">
+                                    :class="{ checked: val, disabled: !hasRole(['operator', 'manager', 'admin']) }"
+                                    @click="(hasRole('operator') || hasRole('manager') || hasRole('admin')) && toggleChecklist(key as string)">
                                     <div class="checkbox-premium">
                                         <div class="check-mark-mini" v-if="val">✓</div>
                                     </div>
@@ -508,9 +537,6 @@
                                         <p class="ledger-text">{{ c.text }}</p>
                                     </div>
                                 </div>
-                                <div v-if="comments.length === 0" class="text-center py-4 text-tertiary smaller-text">
-                                    {{ $t('common.noData') }}
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -539,6 +565,7 @@ const {
     getApplicationComments,
     getUsers,
     assignOperator,
+    assignManager,
     adminCreateApplication,
     getCars,
     hasRole,
@@ -546,7 +573,8 @@ const {
     getDocuments,
     getVideos,
     apiBase,
-    authToken
+    authToken,
+    currentUser
 } = useApi()
 
 const filterStatuses = computed(() => [
@@ -565,7 +593,9 @@ const applications = ref<any[]>([])
 const comments = ref<any[]>([])
 const newComment = ref('')
 const operators = ref<any[]>([])
+const managers = ref<any[]>([])
 const showAssign = ref(false)
+const showAssignManager = ref(false)
 const appDocuments = ref<any[]>([])
 const appVideos = ref<any[]>([])
 const isUploading = ref(false)
@@ -703,13 +733,42 @@ const fetchOperators = async () => {
     try {
         // Fetch both operators and managers for assignment
         const ops: any = await getUsers({ role: 'operator', per_page: 100 })
-        const managers: any = await getUsers({ role: 'manager', per_page: 100 })
-        operators.value = [...(ops || []), ...(managers || [])]
+        const mans: any = await getUsers({ role: 'manager', per_page: 100 })
+        operators.value = ops || []
+        managers.value = mans || []
     } catch (err) { }
+}
+
+const handleAssignManager = async (managerId: string) => {
+    if (!selectedApp.value) return
+    try {
+        await assignManager(selectedApp.value.id, managerId)
+        selectedApp.value.manager_id = managerId
+        // Update local list
+        const localApp = applications.value.find(a => a.id === selectedApp.value.id)
+        if (localApp) localApp.manager_id = managerId
+
+        toast.success(t('common.success'), t('applications.assigned'))
+        showAssignManager.value = false
+    } catch (e: any) {
+        toast.error(t('common.error'), e?.data?.detail || t('common.error'))
+    }
 }
 
 const filteredApplications = computed(() => {
     return applications.value.filter(a => {
+        // Role-based visibility filtering
+        if (!hasRole('admin')) {
+            if (hasRole('manager')) {
+                // Managers see everything from 'confirmed' onwards, excluding 'new' and 'cancelled'
+                const managerHiddenStatuses = ['new', 'cancelled']
+                if (managerHiddenStatuses.includes(a.status.toLowerCase())) return false
+            } else if (hasRole('operator')) {
+                // Operators see only 'new' applications
+                if (a.status.toLowerCase() !== 'new') return false
+            }
+        }
+
         const matchesStatus = activeFilter.value === 'All' || a.status.toLowerCase() === activeFilter.value.toLowerCase()
         const clientName = `${a.client_first_name || ''} ${a.client_last_name || ''}`
         const carName = `${a.car_brand || ''} ${a.car_model || ''}`
@@ -721,7 +780,21 @@ const filteredApplications = computed(() => {
     })
 })
 
-    const openDetail = async (app: any) => {
+const openDetail = async (app: any) => {
+    // Manager auto-assignment on click
+    // When a manager opens a confirmed application, they become the manager of it.
+    if (hasRole('manager') && app.status !== 'new' && app.operator_id !== (currentUser.value as any)?.id) {
+        try {
+            await assignOperator(app.id, (currentUser.value as any).id)
+            app.operator_id = (currentUser.value as any).id
+            // Update local applications list to reflect assignment
+            const localApp = applications.value.find(a => a.id === app.id)
+            if (localApp) localApp.operator_id = (currentUser.value as any).id
+        } catch (e) {
+            console.error('Auto-assignment failed', e)
+        }
+    }
+
     // Only show these specific checklist items per user request
     const checklist: Record<string, boolean> = {
         'agreed_visit': app.checklist?.agreed_visit || false,
@@ -1392,5 +1465,25 @@ definePageMeta({ layout: false })
     border-color: var(--color-accent);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.markup-badge-mini {
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--color-success);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.id-badge-minimal {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    background: var(--color-bg-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0.8;
 }
 </style>

@@ -85,10 +85,8 @@ def _get_role_level(r) -> int:
     levels = {
         "client": 1,
         "operator": 2,
-        "supervisor": 3,
-        "manager": 4,
-        "admin": 5,
-        "owner": 6
+        "manager": 3,
+        "admin": 4
     }
     return levels.get(val, 0)
 
@@ -160,7 +158,5 @@ DB = Annotated[AsyncSession, Depends(get_db)]
 
 # Role-based dependencies
 StaffUser = Annotated[User, Depends(require_min_role(Role.OPERATOR))]
-SupervisorUser = Annotated[User, Depends(require_min_role(Role.SUPERVISOR))]
 ManagerUser = Annotated[User, Depends(require_min_role(Role.MANAGER))]
 AdminUser = Annotated[User, Depends(require_min_role(Role.ADMIN))]
-OwnerUser = Annotated[User, Depends(require_min_role(Role.OWNER))]

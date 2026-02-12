@@ -66,7 +66,7 @@ class UserCreateStaff(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
     email: Optional[EmailStr] = None
-    role: Role = Field(..., description="Staff role: operator, supervisor, manager, admin")
+    role: Role = Field(..., description="Staff role: operator, manager, admin")
 
 
 class UserUpdate(BaseModel):

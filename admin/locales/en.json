@@ -44,13 +44,16 @@
         "updated": "Updated",
         "fileUploaded": "File Uploaded",
         "billion": "Bn",
-        "million": "M"
+        "million": "M",
+        "searchPlaceholder": "Search by name, phone...",
+        "allRoles": "All Roles"
     },
     "nav": {
         "dashboard": "Dashboard",
         "applications": "Applications",
         "cars": "Catalog",
-        "users": "Staff",
+        "staff": "Staff",
+        "users": "Users",
         "blacklist": "Blacklist",
         "payments": "Payments",
         "stories": "Stories",
@@ -219,6 +222,8 @@
         "sourcePrice": "Dealer Price",
         "price": "Retail Price",
         "priceNote": "Prices include automatic system markup (12-15%).",
+        "markup": "Current Markup",
+        "markupApprox": "Approximate Markup",
         "status": {
             "title": "Inventory Status",
             "available": "Available",
@@ -272,10 +277,10 @@
         "saveError": "Error saving data",
         "deleteError": "Error deleting"
     },
-    "users": {
+    "staff": {
         "title": "Staff",
         "subtitle": "Manage system access and roles",
-        "user": "User",
+        "user": "Staff Member",
         "addUser": "Add Staff Member",
         "editUser": "Edit",
         "firstName": "First Name",
@@ -288,28 +293,27 @@
         "active": "Active",
         "blocked": "Blocked",
         "block": "Block",
+        "activate": "Activate"
+    },
+    "users": {
+        "title": "Users",
+        "subtitle": "List of registered clients",
+        "user": "Client",
+        "phone": "Phone",
+        "status": "Status",
+        "noEmail": "No email",
+        "active": "Active",
+        "blocked": "Blocked",
+        "block": "Block",
         "activate": "Activate",
-        "create": {
-            "title": "Create client"
-        },
         "roles": {
             "operator": "Operator",
-            "supervisor": "Supervisor",
             "manager": "Manager",
             "admin": "Admin",
-            "owner": "Owner",
             "client": "Client"
         },
-        "confirmBlock": {
-            "title": "Block Access",
-            "message": "Are you sure you want to block {name}? User will also be added to blacklist."
-        },
-        "confirmActivate": {
-            "title": "Activate Access",
-            "message": "Restore access for {name}? User will also be removed from blacklist."
-        },
-        "allRoles": "All Roles",
-        "searchPlaceholder": "Search by name, phone..."
+        "searchPlaceholder": "Search by name, phone...",
+        "allRoles": "All Roles"
     },
     "stories": {
         "title": "Stories Management",

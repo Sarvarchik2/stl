@@ -98,9 +98,6 @@
                                         {{ (car.final_price_usd || (car.source_price_usd * 1.15)).toLocaleString() }}
                                         <span class="smaller-text font-normal text-tertiary">USD</span>
                                     </div>
-                                    <div v-if="hasRole('manager')" class="text-secondary smaller-text" style="font-size: 0.7rem; opacity: 0.7;">
-                                        {{ $t('cars.sourcePrice') }}: {{ car.source_price_usd?.toLocaleString() }} USD
-                                    </div>
                                 </div>
                                 <div class="card-actions" @click.stop v-if="hasRole('manager')">
                                     <button class="btn-circle-action" @click="openModal(car)">
@@ -127,7 +124,6 @@
                                     <th class="pl-8">{{ $t('cars.car') }}</th>
                                     <th>{{ $t('cars.specs') }}</th>
                                     <th>{{ $t('cars.mileage') }}</th>
-                                    <th>{{ $t('cars.sourcePrice') }}</th>
                                     <th>{{ $t('cars.price') }}</th>
                                     <th>{{ $t('common.status') }}</th>
                                     <th class="text-right pr-8">{{ $t('common.actions') }}</th>
@@ -163,10 +159,7 @@
                                         <div class="font-medium text-white">{{ (car.mileage || 0).toLocaleString() }} км
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class="text-secondary smaller-text">{{
-                                            car.source_price_usd?.toLocaleString() }} USD</div>
-                                    </td>
+
                                     <td>
                                         <div class="font-bold text-accent">{{ (car.final_price_usd ||
                                             (car.source_price_usd *
@@ -205,9 +198,7 @@
                 </div>
             </div>
 
-            <p class="smaller-text text-tertiary mt-6 opacity-30 italic">
-                * {{ $t('cars.priceNote') }}
-            </p>
+
 
             <div class="spacer"></div>
         </div>
@@ -274,7 +265,7 @@
                                     <input v-model.number="form.source_price_usd" type="number" class="input input-sm">
                                 </div>
                                 <div class="form-group">
-                                    <label class="micro-label mb-2">{{ $t('cars.price') }} (Approx {{ form.markup_percent }}% markup)</label>
+                                    <label class="micro-label mb-2">{{ $t('cars.price') }}</label>
                                     <div class="input input-sm flex items-center bg-disabled text-accent font-bold">
                                         {{ ((form.source_price_usd || 0) * (1 + (form.markup_percent || 15) / 100)).toLocaleString(undefined, { maximumFractionDigits: 2 }) }} USD
                                     </div>

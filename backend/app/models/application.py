@@ -62,6 +62,7 @@ class Application(Base):
     # Relationships
     client = relationship("User", back_populates="applications", foreign_keys=[client_id])
     operator = relationship("User", back_populates="assigned_applications", foreign_keys=[operator_id])
+    manager = relationship("User", back_populates="managed_applications", foreign_keys=[manager_id])
     car = relationship("Car", back_populates="applications")
     payments = relationship("Payment", back_populates="application")
     documents = relationship("Document", back_populates="application")

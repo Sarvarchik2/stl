@@ -7,7 +7,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from ..dependencies import (
-    DB, CurrentUser, StaffUser, SupervisorUser, 
+    DB, CurrentUser, StaffUser, 
     ManagerUser, AdminUser
 )
 from ..models.application import Application, StatusHistory
@@ -23,11 +23,35 @@ from ..schemas.application import (
     ApplicationStatusUpdate, ContactStatusUpdate, ChecklistUpdate,
     RejectionUpdate, AssignOperatorRequest, CommentUpdate,
     InternalNoteUpdate, ConfirmCarRequest, CargoBookingRequest,
-    CommentCreate, CommentResponse, StatusHistoryResponse
+    CommentCreate, CommentResponse, StatusHistoryResponse, 
+    AssignManagerRequest
 )
 from ..services.pricing import get_final_price
 from ..services.blacklist import is_phone_blocked
 from ..services.audit import log_action
+
+async def _ensure_assigned(app: Application, user: User, db: DB):
+    """Auto-assign application to user if not already assigned."""
+    if user.role == Role.OPERATOR and not app.operator_id:
+        app.operator_id = user.id
+        await log_action(
+            db=db,
+            action="application_auto_assigned",
+            entity_type="application",
+            entity_id=app.id,
+            user_id=user.id,
+            new_value={"operator_id": str(user.id)}
+        )
+    elif user.role == Role.MANAGER and not app.manager_id:
+        app.manager_id = user.id
+        await log_action(
+            db=db,
+            action="application_auto_assigned",
+            entity_type="application",
+            entity_id=app.id,
+            user_id=user.id,
+            new_value={"manager_id": str(user.id)}
+        )
 
 router = APIRouter(prefix="/applications", tags=["Applications"])
 
@@ -229,10 +253,36 @@ async def list_applications(
         query = query.where(Application.client_id == current_user.id)
     else:
         # Staff filters
+        # 1. Enforce Role Visibility Rules
+        if current_user.role == Role.OPERATOR:
+            query = query.where(
+                or_(
+                    Application.operator_id == current_user.id,
+                    Application.operator_id == None
+                )
+            )
+        elif current_user.role == Role.MANAGER:
+            query = query.where(
+                or_(
+                    Application.manager_id == current_user.id,
+                    Application.manager_id == None
+                )
+            )
+            
+        # 2. Apply explicit filters (search params)
         if params.my_only:
-            query = query.where(Application.operator_id == current_user.id)
+            # If explicit "my only", strict filter
+            if current_user.role == Role.OPERATOR:
+                 query = query.where(Application.operator_id == current_user.id)
+            elif current_user.role == Role.MANAGER:
+                 query = query.where(Application.manager_id == current_user.id)
+                 
         if params.unassigned:
-            query = query.where(Application.operator_id == None)
+            if current_user.role == Role.OPERATOR:
+                query = query.where(Application.operator_id == None)
+            elif current_user.role == Role.MANAGER:
+                query = query.where(Application.manager_id == None)
+                
         if params.operator_id:
             query = query.where(Application.operator_id == params.operator_id)
         if params.client_id:
@@ -368,6 +418,9 @@ async def update_status(
     if not app:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
         
+    # Auto-assign
+    await _ensure_assigned(app, current_user, db)
+        
     old_status = app.status
     new_status = update.status
     
@@ -390,7 +443,7 @@ async def update_status(
     if new_status == ApplicationStatus.PAID:
         # Check if there is a confirmed payment covering the amount? 
         # For simplicity, we assume manager checks this manually or system auto-updates
-        if current_user.role not in [Role.MANAGER, Role.ADMIN, Role.OWNER]:
+        if current_user.role not in [Role.MANAGER, Role.ADMIN]:
              raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, 
                 detail="Only Manager can set PAID status"
@@ -444,6 +497,9 @@ async def update_contact_status(
     if not app:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
         
+    # Auto-assign
+    await _ensure_assigned(app, current_user, db)
+        
     app.contact_status = update.contact_status
     if update.note:
         app.operator_comment = (app.operator_comment or "") + f"\n[{datetime.now()}] {update.note}"
@@ -467,6 +523,9 @@ async def update_checklist(
     if not app:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
         
+    # Auto-assign
+    await _ensure_assigned(app, current_user, db)
+        
     app.checklist = update.checklist
     
     await db.commit()
@@ -478,7 +537,7 @@ async def update_checklist(
 async def assign_operator(
     app_id: UUID,
     request: AssignOperatorRequest,
-    current_user: SupervisorUser,
+    current_user: StaffUser,
     db: DB
 ):
     """Assign operator to application (Supervisor+)."""
@@ -504,6 +563,36 @@ async def assign_operator(
     return app
 
 
+@router.patch("/{app_id}/assign-manager", response_model=ApplicationResponse)
+async def assign_manager(
+    app_id: UUID,
+    request: AssignManagerRequest,
+    current_user: StaffUser,
+    db: DB
+):
+    """Assign manager to application (Supervisor+)."""
+    result = await db.execute(select(Application).where(Application.id == app_id))
+    app = result.scalar_one_or_none()
+    
+    if not app:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
+        
+    app.manager_id = request.manager_id
+    
+    await log_action(
+        db=db,
+        action="application_assigned_manager",
+        entity_type="application",
+        entity_id=app.id,
+        user_id=current_user.id,
+        new_value={"manager_id": str(request.manager_id)}
+    )
+    
+    await db.commit()
+    await db.refresh(app)
+    return app
+
+
 @router.post("/{app_id}/comments", response_model=CommentResponse)
 async def add_comment(
     app_id: UUID,
@@ -517,6 +606,9 @@ async def add_comment(
     
     if not app:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Application not found")
+        
+    # Auto-assign
+    await _ensure_assigned(app, current_user, db)
         
     from ..models.application import ApplicationComment
     comment = ApplicationComment(

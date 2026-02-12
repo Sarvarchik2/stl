@@ -5,9 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from typing import List
 
-from ..dependencies import DB, AdminUser
+from ..dependencies import DB, AdminUser, StaffUser, CurrentUser
 from ..models.application import Application
 from ..models.audit import AuditLog, Setting
+from ..models.enums import Role
 from ..schemas.common import (
     AuditLogListResponse, AuditLogResponse, 
     SettingResponse, SettingUpdate,
@@ -183,7 +184,7 @@ async def override_status(
 @router.get("/stats")
 async def get_stats(
     db: DB, 
-    user: AdminUser,
+    user: CurrentUser,
     period: str = Query("all", enum=["day", "week", "month", "all"])
 ):
     """
@@ -260,6 +261,12 @@ async def get_stats(
     sold_query = apply_filter(sold_query, Application.updated_at) # Closed in period
     sold_count = (await db.execute(sold_query)).scalar() or 0
     
+    canceled_query = select(func.count(Application.id)).where(
+        Application.status == ApplicationStatus.CANCELLED
+    )
+    canceled_query = apply_filter(canceled_query, Application.updated_at)
+    canceled_count = (await db.execute(canceled_query)).scalar() or 0
+    
     # Conversion = Sold (in period) / Created (in period) ? 
     # Or Sold (in period) / Total Apps? 
     # Standard is usually Closed / Opened (if cohort) or just Closed / Total Active. 
@@ -272,22 +279,45 @@ async def get_stats(
     logs_query = apply_filter(logs_query, AuditLog.created_at)
     logs = (await db.execute(logs_query)).scalars().all()
     
-    # 5. Canceled/Rejected
-    canceled_query = select(func.count(Application.id)).where(
-        Application.status == ApplicationStatus.CANCELLED
-    )
-    canceled_query = apply_filter(canceled_query, Application.updated_at)
-    canceled_count = (await db.execute(canceled_query)).scalar() or 0
+    # 5. Status Breakdown
+    status_query = select(Application.status, func.count(Application.id)).group_by(Application.status)
+    # For breakdown, we usually want "Current state", but if period is selected, 
+    # maybe "Status changes in this period"? 
+    # Usually managers want to see "How many NEW we have RIGHT NOW".
+    # So we won't apply time filter to status counts to show current workload.
+    status_results = (await db.execute(status_query)).all()
+    # status_results is a list of tuples like (ApplicationStatus.NEW, 5)
+    # Safely handle Enum vs String
+    status_counts = {}
+    for s, count in status_results:
+        key = getattr(s, 'value', s)
+        if key:
+            status_counts[str(key)] = count
 
+    # 6. Contact Status Breakdown (For Operators)
+    contact_query = select(Application.contact_status, func.count(Application.id)).group_by(Application.contact_status)
+    contact_results = (await db.execute(contact_query)).all()
+    contact_counts = {}
+    for s, count in contact_results:
+        key = getattr(s, 'value', s)
+        if key:
+            contact_counts[str(key)] = count
+
+    # Security Filter
+    # Only Admins see financials
+    is_admin = user.role == Role.ADMIN
+    
     return {
-        "total_volume_uzs": float(total_volume) * 12500,
-        "total_volume_usd": float(total_volume),
-        "total_profit_usd": float(total_profit),
+        "total_volume_uzs": (float(total_volume) * 12500) if is_admin else 0,
+        "total_volume_usd": float(total_volume) if is_admin else 0,
+        "total_profit_usd": float(total_profit) if is_admin else 0,
         "in_pipeline": in_pipeline,
         "fleet_count": total_cars,
         "conversion_rate": round(conversion, 1),
         "total_applications": total_apps,
         "sold_count": sold_count,
         "canceled_count": canceled_count,
+        "status_counts": status_counts,
+        "contact_counts": contact_counts,
         "recent_activity": logs
     }

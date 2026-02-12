@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed, provide } from 'vue'
 
 const isSidebarOpen = ref(false)
 const route = useRoute()

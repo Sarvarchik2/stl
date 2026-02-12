@@ -36,7 +36,7 @@
                 <span>{{ $t('nav.applications') }}</span>
             </NuxtLink>
 
-            <NuxtLink to="/cars" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/cars" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path
@@ -46,7 +46,7 @@
                 <span>{{ $t('nav.cars') }}</span>
             </NuxtLink>
 
-            <NuxtLink v-if="hasRole('operator')" to="/stories" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/stories" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="12" cy="12" r="10" />
@@ -57,7 +57,7 @@
                 <span>{{ $t('nav.stories') }}</span>
             </NuxtLink>
 
-            <NuxtLink v-if="hasRole('operator')" to="/users" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/staff" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -66,10 +66,20 @@
                         <path d="M16 3.13a4 4 0 010 7.75" />
                     </svg>
                 </div>
+                <span>{{ $t('nav.staff') }}</span>
+            </NuxtLink>
+
+            <NuxtLink v-if="hasRole('admin')" to="/users" class="nav-link" @click="$emit('close')">
+                <div class="nav-link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
                 <span>{{ $t('nav.users') }}</span>
             </NuxtLink>
 
-            <NuxtLink v-if="hasRole('operator')" to="/payments" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/payments" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
@@ -79,7 +89,7 @@
                 <span>{{ $t('nav.payments') }}</span>
             </NuxtLink>
 
-            <NuxtLink v-if="hasRole('supervisor')" to="/blacklist" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/blacklist" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="12" cy="12" r="10" />
@@ -121,7 +131,7 @@
                 <span>{{ theme === 'light' ? $t('settings.darkTheme') : $t('settings.lightTheme') }}</span>
             </button>
 
-            <NuxtLink v-if="hasRole('manager')" to="/settings" class="nav-link" @click="$emit('close')">
+            <NuxtLink v-if="hasRole('admin')" to="/settings" class="nav-link" @click="$emit('close')">
                 <div class="nav-link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="12" cy="12" r="3" />

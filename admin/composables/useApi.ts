@@ -74,10 +74,8 @@ export const useApi = () => {
         const hierarchy: Record<string, number> = {
             'client': 1,
             'operator': 2,
-            'supervisor': 3,
-            'manager': 4,
-            'admin': 5,
-            'owner': 6
+            'manager': 3,
+            'admin': 4
         }
 
         const userLevel = hierarchy[currentUser.value.role] || 0
@@ -212,10 +210,18 @@ export const useApi = () => {
         })
     }
 
-    const assignOperator = async (id: string, operatorId: string) => {
-        return await $fetch(`${apiBase}/applications/${id}/assign`, {
+    const assignOperator = async (appId: string, operatorId: string) => {
+        return await $fetch(`${apiBase}/applications/${appId}/assign`, {
             method: 'PATCH',
             body: { operator_id: operatorId },
+            headers: headers.value
+        })
+    }
+
+    const assignManager = async (appId: string, managerId: string) => {
+        return await $fetch(`${apiBase}/applications/${appId}/assign-manager`, {
+            method: 'PATCH',
+            body: { manager_id: managerId },
             headers: headers.value
         })
     }
@@ -417,6 +423,7 @@ export const useApi = () => {
         addApplicationComment,
         getApplicationComments,
         assignOperator,
+        assignManager,
         getStories,
         createStory,
         updateStory,

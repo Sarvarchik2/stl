@@ -7,7 +7,7 @@
                         <h1 class="text-thin">{{ $t('dashboard.title') }}</h1>
                         <p class="text-secondary text-light">{{ $t('dashboard.subtitle') }}</p>
                     </div>
-                   <div class="header-actions flex gap-3 items-center">
+                    <div class="header-actions flex gap-3 items-center">
                         <div class="filter-group">
                             <select v-model="selectedPeriod" @change="fetchData" class="select-filter">
                                 <option value="all">{{ $t('common.allTime') }}</option>
@@ -30,10 +30,10 @@
 
         <div class="container">
             <!-- Priority Metrics Cards -->
-            <section class="metrics-grid mb-10">
-                <div class="grid grid-5 gap-4">
+            <div class="metrics-row mb-10">
+                <div class="metrics-grid-flexible">
                     <!-- Turnover (Volume) -->
-                    <div class="metric-card glass-card shadow-sm">
+                    <div v-if="showFinancials" class="metric-card glass-card shadow-sm">
                         <div class="flex-between mb-4">
                             <label class="section-label">{{ $t('dashboard.turnover') }}</label>
                             <span class="trend-tag success">USD</span>
@@ -47,7 +47,7 @@
                     </div>
 
                     <!-- Profit (Income) -->
-                    <div class="metric-card glass-card shadow-sm">
+                    <div v-if="showFinancials" class="metric-card glass-card shadow-sm">
                         <div class="flex-between mb-4">
                             <label class="section-label">{{ $t('dashboard.income') }}</label>
                             <span class="trend-tag success">USD</span>
@@ -55,8 +55,103 @@
                         <div class="metric-value text-success font-bold">
                             +{{ formatMoney(stats.total_profit_usd || 0) }}
                         </div>
-                         <div class="metric-footer mt-2">
+                        <div class="metric-footer mt-2">
                             <span class="smaller-text text-tertiary">Net Margin</span>
+                        </div>
+                    </div>
+
+                    <!-- Staff-Specific Status Highlights (Replacement for financials) -->
+                    <div v-if="!hasRole('admin') && hasRole('operator')"
+                        class="metric-card glass-card shadow-sm border-accent-light">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.status.new') }}</label>
+                            <span class="status-dot-mini accent animate-pulse"></span>
+                        </div>
+                        <div class="metric-value text-accent font-bold">
+                            {{ getStatusCount('new') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Waiting for contact</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('manager')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label font-bold text-accent">{{ $t('applications.filters.confirmed')
+                            }}</label>
+                            <span class="badge badge-sm badge-outline">Ready</span>
+                        </div>
+                        <div class="metric-value text-primary font-bold">
+                            {{ getStatusCount('confirmed') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Needs processing</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('manager')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.status.contract_signed') }}</label>
+                            <span class="trend-tag info">Doc</span>
+                        </div>
+                        <div class="metric-value text-primary font-bold">
+                            {{ getStatusCount('contract_signed') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Waiting payment</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('manager')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.status.paid') }}</label>
+                            <span class="trend-tag success">$</span>
+                        </div>
+                        <div class="metric-value text-success font-bold">
+                            {{ getStatusCount('paid') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Ready for logistics</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('manager')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.status.delivered') }}</label>
+                            <span class="trend-tag success">Done</span>
+                        </div>
+                        <div class="metric-value text-primary font-bold">
+                            {{ getStatusCount('delivered') + getStatusCount('completed') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Completed deals</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('operator')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.contactStatus') }}: {{
+                                $t('applications.contactStatuses.not_touched') }}</label>
+                            <span class="status-dot-mini warning"></span>
+                        </div>
+                        <div class="metric-value text-primary font-bold">
+                            {{ getContactCount('not_touched') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">New leads</span>
+                        </div>
+                    </div>
+
+                    <div v-if="!hasRole('admin') && hasRole('operator')" class="metric-card glass-card shadow-sm">
+                        <div class="flex-between mb-4">
+                            <label class="section-label">{{ $t('applications.contactStatuses.callback') }}</label>
+                            <span class="trend-tag info">Call</span>
+                        </div>
+                        <div class="metric-value text-primary font-bold">
+                            {{ getContactCount('callback') }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">Schedule calls</span>
                         </div>
                     </div>
 
@@ -67,18 +162,22 @@
                             <div class="status-indicator active"></div>
                         </div>
                         <div class="metric-value text-primary font-bold">
-                            {{ stats.in_pipeline }} <span class="smaller-text text-tertiary">{{
-                                $t('dashboard.totalApplications').split(' ')[1] }}</span>
+                            {{ stats.in_pipeline }}
+                            <span class="smaller-text text-tertiary">
+                                {{ ($t('dashboard.totalApplications') || '').split(' ').pop() }}
+                            </span>
                         </div>
                         <div class="metric-footer mt-4">
                             <div class="progress-mini">
-                                <div class="progress-fill accent" :style="{ width: stats.total_applications ? (stats.in_pipeline / stats.total_applications * 100) + '%' : '0%' }"></div>
+                                <div class="progress-fill accent"
+                                    :style="{ width: stats.total_applications ? (stats.in_pipeline / stats.total_applications * 100) + '%' : '0%' }">
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Inventory Flow -->
-                    <div class="metric-card glass-card shadow-sm">
+                    <div v-if="!hasRole('operator')" class="metric-card glass-card shadow-sm">
                         <div class="flex-between mb-4">
                             <label class="section-label">{{ $t('nav.cars') }}</label>
                             <span class="trend-tag neutral">{{ $t('cars.statuses.available') }}</span>
@@ -107,125 +206,137 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <!-- Operational Insights Section -->
-            <div class="insights-layout">
-                <!-- Left: Detailed Activity & Tables -->
-                <div class="insights-main">
-                    <div class="flex-between mb-4 px-2">
-                        <h3 class="m-0 text-thin">{{ $t('dashboard.recentActivity') }}</h3>
-                        <NuxtLink to="/applications"
-                            class="btn btn-ghost smaller-text font-bold text-accent hover-accent">{{
-                                $t('common.all').toUpperCase() }} ↗
-                        </NuxtLink>
-                    </div>
-
-                    <div class="card no-padding overflow-hidden border-light shadow-sm">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th class="pl-8">{{ $t('common.user') }}</th>
-                                    <th>{{ $t('common.action') }}</th>
-                                    <th>{{ $t('common.target') }}</th>
-                                    <th class="pr-8 text-right">{{ $t('common.date') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="loading" v-for="i in 3" :key="i">
-                                    <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
-                                        {{ $t('common.loading') }}
-                                    </td>
-                                </tr>
-                                <tr v-else-if="!stats.recent_activity || stats.recent_activity.length === 0">
-                                    <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
-                                        {{ $t('common.noData') }}
-                                    </td>
-                                </tr>
-                                <tr v-else v-for="log in stats.recent_activity" :key="log.id" class="premium-row">
-                                    <td class="pl-8 py-4">
-                                        <div class="font-bold text-primary">{{ log.user_id ? $t('users.roles.admin') : 'System' }}</div>
-                                        <div class="smaller-text text-tertiary monospace">#{{ log.user_id ? log.user_id.substring(0,6) : 'SYS' }}</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge neutral">{{ formatAction(log.action) }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="text-secondary font-medium">{{ formatEntity(log.entity_type) }}</div>
-                                        <div class="smaller-text text-tertiary">#{{ log.entity_id ? log.entity_id.substring(0,8) : '-' }}</div>
-                                    </td>
-                                    <td class="pr-8 text-right">
-                                        <div class="text-secondary">{{ new Date(log.created_at).toLocaleTimeString() }}</div>
-                                        <div class="smaller-text text-tertiary">{{ new Date(log.created_at).toLocaleDateString() }}</div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <!-- Operational Insights Section -->
+        <div class="insights-layout">
+            <!-- Left: Detailed Activity & Tables -->
+            <div class="insights-main">
+                <div class="flex-between mb-4 px-2">
+                    <h3 class="m-0 text-thin">{{ $t('dashboard.recentActivity') }}</h3>
+                    <NuxtLink to="/applications" class="btn btn-ghost smaller-text font-bold text-accent hover-accent">
+                        {{
+                            ($t('common.all') || '').toString().toUpperCase() }} ↗
+                    </NuxtLink>
                 </div>
 
-                <!-- Right: Pie Chart Stats -->
-                <div class="insights-side">
-                    <div class="card glass-card shadow-sm featured-insight">
-                        <label class="section-label mb-6">{{ $t('dashboard.quickStats') }}</label>
-
-                        <!-- Pie Chart Container -->
-                        <div class="chart-container flex justify-center mb-6">
-                            <div class="pie-chart" :style="pieChartStyle">
-                                <div class="chart-center">
-                                    <span class="chart-total">{{ stats.total_applications }}</span>
-                                    <span class="chart-label">{{ $t('common.all') }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Legend -->
-                        <div class="chart-legend grid gap-3">
-                            <div class="legend-item">
-                                <div class="flex items-center gap-2">
-                                    <div class="dot active-dot"></div>
-                                    <span class="smaller-text font-bold">{{ $t('applications.filters.inProgress')
-                                        }}</span>
-                                </div>
-                                <span class="smaller-text text-tertiary">{{ stats.in_pipeline }}</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="flex items-center gap-2">
-                                    <div class="dot success-dot"></div>
-                                    <span class="smaller-text font-bold">{{ $t('applications.filters.completed')
-                                        }}</span>
-                                </div>
-                                <span class="smaller-text text-tertiary">{{ stats.sold_count }}</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="flex items-center gap-2">
-                                    <div class="dot cancel-dot"></div>
-                                    <span class="smaller-text font-bold">{{ $t('applications.status.cancelled')
-                                        }}</span>
-                                </div>
-                                <span class="smaller-text text-tertiary">{{ stats.canceled_count }}</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 p-4 rounded bg-bg-secondary border border-light">
-                            <p class="smaller-text m-0 text-secondary italic">
-                                "{{ $t('dashboard.realTime') }}"
-                            </p>
-                        </div>
-                    </div>
+                <div class="card no-padding overflow-hidden border-light shadow-sm">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="pl-8">{{ $t('common.user') }}</th>
+                                <th>{{ $t('common.action') }}</th>
+                                <th>{{ $t('common.target') }}</th>
+                                <th class="pr-8 text-right">{{ $t('common.date') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="loading" v-for="i in 3" :key="i">
+                                <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
+                                    {{ $t('common.loading') }}
+                                </td>
+                            </tr>
+                            <tr v-else-if="!stats.recent_activity || stats.recent_activity.length === 0">
+                                <td colspan="4" class="py-12 text-center text-tertiary smaller-text">
+                                    {{ $t('common.noData') }}
+                                </td>
+                            </tr>
+                            <tr v-else v-for="log in stats.recent_activity" :key="log.id" class="premium-row">
+                                <td class="pl-8 py-4">
+                                    <div class="font-bold text-primary">{{ log.user_id ? $t('users.roles.admin') :
+                                        'System' }}</div>
+                                    <div class="smaller-text text-tertiary monospace">#{{ log.user_id ?
+                                        log.user_id.substring(0, 6) : 'SYS' }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge neutral">{{ formatAction(log.action) }}</span>
+                                </td>
+                                <td>
+                                    <div class="text-secondary font-medium">{{ formatEntity(log.entity_type) }}
+                                    </div>
+                                    <div class="smaller-text text-tertiary">#{{ log.entity_id ?
+                                        log.entity_id.substring(0, 8) : '-' }}</div>
+                                </td>
+                                <td class="pr-8 text-right">
+                                    <div class="text-secondary">{{ new Date(log.created_at).toLocaleTimeString() }}
+                                    </div>
+                                    <div class="smaller-text text-tertiary">{{ new
+                                        Date(log.created_at).toLocaleDateString() }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="spacer"></div>
+            <!-- Right: Pie Chart Stats -->
+            <div class="insights-side">
+                <div class="card glass-card shadow-sm featured-insight">
+                    <label class="section-label mb-6">{{ $t('dashboard.quickStats') }}</label>
+
+                    <!-- Pie Chart Container -->
+                    <div class="chart-container flex justify-center mb-6">
+                        <div class="pie-chart" :style="pieChartStyle">
+                            <div class="chart-center">
+                                <span class="chart-total">{{ stats.total_applications }}</span>
+                                <span class="chart-label">{{ $t('common.all') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="chart-legend grid gap-3">
+                        <div class="legend-item">
+                            <div class="flex items-center gap-2">
+                                <div class="dot active-dot"></div>
+                                <span class="smaller-text font-bold">{{ $t('applications.filters.inProgress')
+                                    }}</span>
+                            </div>
+                            <span class="smaller-text text-tertiary">{{ stats.in_pipeline }}</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="flex items-center gap-2">
+                                <div class="dot success-dot"></div>
+                                <span class="smaller-text font-bold">{{ $t('applications.filters.completed')
+                                    }}</span>
+                            </div>
+                            <span class="smaller-text text-tertiary">{{ stats.sold_count }}</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="flex items-center gap-2">
+                                <div class="dot cancel-dot"></div>
+                                <span class="smaller-text font-bold">{{ $t('applications.status.cancelled')
+                                    }}</span>
+                            </div>
+                            <span class="smaller-text text-tertiary">{{ stats.canceled_count }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 rounded bg-bg-secondary border border-light">
+                        <p class="smaller-text m-0 text-secondary italic">
+                            "{{ $t('dashboard.realTime') }}"
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="spacer"></div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 
-const { getStats, getApplications } = useApi()
+const { getStats, getApplications, hasRole } = useApi()
 const { t } = useI18n()
+
+const showFinancials = computed(() => hasRole('admin'))
+const showStaffMetrics = computed(() => hasRole(['manager', 'operator', 'admin']))
+
+const getStatusCount = (s: string) => (stats.value as any).status_counts?.[s] || 0
+const getContactCount = (s: string) => (stats.value as any).contact_counts?.[s] || 0
 
 const selectedPeriod = ref('all')
 
@@ -239,6 +350,8 @@ const stats = ref({
     total_applications: 0,
     sold_count: 0,
     canceled_count: 0,
+    status_counts: {} as Record<string, number>,
+    contact_counts: {} as Record<string, number>,
     recent_activity: [] as any[]
 })
 
@@ -260,16 +373,6 @@ const formatEntity = (type: string) => {
 }
 
 
-
-const translateStatus = (status: string) => {
-    // Dynamic translation key lookup
-    const key = `applications.status.${status?.toLowerCase()}`
-    const { t, te } = useI18n() // Access t/te dynamically if needed, or use global
-    // Since we are in script setup, we can use useNuxtApp().$i18n.t or useI18n()
-    // But for simplicity in template, $t is available.
-    // In script, we better use t() from useI18n destructuring
-    return t(key)
-}
 
 // Compute Pie Chart Segments
 const pieChartStyle = computed(() => {
@@ -310,7 +413,7 @@ const fetchData = async () => {
         // Let's reload applications if they change date filter?
         // Usually "Recent Applications" means just latest created, regardless of stats filter.
         // But "Recent Actions" (Audit Logs) should be filtered. 
-        
+
         recentApplications.value = (appsRes.items || []).map((a: any) => ({
             id: a.id.substring(0, 8),
             fullId: a.id,
@@ -345,16 +448,40 @@ useHead({
     margin-bottom: var(--spacing-xl);
 }
 
+.metrics-grid-flexible {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.metrics-grid-flexible>* {
+    flex: 1;
+    min-width: 220px;
+    max-width: calc(25% - 1.2rem);
+}
+
+@media (max-width: 1400px) {
+    .metrics-grid-flexible>* {
+        max-width: calc(33.33% - 1rem);
+    }
+}
+
+@media (max-width: 1024px) {
+    .metrics-grid-flexible>* {
+        max-width: calc(50% - 0.75rem);
+    }
+}
+
+@media (max-width: 640px) {
+    .metrics-grid-flexible>* {
+        max-width: 100%;
+    }
+}
+
 .grid-5 {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 1.5rem;
-}
-
-@media (max-width: 1400px) {
-    .grid-5 {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 
 @media (max-width: 900px) {
