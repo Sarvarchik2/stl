@@ -131,11 +131,11 @@
                         <div v-if="editingId" class="tabs-minimal mt-4">
                             <button class="tab-btn" :class="{ active: activeTab === 'profile' }"
                                 @click="activeTab = 'profile'">
-                                {{ $t('common.profile') || 'Profile' }}
+                                {{ $t('common.profile') }}
                             </button>
                             <button class="tab-btn" :class="{ active: activeTab === 'performance' }"
                                 @click="activeTab = 'performance'">
-                                {{ $t('dashboard.quickStats') || 'Performance' }}
+                                {{ $t('dashboard.quickStats') }}
                             </button>
                         </div>
                     </div>
@@ -209,8 +209,8 @@
                             <div v-if="performanceData" class="flex items-center gap-3">
                                 <div class="text-right">
                                     <div class="micro-label uppercase text-tertiary">{{ performanceData.label ===
-                                        'processed' ? $t('applications.status.confirmed') :
-                                        $t('applications.status.delivered') }}</div>
+                                        'processed' ? $t('dashboard.processed') :
+                                        $t('dashboard.delivered') }}</div>
                                     <div class="text-xl font-black text-success">{{ performanceData.success_count }}
                                     </div>
                                 </div>
@@ -224,8 +224,9 @@
 
                         <div v-else-if="performanceData?.applications?.length"
                             class="performance-history custom-scrollbar">
-                            <label class="micro-label mb-3 block uppercase tracking-widest text-tertiary">Recent
-                                Activity</label>
+                            <label class="micro-label mb-3 block uppercase tracking-widest text-tertiary">
+                                {{ $t('dashboard.recentActivity') }}
+                            </label>
                             <div class="grid gap-2">
                                 <div v-for="app in performanceData.applications" :key="app.id"
                                     class="performance-item glass-card-hover p-4 border border-light rounded-xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01]"
@@ -233,7 +234,8 @@
                                     <div class="flex items-center gap-4">
                                         <div class="app-id-circle">#{{ app.id.toString().substring(0, 4) }}</div>
                                         <div>
-                                            <div class="font-bold text-sm text-primary">Application</div>
+                                            <div class="font-bold text-sm text-primary">{{
+                                                $t('applications.application') }}</div>
                                             <div class="smaller-text text-tertiary">{{ new
                                                 Date(app.created_at).toLocaleDateString() }}</div>
                                         </div>
@@ -270,22 +272,22 @@
             <div v-if="selectedApp" class="modal-overlay" @click.self="selectedApp = null" style="z-index: 3000;">
                 <div class="modal-card modal-compact animate-scale-in border-accent-light shadow-2xl">
                     <div class="flex-between mb-6">
-                        <h2 class="text-xl font-black m-0 tracking-tight">Application Details</h2>
+                        <h2 class="text-xl font-black m-0 tracking-tight">{{ $t('applications.detail.title') }}</h2>
                         <button class="btn btn-icon-only btn-ghost" @click="selectedApp = null">✕</button>
                     </div>
 
                     <div class="bg-secondary/20 p-5 rounded-2xl border border-light mb-6">
                         <div class="flex-between mb-4">
-                            <span class="micro-label">Status</span>
+                            <span class="micro-label">{{ $t('common.status') }}</span>
                             <span class="badge" :class="selectedApp.status">{{ selectedApp.status }}</span>
                         </div>
                         <div class="flex-between mb-4">
-                            <span class="micro-label">Final Price</span>
+                            <span class="micro-label">{{ $t('applications.finalPrice') }}</span>
                             <span class="text-xl font-bold text-primary">${{ selectedApp.final_price?.toLocaleString()
                                 }}</span>
                         </div>
                         <div class="flex-between">
-                            <span class="micro-label">Created</span>
+                            <span class="micro-label">{{ $t('common.created') }}</span>
                             <span class="text-secondary smaller-text">{{ new
                                 Date(selectedApp.created_at).toLocaleString() }}</span>
                         </div>
@@ -294,7 +296,7 @@
                     <div class="grid gap-3">
                         <NuxtLink :to="`/applications?id=${selectedApp.id}`"
                             class="btn btn-primary btn-sm w-full font-bold shadow-sm">
-                            FULL CRM DETAILS ↗
+                            {{ $t('applications.fullCrmDetails') }}
                         </NuxtLink>
                         <button class="btn btn-ghost btn-sm w-full" @click="selectedApp = null">
                             {{ $t('common.close') }}

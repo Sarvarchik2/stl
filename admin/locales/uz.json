@@ -21,6 +21,8 @@
         "name": "Ism",
         "yes": "Ha",
         "no": "Yo'q",
+        "profile": "Profil",
+        "created": "Yaratilgan",
         "error": "Xato",
         "success": "Muvaffaqiyatli",
         "warning": "Ogohlantirish",
@@ -85,6 +87,11 @@
         "totalRevenue": "Umumiy daromad",
         "recentActivity": "So'nggi harakatlar",
         "quickStats": "Tezkor statistika",
+        "requireAttention": "E'tibor talab etiladi",
+        "processed": "Ishlab chiqildi",
+        "delivered": "Yetkazildi",
+        "myPerformance": "Mening natijalarim",
+        "allTimeResults": "Jami vaqt bo'yicha",
         "high": "Yuqori",
         "realTime": "Real vaqt yangilanishlari."
     },
@@ -92,6 +99,9 @@
         "title": "Arizalar",
         "subtitle": "Mijozlar arizalarini boshqarish",
         "newApplication": "Yangi ariza",
+        "application": "Ariza",
+        "finalPrice": "Yakuniy narx",
+        "fullCrmDetails": "CRM-DA TO'LIQ MA'LUMOT ↗",
         "detail": {
             "title": "Ariza tafsilotlari",
             "currentStage": "Joriy bosqich",
@@ -289,6 +299,7 @@
             "title": "Kirishni faollashtirish",
             "message": "{name} uchun kirishni tiklash? Foydalanuvchi qora ro'yxatdan ham o'chiriladi."
         },
+        "statusError": "Holatni yangilashda xato",
         "allRoles": "Barcha rollar",
         "searchPlaceholder": "Ism, telefon bo'yicha qidirish..."
     },
@@ -372,9 +383,9 @@
         "title": "Moliyaviy tarix",
         "subtitle": "Daromad va to'lovlar tarixi",
         "stats": {
-            "revenue": "Jami daromad",
-            "loans": "Faol kreditlar",
-            "pending": "Kutilayotgan to'lovlar",
+            "turnover": "Aylanma",
+            "profit": "Sof foyda",
+            "pending": "Kutilayotganlar",
             "fromLastMonth": "o'tgan oydan",
             "repaid": "To'lanmoqda",
             "endOfWeek": "Hafta oxirigacha"
@@ -387,6 +398,17 @@
             "type": "Turi",
             "status": "Holati",
             "date": "Sana"
+        },
+        "type": {
+            "income": "Daromad",
+            "refund": "Qaytarish",
+            "loan": "Kredit"
+        },
+        "status": {
+            "pending": "Kutilmoqda",
+            "confirmed": "Tasdiqlangan",
+            "rejected": "Rad etilgan",
+            "failed": "Xato"
         },
         "amount": "Summa",
         "updating": "Yangilanmoqda..."

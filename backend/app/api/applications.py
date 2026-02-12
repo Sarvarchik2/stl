@@ -13,9 +13,11 @@ from ..dependencies import (
 from ..models.application import Application, StatusHistory
 from ..models.car import Car
 from ..models.user import User
+from ..models.payment import Payment
 from ..models.enums import (
     Role, ApplicationStatus, ContactStatus, 
-    RejectionReason, DocumentType
+    RejectionReason, DocumentType,
+    PaymentStatus, PaymentMethod
 )
 from ..schemas.application import (
     ApplicationCreate, AdminApplicationCreate, ApplicationResponse, ApplicationDetailResponse,
@@ -458,6 +460,27 @@ async def update_status(
     # Update
     app.status = new_status
     
+    # Auto-create payment if status is PAID
+    if new_status == ApplicationStatus.PAID:
+        payment = Payment(
+            application_id=app.id,
+            amount=app.final_price or 0,
+            method=PaymentMethod.CASH, # Default method
+            status=PaymentStatus.CONFIRMED,
+            confirmed_by=current_user.id,
+            confirmed_at=datetime.utcnow(),
+            created_by=current_user.id
+        )
+        db.add(payment)
+        await log_action(
+            db=db,
+            action="payment_auto_created",
+            entity_type="payment",
+            entity_id=payment.id,
+            user_id=current_user.id,
+            new_value={"amount": float(app.final_price or 0), "status": "confirmed"}
+        )
+
     # History
     history = StatusHistory(
         application_id=app.id,

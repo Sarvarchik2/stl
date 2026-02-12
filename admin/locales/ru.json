@@ -23,6 +23,8 @@
         "yes": "Да",
         "no": "Нет",
         "user": "Пользователь",
+        "profile": "Профиль",
+        "created": "Создано",
         "action": "Действие",
         "target": "Объект",
         "allTime": "За все время",
@@ -100,6 +102,11 @@
         "income": "Доход",
         "recentActivity": "Последние действия",
         "quickStats": "Быстрая статистика",
+        "requireAttention": "Требуют внимания",
+        "processed": "Обработано",
+        "delivered": "Доставлено",
+        "myPerformance": "Мои показатели",
+        "allTimeResults": "Итого за все время",
         "high": "Высокий",
         "realTime": "Обновление в реальном времени."
     },
@@ -108,6 +115,9 @@
         "subtitle": "Управление заявками клиентов",
         "newApplication": "Новая заявка",
         "applicationDetails": "Детали заявки",
+        "application": "Заявка",
+        "finalPrice": "Финальная цена",
+        "fullCrmDetails": "ПОЛНЫЕ ДАННЫЕ В CRM ↗",
         "currentStage": "Текущий этап",
         "contactStatus": "Статус контакта",
         "operator": "Ответственный оператор",
@@ -299,7 +309,13 @@
         "title": "Пользователи",
         "subtitle": "Список зарегистрированных клиентов",
         "user": "Пользователь",
+        "addUser": "Добавить пользователя",
+        "editUser": "Редактировать",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
         "phone": "Телефон",
+        "email": "Email",
+        "role": "Роль",
         "status": "Статус",
         "noEmail": "Нет email",
         "active": "Активен",
@@ -313,7 +329,16 @@
             "client": "Клиент"
         },
         "searchPlaceholder": "Поиск по имени, телефону...",
-        "allRoles": "Все роли"
+        "allRoles": "Все роли",
+        "confirmBlock": {
+            "title": "Блокировка доступа",
+            "message": "Заблокировать {name}? Пользователь также будет добавлен в черный список."
+        },
+        "confirmActivate": {
+            "title": "Восстановление доступа",
+            "message": "Восстановить доступ для {name}? Пользователь будет удален из черного списка."
+        },
+        "statusError": "Ошибка обновления статуса"
     },
     "stories": {
         "title": "Управление Stories",
@@ -395,8 +420,8 @@
         "title": "Финансы",
         "subtitle": "История платежей",
         "stats": {
-            "revenue": "Доход",
-            "loans": "Займы",
+            "turnover": "Оборот",
+            "profit": "Чистый доход",
             "pending": "Ожидаемые",
             "fromLastMonth": "с прошлого месяца",
             "repaid": "Погашаются",
@@ -410,6 +435,17 @@
             "type": "Тип",
             "status": "Статус",
             "date": "Дата"
+        },
+        "type": {
+            "income": "Доход",
+            "refund": "Возврат",
+            "loan": "Займ"
+        },
+        "status": {
+            "pending": "Ожидает",
+            "confirmed": "Выполнен",
+            "rejected": "Отклонен",
+            "failed": "Ошибка"
         },
         "amount": "Сумма",
         "updating": "Обновление..."

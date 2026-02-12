@@ -11,7 +11,8 @@ from ..models.payment import Payment
 from ..models.application import Application
 from ..models.enums import PaymentStatus, ApplicationStatus
 from ..schemas.common import (
-    PaymentCreate, PaymentResponse, PaymentConfirm, PaymentReject
+    PaymentCreate, PaymentResponse, PaymentConfirm, PaymentReject,
+    PaymentListResponse
 )
 from ..services.audit import log_action
 
@@ -20,7 +21,7 @@ router = APIRouter(prefix="/applications/{app_id}/payments", tags=["Payments"])
 # Global payments router for admin view
 global_router = APIRouter(prefix="/payments", tags=["Payments Global"])
 
-@global_router.get("", response_model=List[PaymentResponse])
+@global_router.get("", response_model=PaymentListResponse)
 async def list_all_payments(
     db: DB,
     user: ManagerUser,
@@ -28,28 +29,76 @@ async def list_all_payments(
     offset: int = Query(0, ge=0)
 ):
     """List all payments across all applications (Manager/Admin only)."""
-    query = select(Payment).order_by(Payment.created_at.desc()).limit(limit).offset(offset)
+    from ..models.car import Car
+    from ..models.user import User
+    from sqlalchemy import func
+    
+    # Count total
+    total_query = select(func.count(Payment.id))
+    total = (await db.execute(total_query)).scalar() or 0
+    
+    query = (
+        select(Payment, Application, Car, User)
+        .join(Application, Payment.application_id == Application.id)
+        .join(Car, Application.car_id == Car.id)
+        .join(User, Application.client_id == User.id)
+        .order_by(Payment.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
     result = await db.execute(query)
-    return result.scalars().all()
+    
+    items = []
+    for row in result.all():
+        payment, app, car, client = row
+        # Add virtual fields for the response model
+        res = PaymentResponse.model_validate(payment)
+        res.car_name = f"{car.brand} {car.model}"
+        res.client_name = f"{client.first_name} {client.last_name}"
+        res.type = "income" # Default for now
+        items.append(res)
+        
+    return {
+        "items": items,
+        "total": total
+    }
 
 @global_router.get("/stats")
 async def get_payment_stats(db: DB, user: ManagerUser):
-    """Get overall payment statistics."""
+    """Get overall payment statistics for the payments page."""
     from sqlalchemy import func
     
-    # Total volume by status
-    query = select(Payment.status, func.sum(Payment.amount)).group_by(Payment.status)
-    result = await db.execute(query)
-    stats = {row[0].value: float(row[1]) for row in result.all()}
+    # Financial states: PAID, DELIVERED, COMPLETED
+    financial_statuses = [
+        ApplicationStatus.PAID,
+        ApplicationStatus.DELIVERED,
+        ApplicationStatus.COMPLETED
+    ]
     
-    # Add count
-    count_query = select(func.count(Payment.id))
-    total_count = (await db.execute(count_query)).scalar() or 0
+    # Turnover (Sum of final_price for deals that are paid or delivered)
+    turnover_query = select(func.sum(Application.final_price)).where(
+        Application.status.in_(financial_statuses)
+    )
+    turnover = (await db.execute(turnover_query)).scalar() or 0
+    
+    # Profit (Sum of final_price - source_price_snapshot)
+    profit_expr = Application.final_price - func.coalesce(Application.source_price_snapshot, 0)
+    profit_query = select(func.sum(profit_expr)).where(
+        Application.status.in_(financial_statuses)
+    )
+    profit = (await db.execute(profit_query)).scalar() or 0
+    
+    # Pending volume (Sum of Applications with status CONFIRMED)
+    # These are deals that are "expected" to be paid soon.
+    pending_query = select(func.sum(Application.final_price)).where(
+        Application.status == ApplicationStatus.CONFIRMED
+    )
+    pending_total = (await db.execute(pending_query)).scalar() or 0
     
     return {
-        "by_status": stats,
-        "total_count": total_count,
-        "total_volume": sum(stats.values())
+        "turnover": float(turnover),
+        "profit": float(profit),
+        "pending_total": float(pending_total)
     }
 
 

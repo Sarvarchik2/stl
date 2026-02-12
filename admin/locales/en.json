@@ -22,6 +22,8 @@
         "yes": "Yes",
         "no": "No",
         "user": "User",
+        "profile": "Profile",
+        "created": "Created",
         "action": "Action",
         "target": "Target",
         "allTime": "All Time",
@@ -99,6 +101,11 @@
         "income": "Income",
         "recentActivity": "Recent Activity",
         "quickStats": "Quick Stats",
+        "requireAttention": "Require attention",
+        "processed": "Processed",
+        "delivered": "Delivered",
+        "myPerformance": "My Performance",
+        "allTimeResults": "All Time Results",
         "high": "High",
         "realTime": "Real-time updates."
     },
@@ -107,6 +114,9 @@
         "subtitle": "Manage customer applications",
         "newApplication": "New Application",
         "applicationDetails": "Application Details",
+        "application": "Application",
+        "finalPrice": "Final Price",
+        "fullCrmDetails": "FULL CRM DETAILS ↗",
         "currentStage": "Current Stage",
         "contactStatus": "Contact Status",
         "operator": "Assigned Operator",
@@ -298,8 +308,14 @@
     "users": {
         "title": "Users",
         "subtitle": "List of registered clients",
-        "user": "Client",
+        "user": "User",
+        "addUser": "Add User",
+        "editUser": "Edit User",
+        "firstName": "First Name",
+        "lastName": "Last Name",
         "phone": "Phone",
+        "email": "Email",
+        "role": "Role",
         "status": "Status",
         "noEmail": "No email",
         "active": "Active",
@@ -313,7 +329,16 @@
             "client": "Client"
         },
         "searchPlaceholder": "Search by name, phone...",
-        "allRoles": "All Roles"
+        "allRoles": "All Roles",
+        "confirmBlock": {
+            "title": "Block Access",
+            "message": "Block {name}? The user will also be added to the blacklist."
+        },
+        "confirmActivate": {
+            "title": "Restore Access",
+            "message": "Restore access for {name}? The user will be removed from the blacklist."
+        },
+        "statusError": "Error updating status"
     },
     "stories": {
         "title": "Stories Management",
@@ -395,9 +420,9 @@
         "title": "Financial History",
         "subtitle": "Income and loan tracking",
         "stats": {
-            "revenue": "Total Revenue",
-            "loans": "Active Loans",
-            "pending": "Pending Payments",
+            "turnover": "Turnover",
+            "profit": "Net Profit",
+            "pending": "Expected",
             "fromLastMonth": "from last month",
             "repaid": "Currently being repaid",
             "endOfWeek": "Expected by end of week"
@@ -410,6 +435,17 @@
             "type": "Type",
             "status": "Status",
             "date": "Date"
+        },
+        "type": {
+            "income": "Income",
+            "refund": "Refund",
+            "loan": "Loan"
+        },
+        "status": {
+            "pending": "Pending",
+            "confirmed": "Confirmed",
+            "rejected": "Rejected",
+            "failed": "Failed"
         },
         "amount": "Amount",
         "updating": "Updating records..."

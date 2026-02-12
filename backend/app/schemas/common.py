@@ -31,9 +31,19 @@ class PaymentResponse(BaseModel):
     rejection_reason: Optional[str]
     created_by: UUID
     created_at: datetime
+    
+    # Extra fields for lists
+    car_name: Optional[str] = None
+    client_name: Optional[str] = None
+    type: str = "income"
 
     class Config:
         from_attributes = True
+
+
+class PaymentListResponse(BaseModel):
+    items: List[PaymentResponse]
+    total: int
 
 
 class PaymentConfirm(BaseModel):

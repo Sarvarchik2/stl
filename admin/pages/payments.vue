@@ -11,17 +11,16 @@
             <!-- Stats Summary -->
             <div class="grid grid-3 mb-12">
                 <div class="detail-card">
-                    <p class="section-label mb-2">{{ $t('payments.stats.revenue') }}</p>
+                    <p class="section-label mb-2">{{ $t('payments.stats.turnover') }}</p>
                     <div class="number-medium text-primary">
-                        {{ stats.total_revenue.toLocaleString() }} <span class="smaller-text text-tertiary">USD</span>
+                        {{ stats.turnover.toLocaleString() }} <span class="smaller-text text-tertiary">USD</span>
                     </div>
-                    <p class="smaller-text text-success mt-3 font-medium">↑ 12.5% {{ $t('payments.stats.fromLastMonth')
-                        }}</p>
                 </div>
                 <div class="detail-card">
-                    <p class="section-label mb-2">{{ $t('payments.stats.loans') }}</p>
-                    <div class="number-medium text-primary">{{ stats.active_loans }}</div>
-                    <p class="smaller-text text-tertiary mt-3">{{ $t('payments.stats.repaid') }}</p>
+                    <p class="section-label mb-2">{{ $t('payments.stats.profit') }}</p>
+                    <div class="number-medium text-success">
+                        {{ stats.profit.toLocaleString() }} <span class="smaller-text text-tertiary">USD</span>
+                    </div>
                 </div>
                 <div class="detail-card">
                     <p class="section-label mb-2">{{ $t('payments.stats.pending') }}</p>
@@ -29,7 +28,6 @@
                         {{ stats.pending_payments.toLocaleString() }} <span
                             class="smaller-text text-tertiary">USD</span>
                     </div>
-                    <p class="smaller-text text-tertiary mt-3">{{ $t('payments.stats.endOfWeek') }}</p>
                 </div>
             </div>
 
@@ -71,7 +69,7 @@
                                 <td><span class="type-badge" :class="item.type">{{ formatType(item.type) }}</span></td>
                                 <td><span class="badge" :class="item.status">{{ formatStatus(item.status) }}</span></td>
                                 <td class="text-right pr-8 text-secondary smaller-text font-medium">{{
-                                    formatDate(item.date) }}</td>
+                                    formatDate(item.created_at) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -90,9 +88,9 @@ const { getPayments, getPaymentStats } = useApi()
 
 const payments = ref<any[]>([])
 const stats = ref({
-    total_revenue: 450000000,
-    active_loans: 24,
-    pending_payments: 15200000
+    turnover: 0,
+    profit: 0,
+    pending_payments: 0
 })
 const loading = ref(true)
 
@@ -106,12 +104,13 @@ const fetchData = async () => {
         payments.value = payRes.items || []
         if (statRes) {
             stats.value = {
-                total_revenue: statRes.total_revenue || 0,
-                active_loans: statRes.active_loans_count || 0,
+                turnover: statRes.turnover || 0,
+                profit: statRes.profit || 0,
                 pending_payments: statRes.pending_total || 0
             }
         }
     } catch (err) {
+        console.error('Payments fetch error:', err)
         payments.value = []
     } finally {
         loading.value = false
@@ -231,7 +230,7 @@ definePageMeta({ layout: false })
         flex-grow: 1;
     }
 
-    .grid-3 {
+    .grid-2 {
         grid-template-columns: 1fr;
     }
 

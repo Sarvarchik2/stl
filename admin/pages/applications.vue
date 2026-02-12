@@ -44,14 +44,14 @@
                         <div>
                             <p class="text-tertiary smaller-text font-bold uppercase tracking-wider mb-1">
                                 {{ dashboardStats.personal_performance.label === 'processed' ?
-                                    $t('applications.status.confirmed') : $t('applications.status.delivered') }}
+                                    $t('dashboard.processed') : $t('dashboard.delivered') }}
                             </p>
                             <h2 class="m-0 text-primary font-black">{{ dashboardStats.personal_performance.count }}</h2>
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="badge badge-accent mb-2">My Performance</span>
-                        <p class="smaller-text text-tertiary">All Time Results</p>
+                        <span class="badge badge-accent mb-2">{{ $t('dashboard.myPerformance') }}</span>
+                        <p class="smaller-text text-tertiary">{{ $t('dashboard.allTimeResults') }}</p>
                     </div>
                 </div>
             </div>
