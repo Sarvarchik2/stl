@@ -13,7 +13,7 @@
                 <div class="detail-card">
                     <p class="section-label mb-2">{{ $t('payments.stats.revenue') }}</p>
                     <div class="number-medium text-primary">
-                        {{ stats.total_revenue.toLocaleString() }} <span class="smaller-text text-tertiary">UZS</span>
+                        {{ stats.total_revenue.toLocaleString() }} <span class="smaller-text text-tertiary">USD</span>
                     </div>
                     <p class="smaller-text text-success mt-3 font-medium">↑ 12.5% {{ $t('payments.stats.fromLastMonth')
                         }}</p>
@@ -27,7 +27,7 @@
                     <p class="section-label mb-2">{{ $t('payments.stats.pending') }}</p>
                     <div class="number-medium text-error">
                         {{ stats.pending_payments.toLocaleString() }} <span
-                            class="smaller-text text-tertiary">UZS</span>
+                            class="smaller-text text-tertiary">USD</span>
                     </div>
                     <p class="smaller-text text-tertiary mt-3">{{ $t('payments.stats.endOfWeek') }}</p>
                 </div>
@@ -65,7 +65,7 @@
                                     <div class="font-bold"
                                         :class="item.type === 'income' ? 'text-success' : 'text-primary'">
                                         {{ item.type === 'income' ? '+' : '' }}{{ item.amount.toLocaleString() }}
-                                        <span class="smaller-text text-tertiary font-normal ml-1">UZS</span>
+                                        <span class="smaller-text text-tertiary font-normal ml-1">USD</span>
                                     </div>
                                 </td>
                                 <td><span class="type-badge" :class="item.type">{{ formatType(item.type) }}</span></td>

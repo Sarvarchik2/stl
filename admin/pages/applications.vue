@@ -76,7 +76,7 @@
                                 </td>
                                 <td>
                                     <div class="text-primary font-bold">{{ app.final_price?.toLocaleString() }}</div>
-                                    <div class="smaller-text text-tertiary">UZS</div>
+                                    <div class="smaller-text text-tertiary">USD</div>
                                 </td>
                                 <td>
                                     <div class="operator-badge-minimal" :class="{ 'assigned': app.operator_id }">
@@ -385,7 +385,7 @@
                                         <div class="text-primary font-bold mb-1">{{ selectedApp.car_brand }} {{
                                             selectedApp.car_model }}</div>
                                         <div class="text-accent font-bold">{{ selectedApp.final_price?.toLocaleString()
-                                        }} <span class="smaller-text font-normal text-tertiary">UZS</span></div>
+                                        }} <span class="smaller-text font-normal text-tertiary">USD</span></div>
                                         <div class="smaller-text text-tertiary mt-1" v-if="selectedApp.car_year">{{
                                             selectedApp.car_year }} г.в.</div>
                                     </div>

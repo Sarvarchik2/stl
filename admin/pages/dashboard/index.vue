@@ -33,11 +33,7 @@
                         <div class="metric-value text-primary font-bold">
                             {{ formatMoney(stats.total_volume_usd) }}
                         </div>
-                        <div class="metric-footer mt-4 flex items-center gap-2">
-                            <div class="text-secondary smaller-text">
-                                ≈ {{ formatMoneyUZS(stats.total_volume_uzs) }} UZS
-                            </div>
-                        </div>
+
                     </div>
 
                     <!-- Pipeline Health -->
@@ -235,15 +231,7 @@ const formatMoney = (amount: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount)
 }
 
-const formatMoneyUZS = (amount: number) => {
-    if (amount >= 1000000000) {
-        return (amount / 1000000000).toFixed(1) + ' ' + t('common.billion')
-    }
-    if (amount >= 1000000) {
-        return (amount / 1000000).toFixed(1) + ' ' + t('common.million')
-    }
-    return amount.toLocaleString()
-}
+
 
 const translateStatus = (status: string) => {
     // Dynamic translation key lookup
