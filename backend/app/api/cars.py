@@ -6,7 +6,7 @@ from typing import List, Optional
 from decimal import Decimal
 from uuid import UUID
 
-from ..dependencies import DB, CurrentUser, StaffUser, AdminUser, OptionalUser
+from ..dependencies import DB, CurrentUser, StaffUser, ManagerUser, AdminUser, OptionalUser
 from ..models.car import Car, PriceHistory
 from ..models.enums import Role
 from ..schemas.car import (
@@ -128,6 +128,7 @@ async def list_cars(
             "image_url": car.image_url,
             "photos": car.photos or [],
             "features": car.features or [],
+            "status": car.status,
             "is_active": car.is_active,
             "parsed_at": car.parsed_at,
             "last_seen_at": car.last_seen_at,
@@ -241,10 +242,10 @@ async def get_car_price_history(
 @router.post("", response_model=CarResponse, status_code=status.HTTP_201_CREATED)
 async def create_car(
     car_in: CarCreate,
-    admin_user: AdminUser,
+    current_user: ManagerUser,
     db: DB
 ):
-    """Create a new car (Admin only)."""
+    """Create a new car (Manager+)."""
     # Calculate initial final price
     markup = await get_markup_percent(db)
     final_price = calculate_final_price(car_in.source_price_usd, markup)
@@ -274,10 +275,10 @@ async def create_car(
 async def update_car(
     car_id: UUID,
     car_in: CarUpdate,
-    admin_user: AdminUser,
+    current_user: ManagerUser,
     db: DB
 ):
-    """Update car details (Admin only)."""
+    """Update car details (Manager+)."""
     result = await db.execute(select(Car).where(Car.id == car_id))
     car = result.scalar_one_or_none()
     
@@ -306,10 +307,10 @@ async def update_car(
 @router.delete("/{car_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_car(
     car_id: UUID,
-    admin_user: AdminUser,
+    current_user: ManagerUser,
     db: DB
 ):
-    """Delete a car (Admin only)."""
+    """Delete a car (Manager+)."""
     result = await db.execute(select(Car).where(Car.id == car_id))
     car = result.scalar_one_or_none()
     

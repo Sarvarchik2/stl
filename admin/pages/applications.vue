@@ -375,8 +375,15 @@
                                 <div v-if="selectedApp.client_email" class="text-tertiary smaller-text">{{
                                     selectedApp.client_email }}</div>
                             </div>
-                            <div class="detail-card">
-                                <label class="section-label mb-3">{{ $t('applications.detail.carInfo') }}</label>
+                            <div class="detail-card clickable-card" @click="navigateTo('/cars?open=' + selectedApp.car_id)">
+                                <div class="flex-between mb-3">
+                                    <label class="section-label cursor-pointer">{{ $t('applications.detail.carInfo') }}</label>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-tertiary">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </div>
                                 <div class="flex gap-4">
                                     <div v-if="selectedApp.car_image_url" class="mini-thumb-wrap">
                                         <img :src="selectedApp.car_image_url" class="mini-thumb">
@@ -714,24 +721,13 @@ const filteredApplications = computed(() => {
     })
 })
 
-const openDetail = async (app: any) => {
-    // Merge standard keys only if they are missing, to avoid over-cluttering old apps
-    // but ensuring enough for 'new' apps to be confirmed.
-    const baseChecklist: Record<string, boolean> = {
-        'confirmed_interest': false,
-        'confirmed_budget': false,
-        'confirmed_timeline': false,
-        'agreed_visit': false,
-        'agreed_contract': false
+    const openDetail = async (app: any) => {
+    // Only show these specific checklist items per user request
+    const checklist: Record<string, boolean> = {
+        'agreed_visit': app.checklist?.agreed_visit || false,
+        'documents': app.checklist?.documents || false
     }
 
-    // Only add test_drive/documents if it's a new app or they already exist
-    if (app.status === 'new' || app.checklist?.test_drive || app.checklist?.documents) {
-        baseChecklist.test_drive = false
-        baseChecklist.documents = false
-    }
-
-    const checklist = { ...baseChecklist, ...(app.checklist || {}) }
     selectedApp.value = { ...app, checklist }
 
     try {
@@ -1393,6 +1389,18 @@ definePageMeta({ layout: false })
 }
 
 .hidden {
+
     display: none;
+}
+
+.detail-card.clickable-card {
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.detail-card.clickable-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 </style>

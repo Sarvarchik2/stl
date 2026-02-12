@@ -22,6 +22,7 @@ class CarBase(BaseModel):
     engine: Optional[str] = None
     mpg_city: Optional[int] = None
     mpg_highway: Optional[int] = None
+    status: str = "available"
 
 
 class CarResponse(CarBase):
@@ -114,6 +115,7 @@ class CarUpdate(BaseModel):
     mpg_city: Optional[int] = None
     mpg_highway: Optional[int] = None
     source_price_usd: Optional[Decimal] = None
+    status: Optional[str] = None
     is_active: Optional[bool] = None
     image_url: Optional[str] = None
     photos: Optional[List[str]] = None

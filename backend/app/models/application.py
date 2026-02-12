@@ -34,11 +34,8 @@ class Application(Base):
     checklist = Column(JSON, default=dict)
     # Expected structure:
     # {
-    #     "confirmed_interest": false,
-    #     "confirmed_budget": false,
-    #     "confirmed_timeline": false,
     #     "agreed_visit": false,
-    #     "agreed_contract": false
+    #     "documents": false
     # }
     
     # Rejection info

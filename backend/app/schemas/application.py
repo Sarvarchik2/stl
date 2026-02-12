@@ -13,11 +13,8 @@ from .common import DocumentResponse, PaymentResponse
 # --- Checklist ---
 
 class Checklist(BaseModel):
-    confirmed_interest: bool = False
-    confirmed_budget: bool = False
-    confirmed_timeline: bool = False
     agreed_visit: bool = False
-    agreed_contract: bool = False
+    documents: bool = False
 
 
 # --- Application Schemas ---

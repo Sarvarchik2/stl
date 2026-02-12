@@ -30,6 +30,7 @@ import { ref, onMounted, watch } from 'vue'
 
 const isSidebarOpen = ref(false)
 const route = useRoute()
+const router = useRouter()
 const theme = ref('light')
 
 // Simple check for login state based on route

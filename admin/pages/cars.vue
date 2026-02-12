@@ -398,6 +398,8 @@ import { ref, computed, onMounted, watch } from 'vue'
 
 const { t } = useI18n()
 const toast = useToast()
+const route = useRoute()
+const router = useRouter()
 
 const { getCars, createCar, updateCar, deleteCar, hasRole } = useApi()
 
@@ -469,6 +471,16 @@ const fetchCars = async () => {
         cars.value = []
     } finally {
         loading.value = false
+        // Check for auto-open
+        if (route.query.open) {
+            const target = cars.value.find(c => c.id === route.query.open)
+            if (target) {
+                openModal(target)
+                // Clear query to avoid re-opening on refresh
+                // Clear query to avoid re-opening on refresh
+                router.replace({ query: {} })
+            }
+        }
     }
 }
 
