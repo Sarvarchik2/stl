@@ -212,6 +212,8 @@ async def get_stats(
         return q
 
     # 1. Total Volume (Revenue) & Profit
+    # All values are treated as USD.
+    
     # Revenue = Sum(final_price)
     # Profit = Sum(final_price - source_price_snapshot)
     
@@ -303,14 +305,41 @@ async def get_stats(
         if key:
             contact_counts[str(key)] = count
 
+    # 7. Personal Performance
+    personal_count = 0
+    personal_label = ""
+    
+    if user.role == Role.OPERATOR:
+        op_perf_query = select(func.count(Application.id)).where(
+            Application.operator_id == user.id,
+            Application.status.not_in([ApplicationStatus.NEW, ApplicationStatus.CANCELLED])
+        )
+        if period != 'all':
+             op_perf_query = apply_filter(op_perf_query, Application.updated_at)
+        personal_count = (await db.execute(op_perf_query)).scalar() or 0
+        personal_label = "processed"
+        
+    elif user.role == Role.MANAGER:
+        man_perf_query = select(func.count(Application.id)).where(
+            Application.manager_id == user.id,
+            Application.status.in_([ApplicationStatus.DELIVERED, ApplicationStatus.COMPLETED])
+        )
+        if period != 'all':
+            man_perf_query = apply_filter(man_perf_query, Application.updated_at)
+        personal_count = (await db.execute(man_perf_query)).scalar() or 0
+        personal_label = "delivered"
+
     # Security Filter
     # Only Admins see financials
     is_admin = user.role == Role.ADMIN
+
+    vol_usd = float(total_volume)
+    profit_usd = float(total_profit)
     
     return {
-        "total_volume_uzs": (float(total_volume) * 12500) if is_admin else 0,
-        "total_volume_usd": float(total_volume) if is_admin else 0,
-        "total_profit_usd": float(total_profit) if is_admin else 0,
+        "total_volume_uzs": 0,
+        "total_volume_usd": vol_usd if is_admin else 0,
+        "total_profit_usd": profit_usd if is_admin else 0,
         "in_pipeline": in_pipeline,
         "fleet_count": total_cars,
         "conversion_rate": round(conversion, 1),
@@ -319,5 +348,103 @@ async def get_stats(
         "canceled_count": canceled_count,
         "status_counts": status_counts,
         "contact_counts": contact_counts,
-        "recent_activity": logs
+        "recent_activity": logs,
+        "personal_performance": {
+            "count": personal_count,
+            "label": personal_label
+        }
+    }
+
+
+@router.get("/staff/{user_id}/performance")
+async def get_staff_performance(
+    user_id: UUID,
+    db: DB,
+    admin: AdminUser,
+    period: str = Query("all", enum=["day", "week", "month", "all"])
+):
+    """
+    Get performance metrics and applications for a specific staff member.
+    Admin only.
+    """
+    from sqlalchemy import func
+    from datetime import datetime, timedelta
+    from ..models.user import User
+    from ..models.application import Application
+    from ..models.enums import ApplicationStatus, Role
+    
+    # 1. Verify user exists and is staff
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    
+    if not user or user.role == Role.CLIENT:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Staff member not found"
+        )
+        
+    # 2. Setup period filter
+    start_date = None
+    now = datetime.utcnow()
+    if period == "day":
+        start_date = now - timedelta(days=1)
+    elif period == "week":
+        start_date = now - timedelta(weeks=1)
+    elif period == "month":
+        start_date = now - timedelta(days=30)
+        
+    def apply_filter(q, date_col):
+        if start_date:
+            return q.where(date_col >= start_date)
+        return q
+
+    # 3. Performance logic
+    # Determine if we filter by operator_id or manager_id or both?
+    if user.role == Role.OPERATOR:
+        perf_col = Application.operator_id
+        success_statuses = [
+            s for s in ApplicationStatus 
+            if s not in [ApplicationStatus.NEW, ApplicationStatus.CANCELLED]
+        ]
+        label = "processed"
+    elif user.role == Role.MANAGER:
+        perf_col = Application.manager_id
+        success_statuses = [ApplicationStatus.DELIVERED, ApplicationStatus.COMPLETED]
+        label = "delivered"
+    else:
+        # Admin or other roles
+        perf_col = (Application.operator_id == user_id) | (Application.manager_id == user_id)
+        success_statuses = [ApplicationStatus.DELIVERED, ApplicationStatus.COMPLETED]
+        label = "completed"
+
+    # stats_query
+    if user.role in [Role.OPERATOR, Role.MANAGER]:
+        stats_query = select(func.count(Application.id)).where(perf_col == user_id)
+    else:
+        stats_query = select(func.count(Application.id)).where(perf_col)
+        
+    stats_query = stats_query.where(Application.status.in_(success_statuses))
+    stats_query = apply_filter(stats_query, Application.updated_at)
+    
+    success_count = (await db.execute(stats_query)).scalar() or 0
+    
+    # 4. Get applications list (recent)
+    if user.role in [Role.OPERATOR, Role.MANAGER]:
+        apps_query = select(Application).where(perf_col == user_id)
+    else:
+        apps_query = select(Application).where(perf_col)
+        
+    apps_query = apps_query.order_by(Application.created_at.desc())
+    apps_query = apply_filter(apps_query, Application.created_at)
+    
+    result = await db.execute(apps_query)
+    apps = result.scalars().all()
+    
+    return {
+        "user_id": user_id,
+        "role": user.role.value,
+        "period": period,
+        "success_count": success_count,
+        "label": label,
+        "applications": apps
     }

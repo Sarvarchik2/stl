@@ -78,7 +78,7 @@
                     <div v-if="!hasRole('admin') && hasRole('manager')" class="metric-card glass-card shadow-sm">
                         <div class="flex-between mb-4">
                             <label class="section-label font-bold text-accent">{{ $t('applications.filters.confirmed')
-                            }}</label>
+                                }}</label>
                             <span class="badge badge-sm badge-outline">Ready</span>
                         </div>
                         <div class="metric-value text-primary font-bold">
@@ -98,7 +98,27 @@
                             {{ getStatusCount('contract_signed') }}
                         </div>
                         <div class="metric-footer mt-2">
-                            <span class="smaller-text text-tertiary">Waiting payment</span>
+                            <span class="smaller-text text-tertiary">Require attention</span>
+                        </div>
+                    </div>
+
+                    <!-- Personal Performance (Backend Driven) -->
+                    <div v-if="stats.personal_performance && stats.personal_performance.count > 0 && !hasRole('admin')"
+                        class="metric-card glass-card shadow-sm border-accent-light">
+                        <div class="flex-between mb-4">
+                            <label class="section-label font-bold text-accent">
+                                {{ stats.personal_performance.label === 'processed' ?
+                                    $t('applications.filters.confirmed') : $t('applications.status.delivered') }}
+                            </label>
+                            <span class="trend-tag success">★</span>
+                        </div>
+                        <div class="metric-value text-success font-bold">
+                            {{ stats.personal_performance.count }}
+                        </div>
+                        <div class="metric-footer mt-2">
+                            <span class="smaller-text text-tertiary">{{ stats.personal_performance.label === 'processed'
+                                ? 'Processed' : 'Delivered' }} ({{ selectedPeriod === 'all' ? 'All Time' :
+                                    selectedPeriod }})</span>
                         </div>
                     </div>
 
@@ -291,7 +311,7 @@
                             <div class="flex items-center gap-2">
                                 <div class="dot active-dot"></div>
                                 <span class="smaller-text font-bold">{{ $t('applications.filters.inProgress')
-                                    }}</span>
+                                }}</span>
                             </div>
                             <span class="smaller-text text-tertiary">{{ stats.in_pipeline }}</span>
                         </div>
@@ -299,7 +319,7 @@
                             <div class="flex items-center gap-2">
                                 <div class="dot success-dot"></div>
                                 <span class="smaller-text font-bold">{{ $t('applications.filters.completed')
-                                    }}</span>
+                                }}</span>
                             </div>
                             <span class="smaller-text text-tertiary">{{ stats.sold_count }}</span>
                         </div>
@@ -307,7 +327,7 @@
                             <div class="flex items-center gap-2">
                                 <div class="dot cancel-dot"></div>
                                 <span class="smaller-text font-bold">{{ $t('applications.status.cancelled')
-                                    }}</span>
+                                }}</span>
                             </div>
                             <span class="smaller-text text-tertiary">{{ stats.canceled_count }}</span>
                         </div>
@@ -352,7 +372,11 @@ const stats = ref({
     canceled_count: 0,
     status_counts: {} as Record<string, number>,
     contact_counts: {} as Record<string, number>,
-    recent_activity: [] as any[]
+    recent_activity: [] as any[],
+    personal_performance: {
+        count: 0,
+        label: ''
+    }
 })
 
 const recentApplications = ref<any[]>([])

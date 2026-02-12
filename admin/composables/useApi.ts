@@ -99,6 +99,13 @@ export const useApi = () => {
         })
     }
 
+    const getStaffPerformance = async (userId: string, params?: any) => {
+        return await $fetch(`${apiBase}/admin/staff/${userId}/performance`, {
+            params,
+            headers: headers.value
+        })
+    }
+
     const getSettings = async () => {
         return await $fetch(`${apiBase}/admin/settings`, {
             headers: headers.value
@@ -402,6 +409,7 @@ export const useApi = () => {
 
         // Admin & System
         getStats,
+        getStaffPerformance,
         getAuditLogs,
         getSettings,
         updateSetting,

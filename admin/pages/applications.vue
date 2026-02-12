@@ -29,6 +29,33 @@
         </header>
 
         <div class="container">
+            <!-- Personal Performance Stats -->
+            <div v-if="dashboardStats?.personal_performance && dashboardStats.personal_performance.count > 0 && !hasRole('admin')"
+                class="mb-6 animate-fade-in">
+                <div class="glass-card p-5 border-accent-light flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-accent/10 rounded-xl text-accent">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-tertiary smaller-text font-bold uppercase tracking-wider mb-1">
+                                {{ dashboardStats.personal_performance.label === 'processed' ?
+                                    $t('applications.status.confirmed') : $t('applications.status.delivered') }}
+                            </p>
+                            <h2 class="m-0 text-primary font-black">{{ dashboardStats.personal_performance.count }}</h2>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="badge badge-accent mb-2">My Performance</span>
+                        <p class="smaller-text text-tertiary">All Time Results</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Quick Filter Chips -->
             <div class="filters-bar mb-8 overflow-x-auto py-2">
                 <div class="flex gap-3">
@@ -280,16 +307,16 @@
                             <div class="flex-between mb-4">
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
-                                        }}</label>
+                                    }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </div>
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
-                                        }}</label>
+                                    }}</label>
                                     <div class="mt-1">
                                         <select v-if="hasRole('operator') || hasRole('manager') || hasRole('admin')"
                                             :value="selectedApp.contact_status"
@@ -324,7 +351,7 @@
                                             class="input input-sm">
                                             <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                                }} {{ op.last_name }}</option>
+                                            }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
@@ -348,7 +375,7 @@
                                     class="input input-sm">
                                     <option value="">{{ $t('common.notAssigned') }}</option>
                                     <option v-for="man in managers" :key="man.id" :value="man.id">{{ man.first_name
-                                    }} {{ man.last_name }}</option>
+                                        }} {{ man.last_name }}</option>
                                 </select>
                                 <div v-else class="text-primary font-bold">{{
                                     getOperatorName(selectedApp.manager_id) }}</div>
@@ -403,7 +430,7 @@
                                 @click="navigateTo('/cars?open=' + selectedApp.car_id)">
                                 <div class="flex-between mb-3">
                                     <label class="section-label cursor-pointer">{{ $t('applications.detail.carInfo')
-                                    }}</label>
+                                        }}</label>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" class="text-tertiary">
                                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -531,7 +558,7 @@
                                     <div class="ledger-entry">
                                         <div class="flex-between mb-2">
                                             <span class="ledger-user">{{ c.user_first_name }} {{ c.user_last_name
-                                            }}</span>
+                                                }}</span>
                                             <span class="ledger-time">{{ formatDate(c.created_at) }}</span>
                                         </div>
                                         <p class="ledger-text">{{ c.text }}</p>
@@ -555,9 +582,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 
 const toast = useToast()
 const { t } = useI18n()
+const route = useRoute()
 
 const {
     getApplications,
+    getApplication,
     updateApplicationStatus,
     updateApplicationContactStatus,
     updateApplicationChecklist,
@@ -574,7 +603,8 @@ const {
     getVideos,
     apiBase,
     authToken,
-    currentUser
+    currentUser,
+    getStats
 } = useApi()
 
 const filterStatuses = computed(() => [
@@ -601,6 +631,7 @@ const appVideos = ref<any[]>([])
 const isUploading = ref(false)
 const fileInputContract = ref<HTMLInputElement | null>(null)
 const fileInputVideo = ref<HTMLInputElement | null>(null)
+const dashboardStats = ref<any>(null)
 
 // Create Application Modal
 const showCreateModal = ref(false)
@@ -953,10 +984,40 @@ const getOperatorName = (id: string) => {
     return op ? `${op.first_name} ${op.last_name}` : t('common.notAssigned')
 }
 
-onMounted(() => {
+onMounted(async () => {
     fetchApplications()
     fetchOperators()
     fetchCars()
+
+    // Auto-open application if ID is in URL
+    if (route.query.id) {
+        try {
+            const app = await getApplication(route.query.id as string)
+            if (app) openDetail(app)
+        } catch (e) {
+            console.error('Auto-open failed:', e)
+        }
+    }
+
+    if (!hasRole('admin')) {
+        try {
+            dashboardStats.value = await getStats('all')
+        } catch (e) {
+            console.error('Failed to fetch stats', e)
+        }
+    }
+})
+
+// Watch for route changes to open application details dynamically
+watch(() => route.query.id, async (newId) => {
+    if (newId) {
+        try {
+            const app = await getApplication(newId as string)
+            if (app) openDetail(app)
+        } catch (e) {
+            console.error('Dynamic open failed:', e)
+        }
+    }
 })
 
 definePageMeta({ layout: false })

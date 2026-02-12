@@ -120,54 +120,184 @@
         <!-- User Modal -->
         <Teleport to="body">
             <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
-                <div class="modal-card animate-scale-in">
-                    <h2 class="text-xl font-bold mb-6">{{ modalTitle }}</h2>
-                    <div class="grid grid-2 gap-4">
-                        <div class="form-group">
-                            <label class="micro-label mb-2">{{ $t('staff.firstName') }}</label>
-                            <input v-model="form.first_name" type="text" class="input input-sm">
+                <div class="modal-card animate-scale-in" :class="{ 'modal-wide': editingId }">
+                    <div class="modal-header-premium mb-6">
+                        <div class="flex-between items-center mb-4">
+                            <h2 class="text-xl font-bold m-0">{{ modalTitle }}</h2>
+                            <button v-if="editingId" class="btn btn-icon-only btn-ghost"
+                                @click="showModal = false">✕</button>
                         </div>
-                        <div class="form-group">
-                            <label class="micro-label mb-2">{{ $t('staff.lastName') }}</label>
-                            <input v-model="form.last_name" type="text" class="input input-sm">
-                        </div>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('common.email') }}</label>
-                        <input v-model="form.email" type="email" class="input input-sm">
-                    </div>
-                    <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('staff.phone') }}</label>
-                        <div class="phone-input-wrapper">
-                            <span class="phone-prefix">+998</span>
-                            <input v-model="phoneNumber" @input="formatPhoneInput" type="tel"
-                                class="input input-sm phone-input" :placeholder="$t('auth.phonePlaceholder')"
-                                maxlength="15">
+
+                        <div v-if="editingId" class="tabs-minimal mt-4">
+                            <button class="tab-btn" :class="{ active: activeTab === 'profile' }"
+                                @click="activeTab = 'profile'">
+                                {{ $t('common.profile') || 'Profile' }}
+                            </button>
+                            <button class="tab-btn" :class="{ active: activeTab === 'performance' }"
+                                @click="activeTab = 'performance'">
+                                {{ $t('dashboard.quickStats') || 'Performance' }}
+                            </button>
                         </div>
                     </div>
-                    <div class="form-group mt-4">
-                        <label class="micro-label mb-2">{{ $t('staff.role') }}</label>
-                        <select v-model="form.role" class="input input-sm">
-                            <option v-for="role in roles" :key="role.key" :value="role.key">
-                                {{ role.label }}
-                            </option>
-                        </select>
+
+                    <!-- Profile Tab -->
+                    <div v-if="activeTab === 'profile'" class="tab-content animate-fade-in">
+                        <div class="grid grid-2 gap-4">
+                            <div class="form-group">
+                                <label class="micro-label mb-2">{{ $t('staff.firstName') }}</label>
+                                <input v-model="form.first_name" type="text" class="input input-sm">
+                            </div>
+                            <div class="form-group">
+                                <label class="micro-label mb-2">{{ $t('staff.lastName') }}</label>
+                                <input v-model="form.last_name" type="text" class="input input-sm">
+                            </div>
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="micro-label mb-2">{{ $t('common.email') }}</label>
+                            <input v-model="form.email" type="email" class="input input-sm">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="micro-label mb-2">{{ $t('staff.phone') }}</label>
+                            <div class="phone-input-wrapper">
+                                <span class="phone-prefix">+998</span>
+                                <input v-model="phoneNumber" @input="formatPhoneInput" type="tel"
+                                    class="input input-sm phone-input" :placeholder="$t('auth.phonePlaceholder')"
+                                    maxlength="15">
+                            </div>
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="micro-label mb-2">{{ $t('staff.role') }}</label>
+                            <select v-model="form.role" class="input input-sm">
+                                <option v-for="role in roles" :key="role.key" :value="role.key">
+                                    {{ role.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group mt-4" v-if="!editingId">
+                            <label class="micro-label mb-2">{{ $t('auth.password') }}</label>
+                            <input v-model="form.password" type="password" class="input input-sm">
+                        </div>
+                        <div class="form-group mt-4" v-else>
+                            <label class="micro-label mb-2">{{ $t('settings.newPassword') }} ({{ $t('common.optional')
+                                }})</label>
+                            <input v-model="form.password" type="password" class="input input-sm"
+                                :placeholder="$t('settings.leaveBlank')">
+                        </div>
+                        <div class="flex gap-3 mt-8">
+                            <button class="btn btn-sm flex-grow" @click="showModal = false">{{ $t('common.close')
+                                }}</button>
+                            <button class="btn btn-primary btn-sm flex-grow font-bold" @click="saveUser"
+                                :disabled="saving">
+                                {{ saving ? $t('common.loading') : $t('common.save') }}
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group mt-4" v-if="!editingId">
-                        <label class="micro-label mb-2">{{ $t('auth.password') }}</label>
-                        <input v-model="form.password" type="password" class="input input-sm">
+
+                    <!-- Performance Tab -->
+                    <div v-if="activeTab === 'performance' && editingId" class="tab-content animate-fade-in">
+                        <div
+                            class="flex items-center justify-between mb-6 bg-secondary/30 p-4 rounded-xl border border-light">
+                            <div>
+                                <select v-model="selectedPeriod" class="input input-minimal font-bold smaller-text h-8"
+                                    style="width: auto; padding-right: 2rem;">
+                                    <option value="day">{{ $t('common.today') }}</option>
+                                    <option value="week">{{ $t('common.thisWeek') }}</option>
+                                    <option value="month">{{ $t('common.thisMonth') }}</option>
+                                    <option value="all">{{ $t('common.allTime') }}</option>
+                                </select>
+                            </div>
+                            <div v-if="performanceData" class="flex items-center gap-3">
+                                <div class="text-right">
+                                    <div class="micro-label uppercase text-tertiary">{{ performanceData.label ===
+                                        'processed' ? $t('applications.status.confirmed') :
+                                        $t('applications.status.delivered') }}</div>
+                                    <div class="text-xl font-black text-success">{{ performanceData.success_count }}
+                                    </div>
+                                </div>
+                                <div class="p-2 bg-success/10 rounded-lg text-success">★</div>
+                            </div>
+                        </div>
+
+                        <div v-if="performanceLoading" class="py-12 flex-center">
+                            <div class="loading-spinner"></div>
+                        </div>
+
+                        <div v-else-if="performanceData?.applications?.length"
+                            class="performance-history custom-scrollbar">
+                            <label class="micro-label mb-3 block uppercase tracking-widest text-tertiary">Recent
+                                Activity</label>
+                            <div class="grid gap-2">
+                                <div v-for="app in performanceData.applications" :key="app.id"
+                                    class="performance-item glass-card-hover p-4 border border-light rounded-xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01]"
+                                    @click="openAppDetails(app)">
+                                    <div class="flex items-center gap-4">
+                                        <div class="app-id-circle">#{{ app.id.toString().substring(0, 4) }}</div>
+                                        <div>
+                                            <div class="font-bold text-sm text-primary">Application</div>
+                                            <div class="smaller-text text-tertiary">{{ new
+                                                Date(app.created_at).toLocaleDateString() }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="badge badge-sm" :class="app.status">{{ app.status }}</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" class="opacity-30">
+                                            <path d="M9 18l6-6-6-6" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-else class="py-12 text-center text-tertiary">
+                            <div class="mb-2 opacity-20">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                            </div>
+                            <p class="smaller-text">{{ $t('common.noData') }}</p>
+                        </div>
                     </div>
-                    <div class="form-group mt-4" v-else>
-                        <label class="micro-label mb-2">{{ $t('settings.newPassword') }} ({{ $t('common.optional')
-                        }})</label>
-                        <input v-model="form.password" type="password" class="input input-sm"
-                            :placeholder="$t('settings.leaveBlank')">
+                </div>
+            </div>
+        </Teleport>
+
+        <!-- Application Quick Detail Sub-modal -->
+        <Teleport to="body">
+            <div v-if="selectedApp" class="modal-overlay" @click.self="selectedApp = null" style="z-index: 3000;">
+                <div class="modal-card modal-compact animate-scale-in border-accent-light shadow-2xl">
+                    <div class="flex-between mb-6">
+                        <h2 class="text-xl font-black m-0 tracking-tight">Application Details</h2>
+                        <button class="btn btn-icon-only btn-ghost" @click="selectedApp = null">✕</button>
                     </div>
-                    <div class="flex gap-3 mt-8">
-                        <button class="btn btn-sm flex-grow" @click="showModal = false">{{ $t('common.close')
-                        }}</button>
-                        <button class="btn btn-primary btn-sm flex-grow font-bold" @click="saveUser" :disabled="saving">
-                            {{ saving ? $t('common.loading') : $t('common.save') }}
+
+                    <div class="bg-secondary/20 p-5 rounded-2xl border border-light mb-6">
+                        <div class="flex-between mb-4">
+                            <span class="micro-label">Status</span>
+                            <span class="badge" :class="selectedApp.status">{{ selectedApp.status }}</span>
+                        </div>
+                        <div class="flex-between mb-4">
+                            <span class="micro-label">Final Price</span>
+                            <span class="text-xl font-bold text-primary">${{ selectedApp.final_price?.toLocaleString()
+                                }}</span>
+                        </div>
+                        <div class="flex-between">
+                            <span class="micro-label">Created</span>
+                            <span class="text-secondary smaller-text">{{ new
+                                Date(selectedApp.created_at).toLocaleString() }}</span>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-3">
+                        <NuxtLink :to="`/applications?id=${selectedApp.id}`"
+                            class="btn btn-primary btn-sm w-full font-bold shadow-sm">
+                            FULL CRM DETAILS ↗
+                        </NuxtLink>
+                        <button class="btn btn-ghost btn-sm w-full" @click="selectedApp = null">
+                            {{ $t('common.close') }}
                         </button>
                     </div>
                 </div>
@@ -210,12 +340,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const { t } = useI18n()
 const toast = useToast()
 
-const { getUsers, createStaffUser, updateUserStatus, addToBlacklist, removeFromBlacklistByPhone, hasRole, authToken, currentUser } = useApi()
+const {
+    getUsers,
+    createStaffUser,
+    updateUserStatus,
+    addToBlacklist,
+    removeFromBlacklistByPhone,
+    hasRole,
+    authToken,
+    currentUser,
+    getStaffPerformance,
+    getApplication
+} = useApi()
 
 const isLoadingSession = computed(() => !!authToken.value && !currentUser.value)
 
@@ -244,6 +385,43 @@ const roles = computed(() => [
     { key: 'manager', label: t('users.roles.manager') },
     { key: 'admin', label: t('users.roles.admin') }
 ])
+
+const activeTab = ref('profile')
+const performanceData = ref<any>(null)
+const performanceLoading = ref(false)
+const selectedPeriod = ref('all')
+const selectedApp = ref<any>(null)
+
+const fetchPerformance = async () => {
+    if (!editingId.value) return
+    performanceLoading.value = true
+    try {
+        performanceData.value = await getStaffPerformance(editingId.value, { period: selectedPeriod.value })
+    } catch (err) {
+        console.error('Failed to fetch performance', err)
+    } finally {
+        performanceLoading.value = false
+    }
+}
+
+watch(selectedPeriod, () => {
+    if (activeTab.value === 'performance') fetchPerformance()
+})
+
+watch(activeTab, (newTab) => {
+    if (newTab === 'performance' && !performanceData.value) {
+        fetchPerformance()
+    }
+})
+
+const openAppDetails = async (app: any) => {
+    try {
+        const fullApp = await getApplication((app.id || app).toString())
+        selectedApp.value = fullApp
+    } catch (err) {
+        toast.error(t('common.error'), t('common.loadError'))
+    }
+}
 
 const form = ref({
     first_name: '',
@@ -279,6 +457,8 @@ const fetchUsers = async () => {
 }
 
 const openModal = (user?: any) => {
+    activeTab.value = 'profile'
+    performanceData.value = null
     if (user) {
         editingId.value = user.id
         form.value = { ...user, password: '' }
@@ -597,5 +777,98 @@ definePageMeta({ layout: false })
     .header-actions .btn {
         width: 100%;
     }
+}
+
+.modal-wide {
+    max-width: 650px !important;
+}
+
+.tabs-minimal {
+    display: flex;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.75rem 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition);
+}
+
+.tab-btn.active {
+    color: var(--color-accent);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-accent);
+}
+
+.performance-history {
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.app-id-circle {
+    width: 40px;
+    height: 40px;
+    background: var(--color-bg-secondary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    border: 1px solid var(--color-border);
+}
+
+.glass-card-hover {
+    background: var(--color-bg-card);
+    transition: all 0.2s ease;
+}
+
+.glass-card-hover:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-accent) !important;
+}
+
+.achievement-badge {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.border-accent-light {
+    border-color: var(--color-accent) !important;
+    opacity: 0.5;
 }
 </style>
