@@ -79,7 +79,9 @@
                                     <div class="smaller-text text-tertiary">UZS</div>
                                 </td>
                                 <td>
-                                    <div class="operator-badge-minimal">{{ getOperatorName(app.operator_id) }}</div>
+                                    <div class="operator-badge-minimal" :class="{ 'assigned': app.operator_id }">
+                                        {{ getOperatorName(app.operator_id) }}
+                                    </div>
                                 </td>
                                 <td><span class="badge" :class="app.status">{{ translateStatus(app.status) }}</span>
                                 </td>
@@ -980,6 +982,61 @@ definePageMeta({ layout: false })
     border-radius: 100px;
     display: inline-block;
     border: 1px solid var(--color-border);
+    transition: all var(--transition);
+}
+
+.operator-badge-minimal.assigned {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+    font-weight: 600;
+}
+
+/* Status Badges */
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.badge.new {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge.confirmed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge.contract_signed {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.badge.paid {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badge.delivered {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge.cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* Modal Core Styles */
