@@ -48,7 +48,8 @@
         "billion": "Bn",
         "million": "M",
         "searchPlaceholder": "Search by name, phone...",
-        "allRoles": "All Roles"
+        "allRoles": "All Roles",
+        "period": "Period"
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -120,6 +121,7 @@
         "currentStage": "Current Stage",
         "contactStatus": "Contact Status",
         "operator": "Assigned Operator",
+        "manager": "Assigned Manager",
         "clientProfile": "Client Profile",
         "carInfo": "Car Information",
         "checklistSummary": "Data Verification (Checklist)",

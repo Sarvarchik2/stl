@@ -195,55 +195,84 @@
 
                     <!-- Performance Tab -->
                     <div v-if="activeTab === 'performance' && editingId" class="tab-content animate-fade-in">
-                        <div
-                            class="flex items-center justify-between mb-6 bg-secondary/30 p-4 rounded-xl border border-light">
-                            <div>
-                                <select v-model="selectedPeriod" class="input input-minimal font-bold smaller-text h-8"
-                                    style="width: auto; padding-right: 2rem;">
-                                    <option value="day">{{ $t('common.today') }}</option>
-                                    <option value="week">{{ $t('common.thisWeek') }}</option>
-                                    <option value="month">{{ $t('common.thisMonth') }}</option>
-                                    <option value="all">{{ $t('common.allTime') }}</option>
-                                </select>
-                            </div>
-                            <div v-if="performanceData" class="flex items-center gap-3">
-                                <div class="text-right">
-                                    <div class="micro-label uppercase text-tertiary">{{ performanceData.label ===
-                                        'processed' ? $t('dashboard.processed') :
-                                        $t('dashboard.delivered') }}</div>
-                                    <div class="text-xl font-black text-success">{{ performanceData.success_count }}
-                                    </div>
+                        <div class="performance-overview-grid mb-8">
+                            <div class="stat-card-premium">
+                                <label class="micro-label uppercase tracking-widest text-tertiary mb-2 block">{{
+                                    $t('common.period') }}</label>
+                                <div class="select-fancy-wrapper">
+                                    <select v-model="selectedPeriod" class="select-fancy">
+                                        <option value="day">{{ $t('common.today') }}</option>
+                                        <option value="week">{{ $t('common.thisWeek') }}</option>
+                                        <option value="month">{{ $t('common.thisMonth') }}</option>
+                                        <option value="all">{{ $t('common.allTime') }}</option>
+                                    </select>
+                                    <span class="select-icon">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="3">
+                                            <path d="M6 9l6 6 6-6" />
+                                        </svg>
+                                    </span>
                                 </div>
-                                <div class="p-2 bg-success/10 rounded-lg text-success">★</div>
+                            </div>
+                            <div v-if="performanceData" class="stat-card-premium highlight-success">
+                                <label class="micro-label uppercase tracking-widest text-tertiary mb-2 block">
+                                    {{ performanceData.label === 'processed' ? $t('dashboard.processed') :
+                                        $t('dashboard.delivered') }}
+                                </label>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-3xl font-black text-primary tracking-tight">
+                                        {{ performanceData.success_count }}
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
 
                         <div v-if="performanceLoading" class="py-12 flex-center">
-                            <div class="loading-spinner"></div>
+                            <div class="loading-spinner-fancy"></div>
                         </div>
 
                         <div v-else-if="performanceData?.applications?.length"
-                            class="performance-history custom-scrollbar">
-                            <label class="micro-label mb-3 block uppercase tracking-widest text-tertiary">
+                            class="performance-history-container custom-scrollbar">
+                            <h3 class="micro-label uppercase tracking-widest text-tertiary mb-4">
                                 {{ $t('dashboard.recentActivity') }}
-                            </label>
-                            <div class="grid gap-2">
+                            </h3>
+                            <div class="activity-feed">
                                 <div v-for="app in performanceData.applications" :key="app.id"
-                                    class="performance-item glass-card-hover p-4 border border-light rounded-xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01]"
-                                    @click="openAppDetails(app)">
-                                    <div class="flex items-center gap-4">
-                                        <div class="app-id-circle">#{{ app.id.toString().substring(0, 4) }}</div>
-                                        <div>
-                                            <div class="font-bold text-sm text-primary">{{
-                                                $t('applications.application') }}</div>
-                                            <div class="smaller-text text-tertiary">{{ new
-                                                Date(app.created_at).toLocaleDateString() }}</div>
+                                    class="activity-item-card-premium" @click="openAppDetails(app)">
+                                    <div class="activity-status-indicator">
+                                        <div class="activity-dot-fancy" :class="app.status"></div>
+                                        <div class="activity-line"></div>
+                                    </div>
+                                    <div class="activity-content-premium">
+                                        <div class="flex-between items-start mb-2">
+                                            <div>
+                                                <div class="activity-title">
+                                                    {{ $t('applications.application') }} #{{
+                                                        app.id.toString().substring(0, 8).toUpperCase() }}
+                                                </div>
+                                                <div class="activity-time">
+                                                    {{ new Date(app.created_at).toLocaleDateString(locale, {
+                                                        day: '2-digit',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) }}
+                                                </div>
+                                            </div>
+                                            <span class="badge-premium-pill" :class="app.status">
+                                                {{ $t(`applications.status.${app.status}`) || app.status }}
+                                            </span>
+                                        </div>
+                                        <div class="activity-details">
+                                            <div class="car-tag-mini">{{ app.car_brand }} {{ app.car_model }}</div>
+                                            <div class="client-tag-mini">{{ app.client_first_name }}</div>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="badge badge-sm" :class="app.status">{{ app.status }}</span>
+                                    <div class="activity-arrow">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2" class="opacity-30">
+                                            stroke="currentColor" stroke-width="2.5">
                                             <path d="M9 18l6-6-6-6" />
                                         </svg>
                                     </div>
@@ -251,16 +280,15 @@
                             </div>
                         </div>
 
-                        <div v-else class="py-12 text-center text-tertiary">
-                            <div class="mb-2 opacity-20">
+                        <div v-else class="py-16 text-center text-tertiary animate-fade-in">
+                            <div class="empty-state-icon mb-4">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="7 10 12 15 17 10" />
-                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                    stroke-width="1" class="opacity-20">
+                                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                                    <polyline points="13 2 13 9 20 9" />
                                 </svg>
                             </div>
-                            <p class="smaller-text">{{ $t('common.noData') }}</p>
+                            <p class="small-text font-medium">{{ $t('common.noData') }}</p>
                         </div>
                     </div>
                 </div>
@@ -344,7 +372,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 const {
@@ -804,7 +832,7 @@ definePageMeta({ layout: false })
 }
 
 .tab-btn.active {
-    color: var(--color-accent);
+    color: var(--color-text-primary);
 }
 
 .tab-btn.active::after {
@@ -814,63 +842,252 @@ definePageMeta({ layout: false })
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--color-accent);
+    background: var(--color-text-primary);
 }
 
-.performance-history {
-    max-height: 450px;
-    overflow-y: auto;
-    padding-right: 0.5rem;
+/* Performance Tab Enhanced Styles */
+.performance-overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
 }
 
-.app-id-circle {
-    width: 40px;
-    height: 40px;
-    background: var(--color-bg-secondary);
-    border-radius: 12px;
+.stat-card-premium {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.stat-card-premium.highlight-success {
+    background: linear-gradient(135deg, #ffffff 0%, rgba(16, 185, 129, 0.03) 100%);
+    border-color: rgba(16, 185, 129, 0.15);
+}
+
+.stat-badge-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--color-accent);
-    border: 1px solid var(--color-border);
 }
 
-.glass-card-hover {
-    background: var(--color-bg-card);
+.select-fancy-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-fancy {
+    width: 100%;
+    appearance: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.glass-card-hover:hover {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-accent) !important;
+.select-fancy:hover {
+    border-color: var(--color-text-tertiary);
+    background: var(--color-bg-hover);
 }
 
-.achievement-badge {
-    background: rgba(16, 185, 129, 0.1);
-    padding: 0.5rem 1rem;
-    border-radius: 100px;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+.select-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    opacity: 0.6;
 }
 
-.loading-spinner {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--color-border);
-    border-top-color: var(--color-accent);
+.performance-history-container {
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-top: 2rem;
+}
+
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-item-card-premium {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1rem 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.activity-item-card-premium:last-child {
+    border-bottom: none;
+}
+
+.activity-item-card-premium:hover {
+    padding-left: 0.5rem;
+}
+
+.activity-item-card-premium:hover .activity-title {
+    color: var(--color-accent);
+}
+
+.activity-status-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.5rem;
+}
+
+.activity-dot-fancy {
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    background: var(--color-border);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.activity-dot-fancy.delivered,
+.activity-dot-fancy.completed,
+.activity-dot-fancy.paid {
+    background: var(--color-success);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.activity-dot-fancy.new,
+.activity-dot-fancy.confirmed {
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.activity-line {
+    width: 1px;
+    flex-grow: 1;
+    background: var(--color-border-light);
+    margin-top: 4px;
+}
+
+.activity-content-premium {
+    flex-grow: 1;
+}
+
+.activity-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+    transition: color 0.2s ease;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.badge-premium-pill {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+}
+
+.badge-premium-pill.delivered,
+.badge-premium-pill.paid {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+}
+
+.badge-premium-pill.cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-error);
+}
+
+.activity-details {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.car-tag-mini,
+.client-tag-mini {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    background: var(--color-bg-secondary);
+    border-radius: 6px;
+    color: var(--color-text-secondary);
+}
+
+.activity-arrow {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.2s ease;
+    transform: translateX(-10px);
+}
+
+.activity-item-card-premium:hover .activity-arrow {
+    opacity: 0.3;
+    transform: translateX(0);
+}
+
+.loading-spinner-fancy {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--color-border-light);
+    border-top-color: var(--color-text-primary);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.76, 0, 0.24, 1) infinite;
 }
 
 @keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
     to {
         transform: rotate(360deg);
     }
 }
 
-.border-accent-light {
-    border-color: var(--color-accent) !important;
-    opacity: 0.5;
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+@media (max-width: 640px) {
+    .performance-overview-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

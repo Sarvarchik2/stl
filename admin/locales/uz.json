@@ -38,13 +38,22 @@
         "updated": "Yangilandi",
         "fileUploaded": "Fayl yuklandi",
         "billion": "Mlrd",
-        "million": "Mln"
+        "million": "Mln",
+        "searchPlaceholder": "Ism, telefon bo'yicha qidirish...",
+        "allRoles": "Barcha rollar",
+        "period": "Davr",
+        "optional": "Ixtiyoriy",
+        "allTime": "Barcha vaqt",
+        "thisMonth": "Shu oy",
+        "thisWeek": "Shu hafta",
+        "today": "Bugun"
     },
     "nav": {
         "dashboard": "Boshqaruv paneli",
         "applications": "Arizalar",
         "cars": "Katalog",
-        "users": "Xodimlar",
+        "staff": "Xodimlar",
+        "users": "Mijozlar",
         "blacklist": "Qora ro'yxat",
         "payments": "To'lovlar",
         "stories": "Hikoyalar",
@@ -119,6 +128,7 @@
             "addNote": "Ichki izoh qo'shish..."
         },
         "operator": "Mas'ul operator",
+        "manager": "Mas'ul menejer",
         "notAssigned": "Tayinlanmagan",
         "status": {
             "new": "Yangi",
@@ -263,34 +273,48 @@
         "saveError": "Saqlashda xato",
         "deleteError": "O'chirishda xato"
     },
-    "users": {
+    "staff": {
         "title": "Xodimlar",
         "subtitle": "Tizimga kirish va rollarni boshqarish",
-        "user": "Foydalanuvchi",
+        "user": "Xodim",
         "addUser": "Xodim qo'shish",
         "editUser": "Tahrirlash",
         "firstName": "Ism",
         "lastName": "Familiya",
         "phone": "Telefon",
         "status": "Holat",
-        "email": "Email",
         "noEmail": "Email yo'q",
         "role": "Rol",
         "active": "Faol",
         "blocked": "Bloklangan",
         "block": "Bloklash",
+        "activate": "Faollashtirish"
+    },
+    "users": {
+        "title": "Foydalanuvchilar (Mijozlar)",
+        "subtitle": "Ro'yxatdan o'tgan mijozlar ro'yxati",
+        "user": "Foydalanuvchi",
+        "addUser": "Mijoz qo'shish",
+        "editUser": "Tahrirlash",
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "phone": "Telefon",
+        "email": "Email",
+        "role": "Rol",
+        "status": "Holat",
+        "noEmail": "Email yo'q",
+        "active": "Faol",
+        "blocked": "Bloklangan",
+        "block": "Bloklash",
         "activate": "Faollashtirish",
-        "create": {
-            "title": "Yangi mijoz yaratish"
-        },
         "roles": {
             "operator": "Operator",
-            "supervisor": "Supervayzer",
             "manager": "Menejer",
             "admin": "Admin",
-            "owner": "Egasi",
             "client": "Mijoz"
         },
+        "searchPlaceholder": "Ism, telefon bo'yicha qidirish...",
+        "allRoles": "Barcha rollar",
         "confirmBlock": {
             "title": "Kirishni bloklash",
             "message": "{name}ni bloklashni xohlaysizmi? Foydalanuvchi qora ro'yxatga ham qo'shiladi."
@@ -299,9 +323,7 @@
             "title": "Kirishni faollashtirish",
             "message": "{name} uchun kirishni tiklash? Foydalanuvchi qora ro'yxatdan ham o'chiriladi."
         },
-        "statusError": "Holatni yangilashda xato",
-        "allRoles": "Barcha rollar",
-        "searchPlaceholder": "Ism, telefon bo'yicha qidirish..."
+        "statusError": "Holatni yangilashda xato"
     },
     "stories": {
         "title": "Stories boshqaruvi",
@@ -449,7 +471,9 @@
         "theme": "Mavzu",
         "darkTheme": "Tungi rejim",
         "lightTheme": "Kunduzgi rejim",
-        "language": "Interfeys tili"
+        "language": "Interfeys tili",
+        "newPassword": "Yangi parol",
+        "leaveBlank": "O'zgartirish shart bo'lmasa, bo'sh qoldiring"
     },
     "toast": {
         "error": "Xato",

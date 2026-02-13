@@ -307,16 +307,16 @@
                             <div class="flex-between mb-4">
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.currentStage')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
                                         <span class="badge badge-lg" :class="selectedApp.status">{{
                                             translateStatus(selectedApp.status)
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </div>
                                 <div class="status-group">
                                     <label class="section-label mb-2">{{ $t('applications.detail.contactStatus')
-                                    }}</label>
+                                        }}</label>
                                     <div class="mt-1">
                                         <select v-if="hasRole('operator') || hasRole('manager') || hasRole('admin')"
                                             :value="selectedApp.contact_status"
@@ -351,7 +351,7 @@
                                             class="input input-sm">
                                             <option value="">{{ $t('common.notAssigned') }}</option>
                                             <option v-for="op in operators" :key="op.id" :value="op.id">{{ op.first_name
-                                            }} {{ op.last_name }}</option>
+                                                }} {{ op.last_name }}</option>
                                         </select>
                                         <div v-else class="text-primary font-bold">{{
                                             getOperatorName(selectedApp.operator_id) }}</div>
@@ -375,7 +375,7 @@
                                     class="input input-sm">
                                     <option value="">{{ $t('common.notAssigned') }}</option>
                                     <option v-for="man in managers" :key="man.id" :value="man.id">{{ man.first_name
-                                        }} {{ man.last_name }}</option>
+                                    }} {{ man.last_name }}</option>
                                 </select>
                                 <div v-else class="text-primary font-bold">{{
                                     getOperatorName(selectedApp.manager_id) }}</div>
@@ -430,7 +430,7 @@
                                 @click="navigateTo('/cars?open=' + selectedApp.car_id)">
                                 <div class="flex-between mb-3">
                                     <label class="section-label cursor-pointer">{{ $t('applications.detail.carInfo')
-                                        }}</label>
+                                    }}</label>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" class="text-tertiary">
                                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -558,7 +558,7 @@
                                     <div class="ledger-entry">
                                         <div class="flex-between mb-2">
                                             <span class="ledger-user">{{ c.user_first_name }} {{ c.user_last_name
-                                                }}</span>
+                                            }}</span>
                                             <span class="ledger-time">{{ formatDate(c.created_at) }}</span>
                                         </div>
                                         <p class="ledger-text">{{ c.text }}</p>
@@ -812,17 +812,30 @@ const filteredApplications = computed(() => {
 })
 
 const openDetail = async (app: any) => {
-    // Manager auto-assignment on click
-    // When a manager opens a confirmed application, they become the manager of it.
-    if (hasRole('manager') && app.status !== 'new' && app.operator_id !== (currentUser.value as any)?.id) {
+    // Auto-assignment on click
+    const currentUserId = (currentUser.value as any)?.id
+
+    // Operator auto-assignment
+    if (hasRole('operator') && !app.operator_id && currentUserId) {
         try {
-            await assignOperator(app.id, (currentUser.value as any).id)
-            app.operator_id = (currentUser.value as any).id
-            // Update local applications list to reflect assignment
+            await assignOperator(app.id, currentUserId)
+            app.operator_id = currentUserId
             const localApp = applications.value.find(a => a.id === app.id)
-            if (localApp) localApp.operator_id = (currentUser.value as any).id
+            if (localApp) localApp.operator_id = currentUserId
         } catch (e) {
-            console.error('Auto-assignment failed', e)
+            console.error('Operator auto-assignment failed', e)
+        }
+    }
+
+    // Manager auto-assignment
+    if (hasRole('manager') && !app.manager_id && app.status !== 'new' && currentUserId) {
+        try {
+            await assignManager(app.id, currentUserId)
+            app.manager_id = currentUserId
+            const localApp = applications.value.find(a => a.id === app.id)
+            if (localApp) localApp.manager_id = currentUserId
+        } catch (e) {
+            console.error('Manager auto-assignment failed', e)
         }
     }
 

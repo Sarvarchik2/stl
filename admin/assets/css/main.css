@@ -576,12 +576,6 @@ a:hover {
   width: 100%;
 }
 
-@media (min-width: 1024px) {
-  .main-container {
-    /* padding-left: var(--sidebar-width); */
-  }
-}
-
 /* Admin Table Styles */
 .table-responsive {
   width: 100%;
