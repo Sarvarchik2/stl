@@ -12,6 +12,8 @@
         "confirm": "Confirm",
         "back": "Back",
         "close": "Close",
+        "page": "Page",
+        "of": "of",
         "all": "All",
         "actions": "Actions",
         "status": "Status",
@@ -287,7 +289,16 @@
         "sourceUrl": "Listing Source (URL)",
         "dataError": "Error preparing data",
         "saveError": "Error saving data",
-        "deleteError": "Error deleting"
+        "deleteError": "Error deleting",
+        "sort": {
+            "title": "Sorting",
+            "price_asc": "Cheapest first",
+            "price_desc": "Expensive first",
+            "year_desc": "Newest (year)",
+            "year_asc": "Oldest (year)",
+            "mileage_asc": "Least mileage",
+            "newest": "Recently added"
+        }
     },
     "staff": {
         "title": "Staff",

@@ -12,6 +12,8 @@
         "confirm": "Tasdiqlash",
         "back": "Orqaga",
         "close": "Yopish",
+        "page": "Sahifa",
+        "of": "dan",
         "all": "Hammasi",
         "actions": "Harakatlar",
         "status": "Holat",
@@ -271,7 +273,16 @@
         "sourceUrl": "E'lon manbasi (URL)",
         "dataError": "Ma'lumotlarni tayyorlashda xato",
         "saveError": "Saqlashda xato",
-        "deleteError": "O'chirishda xato"
+        "deleteError": "O'chirishda xato",
+        "sort": {
+            "title": "Saralash",
+            "price_asc": "Arzonroq",
+            "price_desc": "Qimmatroq",
+            "year_desc": "Yangiroq (yil)",
+            "year_asc": "Eskiroq (yil)",
+            "mileage_asc": "Kam masofa",
+            "newest": "Yangi qo'shilganlar"
+        }
     },
     "staff": {
         "title": "Xodimlar",

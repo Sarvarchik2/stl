@@ -74,6 +74,9 @@ class CarListParams(BaseModel):
     # Pagination
     page: int = Field(default=1, ge=1)
     per_page: int = Field(default=20, ge=1, le=100)
+    
+    # Generic Search
+    search: Optional[str] = None
 
 
 class CarListResponse(BaseModel):

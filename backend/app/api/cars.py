@@ -56,6 +56,15 @@ async def list_cars(
         query = query.where(Car.mileage <= params.mileage_to)
     if params.is_active is not None:
         query = query.where(Car.is_active == params.is_active)
+    
+    if params.search:
+        s = f"%{params.search}%"
+        query = query.where(
+            (Car.brand.ilike(s)) |
+            (Car.model.ilike(s)) |
+            (Car.vin.ilike(s)) |
+            (Car.external_id.ilike(s))
+        )
         
     # Price filtering logic (reverse calculation from final price)
     # final = source * (1 + markup/100)  =>  source = final / (1 + markup/100)

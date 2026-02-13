@@ -45,10 +45,23 @@
             <div class="controls-bar-dark mb-8 card card-minimal py-3 px-5">
                 <div class="flex gap-6 items-center flex-wrap">
                     <div class="search-wrap-minimal flex-grow max-w-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" class="text-tertiary">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
                         <input v-model="searchQuery" type="text" :placeholder="$t('cars.search')" class="input-clean"
-                            style="width: 100%;">
+                            style="width: 100%; padding-left: 10px;">
                     </div>
-                    <div class="filter-wrap">
+                    <div class="filter-wrap flex gap-4">
+                        <select v-model="sortParam" class="select-clean">
+                            <option value="created_at:desc">{{ $t('cars.sort.newest') }}</option>
+                            <option value="price:asc">{{ $t('cars.sort.price_asc') }}</option>
+                            <option value="price:desc">{{ $t('cars.sort.price_desc') }}</option>
+                            <option value="year:desc">{{ $t('cars.sort.year_desc') }}</option>
+                            <option value="year:asc">{{ $t('cars.sort.year_asc') }}</option>
+                            <option value="mileage:asc">{{ $t('cars.sort.mileage_asc') }}</option>
+                        </select>
                         <select v-model="statusFilter" class="select-clean">
                             <option value="all">{{ $t('applications.filters.all') }}</option>
                             <option value="available">{{ $t('cars.status.available') }}</option>
@@ -58,13 +71,12 @@
                     </div>
                     <div class="flex-grow"></div>
                     <div class="text-tertiary smaller-text font-bold tracking-widest opacity-50">
-                        {{ loading ? $t('common.loading').toUpperCase() : `${filteredCars.length}
+                        {{ loading ? $t('common.loading').toUpperCase() : `${totalItems}
                         ${$t('common.objects').toUpperCase()}` }}
                     </div>
                 </div>
             </div>
 
-            <!-- Grid View -->
             <div v-if="viewMode === 'grid'" class="grid-view animate-slide-up">
                 <div class="cars-grid gap-8">
                     <div v-if="loading && cars.length === 0" v-for="i in 6" :key="i" class="skeleton-card"></div>
@@ -200,6 +212,33 @@
 
 
 
+            <!-- Pagination Controls -->
+            <div v-if="totalPages > 1" class="pagination-minimal mt-12 mb-10 flex-center">
+                <div class="flex gap-6 items-center">
+                    <button class="btn-pagination" :disabled="page === 1" @click="page--">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                        <span>{{ $t('common.back') }}</span>
+                    </button>
+
+                    <div class="pagination-info">
+                        <span class="text-white font-bold">{{ page }}</span>
+                        <span class="mx-2 opacity-30">/</span>
+                        <span class="text-tertiary">{{ totalPages }}</span>
+                    </div>
+
+                    <button class="btn-pagination" :disabled="page === totalPages" @click="page++">
+                        <span>{{ $t('common.next') }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
             <div class="spacer"></div>
         </div>
 
@@ -267,11 +306,12 @@
                                 <div class="form-group">
                                     <label class="micro-label mb-2">{{ $t('cars.price') }}</label>
                                     <div class="input input-sm flex items-center bg-disabled text-accent font-bold">
-                                        {{ ((form.source_price_usd || 0) * (1 + (form.markup_percent || 15) / 100)).toLocaleString(undefined, { maximumFractionDigits: 2 }) }} USD
+                                        {{ ((form.source_price_usd || 0) * (1 + (form.markup_percent || 15) /
+                                            100)).toLocaleString(undefined, { maximumFractionDigits: 2 }) }} USD
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="grid grid-2 gap-4">
                                 <div class="form-group">
                                     <label class="micro-label mb-2">{{ $t('common.status') }}</label>
@@ -415,6 +455,17 @@ const editingId = ref<string | null>(null)
 const viewMode = ref<'grid' | 'list'>('grid')
 const activeTab = ref('general')
 
+// Pagination State
+const page = ref(1)
+const perPage = ref(24) // 24 is good for grid (shares 1, 2, 3, 4, 6 columns)
+const totalItems = ref(0)
+const totalPages = ref(1)
+
+// Sorting State
+const sortParam = ref('created_at:desc')
+const sortBy = computed(() => sortParam.value.split(':')[0])
+const sortOrder = computed(() => sortParam.value.split(':')[1])
+
 const modalTitle = computed(() => editingId.value ? t('cars.modal.edit') : t('cars.modal.add'))
 
 const tabs = computed(() => [
@@ -465,11 +516,26 @@ watch(featuresString, (val) => {
     form.value.features = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
 })
 
+// Fresh search timer
+let searchTimeout: any = null
+
 const fetchCars = async () => {
     loading.value = true
     try {
-        const res: any = await getCars()
+        const params: any = {
+            page: page.value,
+            per_page: perPage.value,
+            sort_by: sortBy.value,
+            sort_order: sortOrder.value
+        }
+
+        if (searchQuery.value) params.search = searchQuery.value
+        if (statusFilter.value !== 'all') params.status = statusFilter.value
+
+        const res: any = await getCars(params)
         cars.value = res.items || []
+        totalItems.value = res.total || 0
+        totalPages.value = res.pages || 1
     } catch (err) {
         console.error('Error fetching cars:', err)
         cars.value = []
@@ -480,23 +546,39 @@ const fetchCars = async () => {
             const target = cars.value.find(c => c.id === route.query.open)
             if (target) {
                 openModal(target)
-                // Clear query to avoid re-opening on refresh
-                // Clear query to avoid re-opening on refresh
                 router.replace({ query: {} })
             }
         }
     }
 }
 
+// Watchers for reactive fetching
+watch(searchQuery, () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+        page.value = 1
+        fetchCars()
+    }, 400)
+})
+
+watch(statusFilter, () => {
+    page.value = 1
+    fetchCars()
+})
+
+watch(sortParam, () => {
+    page.value = 1
+    fetchCars()
+})
+
+watch(page, () => {
+    fetchCars()
+})
+
 const filteredCars = computed(() => {
-    return cars.value.filter(c => {
-        const matchesStatus = statusFilter.value === 'all' || c.status === statusFilter.value
-        const brandModelVin = `${c.brand || ''} ${c.model || ''} ${c.vin || ''}`.toLowerCase()
-        const matchesSearch = !searchQuery.value ||
-            brandModelVin.includes(searchQuery.value.toLowerCase()) ||
-            c.year?.toString().includes(searchQuery.value)
-        return matchesStatus && matchesSearch
-    })
+    // Now done server-side, but we keep this to avoid template changes where possible
+    // or we can remove it and use 'cars' directly.
+    return cars.value
 })
 
 const openModal = (car?: any) => {
@@ -616,25 +698,42 @@ definePageMeta({ layout: false })
 }
 
 .controls-bar-dark {
-    background: rgba(255, 255, 255, 0.02);
-    border-color: var(--color-border);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+}
+
+.search-wrap-minimal {
+    display: flex;
+    align-items: center;
 }
 
 .input-clean {
     background: transparent;
     border: none;
-    color: #fff;
-    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
     outline: none;
 }
 
 .select-clean {
     background: transparent;
-    border: none;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 6px 12px;
     color: var(--color-text-secondary);
-    font-size: 0.85rem;
-    outline: none;
+    font-size: 0.8rem;
+    font-weight: 500;
     cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.select-clean:hover {
+    border-color: var(--color-text-tertiary);
+    background: var(--color-bg-hover);
 }
 
 /* Grid View Improvements */
@@ -733,6 +832,7 @@ definePageMeta({ layout: false })
     margin-bottom: 0.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     height: 3.2em;
@@ -930,5 +1030,53 @@ textarea.input {
         overflow-x: auto;
         white-space: nowrap;
     }
+}
+
+/* Pagination Styles */
+.pagination-minimal {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-pagination {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-pagination:hover:not(:disabled) {
+    background: var(--color-bg-hover);
+    border-color: var(--color-text-tertiary);
+    transform: translateY(-2px);
+}
+
+.btn-pagination:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.pagination-info {
+    font-size: 0.85rem;
+    padding: 0 1rem;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
