@@ -12,7 +12,7 @@ from typing import Dict, Union
 
 from ..schemas.user import (
     LoginRequest, RegisterRequest, Token, TokenRefresh,
-    UserResponse, OTPRequest, OTPVerify
+    UserResponse, OTPRequest, OTPVerify, RegisterResponse
 )
 from ..services.telegram import send_telegram_message
 from ..services.auth import (
@@ -27,15 +27,13 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 OTP_STORE: Dict[str, Dict[str, Union[str, float]]] = {}
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=RegisterResponse)
 async def register(request: RegisterRequest, db: DB):
     """
-    Register a new client account.
+    Register a new client account with OTP verification.
     
-    - **phone**: Phone number (unique)
-    - **password**: At least 6 characters
-    - **first_name**: First name
-    - **last_name**: Last name
+    If code is not provided, sends OTP via Telegram.
+    If code is provided, verifies it and completes registration/login.
     """
     # Check if phone is blocked
     is_blocked, reason = await is_phone_blocked(db, request.phone)
@@ -47,36 +45,88 @@ async def register(request: RegisterRequest, db: DB):
     
     # Check if phone already exists
     result = await db.execute(select(User).where(User.phone == request.phone))
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Phone number already registered"
-        )
+    user = result.scalar_one_or_none()
     
-    # Create user
-    user = User(
-        phone=request.phone,
-        password_hash=get_password_hash(request.password),
-        first_name=request.first_name,
-        last_name=request.last_name,
-        email=request.email,
-        role=Role.CLIENT
-    )
-    db.add(user)
-    await db.flush()
+    # If code is provided, verify and finalize
+    if request.code:
+        stored_otp = OTP_STORE.get(request.phone)
+        if not stored_otp or stored_otp['expires'] < time.time():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="OTP code expired or not requested"
+            )
+            
+        if stored_otp['code'] != request.code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid OTP code"
+            )
+            
+        # OTP is valid
+        del OTP_STORE[request.phone]
+        
+        if not user:
+            # Create user
+            user = User(
+                phone=request.phone,
+                password_hash=get_password_hash(request.password),
+                first_name=request.first_name,
+                last_name=request.last_name,
+                email=request.email,
+                role=Role.CLIENT,
+                is_active=True
+            )
+            db.add(user)
+            await db.flush()
+            
+            # Log action
+            await log_action(
+                db=db,
+                action="user_registered",
+                entity_type="user",
+                entity_id=user.id,
+                new_value={"phone": user.phone, "role": user.role.value}
+            )
+            await db.commit()
+            await db.refresh(user)
+            
+            return {
+                "message": "Registration successful",
+                "is_new": True,
+                "user": user,
+                "tokens": create_tokens(str(user.id), user.role.value)
+            }
+        else:
+            # Log action for login
+            await log_action(
+                db=db,
+                action="user_login_via_register",
+                entity_type="user",
+                entity_id=user.id
+            )
+            await db.commit()
+            
+            return {
+                "message": "Login successful",
+                "is_new": False,
+                "user": user,
+                "tokens": create_tokens(str(user.id), user.role.value)
+            }
+
+    # No code provided -> Generate and send OTP
+    code = str(random.randint(100000, 999999))
+    expiration = time.time() + 300  # 5 minutes
+    OTP_STORE[request.phone] = {"code": code, "expires": expiration}
     
-    # Log action
-    await log_action(
-        db=db,
-        action="user_registered",
-        entity_type="user",
-        entity_id=user.id,
-        new_value={"phone": user.phone, "role": user.role.value}
-    )
+    # Send to Telegram
+    action_type = "вход" if user else "регистрация"
+    message = f"🔐 <b>Tasdiqlash kodi: {code}</b>\n\n👤 Telefon: {request.phone}\n📝 Действие: {action_type}"
+    await send_telegram_message(message)
     
-    await db.commit()
-    await db.refresh(user)
-    return user
+    return {
+        "message": "OTP sent successfully",
+        "is_new": user is None
+    }
 
 
 @router.post("/login", response_model=Token)

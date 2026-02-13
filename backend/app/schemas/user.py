@@ -6,6 +6,31 @@ from uuid import UUID
 from ..models.enums import Role
 
 
+# --- User Schemas (Base) ---
+
+class UserBase(BaseModel):
+    phone: str
+    email: Optional[str] = None
+    first_name: str
+    last_name: str
+
+
+class UserResponse(UserBase):
+    id: UUID
+    role: Role
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UserMeResponse(UserResponse):
+    """Extended user info for current user."""
+    pass
+
+
 # --- Auth Schemas ---
 
 class TokenPayload(BaseModel):
@@ -44,16 +69,17 @@ class RegisterRequest(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
     email: Optional[EmailStr] = None
+    code: Optional[str] = Field(None, min_length=4, max_length=6)
 
 
-# --- User Schemas ---
+class RegisterResponse(BaseModel):
+    message: str
+    is_new: bool = True
+    user: Optional[UserResponse] = None
+    tokens: Optional[Token] = None
 
-class UserBase(BaseModel):
-    phone: str
-    email: Optional[str] = None
-    first_name: str
-    last_name: str
 
+# --- User Management Schemas ---
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
@@ -81,19 +107,3 @@ class UserRoleUpdate(BaseModel):
 
 class UserStatusUpdate(BaseModel):
     is_active: bool
-
-
-class UserResponse(UserBase):
-    id: UUID
-    role: Role
-    is_active: bool
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class UserMeResponse(UserResponse):
-    """Extended user info for current user."""
-    pass
