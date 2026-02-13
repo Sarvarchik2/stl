@@ -315,7 +315,7 @@ async def list_applications(
     
     # Load relations for schemas
     from sqlalchemy.orm import joinedload
-    query = query.options(joinedload(Application.car), joinedload(Application.client))
+    query = query.options(joinedload(Application.car), joinedload(Application.client), joinedload(Application.manager))
     
     result = await db.execute(query)
     items = result.scalars().all()
@@ -333,6 +333,10 @@ async def list_applications(
             resp.client_first_name = app.client.first_name
             resp.client_last_name = app.client.last_name
             resp.client_phone = app.client.phone
+        if app.manager:
+            resp.manager_first_name = app.manager.first_name
+            resp.manager_last_name = app.manager.last_name
+            resp.manager_phone = app.manager.phone
         response_items.append(resp)
     
     return ApplicationListResponse(
@@ -367,6 +371,7 @@ async def get_application(
     query = select(Application).where(Application.id == app_id).options(
         selectinload(Application.car),
         selectinload(Application.client),
+        selectinload(Application.manager),
         selectinload(Application.comments),
         selectinload(Application.status_history),
         selectinload(Application.documents),
@@ -399,6 +404,11 @@ async def get_application(
         resp.client_first_name = app.client.first_name
         resp.client_last_name = app.client.last_name
         resp.client_phone = app.client.phone
+        
+    if app.manager:
+        resp.manager_first_name = app.manager.first_name
+        resp.manager_last_name = app.manager.last_name
+        resp.manager_phone = app.manager.phone
         
     return resp
 

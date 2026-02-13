@@ -66,6 +66,11 @@ class ApplicationResponse(BaseModel):
     client_first_name: Optional[str] = None
     client_last_name: Optional[str] = None
     client_phone: Optional[str] = None
+
+    # Manager info (denormalized for client view)
+    manager_first_name: Optional[str] = None
+    manager_last_name: Optional[str] = None
+    manager_phone: Optional[str] = None
     
     # Timestamps
     created_at: datetime

@@ -827,8 +827,8 @@ const openDetail = async (app: any) => {
         }
     }
 
-    // Manager auto-assignment
-    if (hasRole('manager') && !app.manager_id && app.status !== 'new' && currentUserId) {
+    // Manager auto-assignment (Managers and Admins)
+    if ((hasRole('manager') || hasRole('admin')) && !app.manager_id && app.status !== 'new' && currentUserId) {
         try {
             await assignManager(app.id, currentUserId)
             app.manager_id = currentUserId
@@ -993,8 +993,18 @@ const translateKey = (key: string) => {
 }
 
 const getOperatorName = (id: string) => {
+    if (!id) return t('common.notAssigned')
     const op = operators.value.find(o => o.id === id)
-    return op ? `${op.first_name} ${op.last_name}` : t('common.notAssigned')
+    if (op) return `${op.first_name} ${op.last_name}`
+    const man = managers.value.find(m => m.id === id)
+    if (man) return `${man.first_name} ${man.last_name}`
+
+    // Fallback if not in lists (e.g. admin who isn't in fetched filters)
+    if (id === (currentUser.value as any)?.id) {
+        return `${(currentUser.value as any).first_name} ${(currentUser.value as any).last_name}`
+    }
+
+    return t('common.notAssigned')
 }
 
 onMounted(async () => {
